@@ -1,14 +1,6 @@
 import type { MetadataRoute } from "next";
 
-const STATIC_PAGES = [
-  "",
-  "terms",
-  "privacy",
-  "shipping-delivery",
-  "cancellation-refund",
-  "login",
-  "signup",
-];
+const STATIC_PAGES = ["", "terms", "privacy", "shipping-delivery", "cancellation-refund"];
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();

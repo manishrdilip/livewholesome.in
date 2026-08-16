@@ -182,7 +182,12 @@ export default function CheckoutPage() {
         </label>
       </div>
 
-      <form method="post" onSubmit={handleSubmit} className="mt-8 space-y-8">
+      <form
+        method="post"
+        action="/api/orders"
+        onSubmit={handleSubmit}
+        className="mt-8 space-y-8"
+      >
         {/* Honeypot — hidden from real users */}
         <div className="hidden" aria-hidden="true">
           <label>
@@ -386,7 +391,11 @@ export default function CheckoutPage() {
           WhatsApp and email.
         </label>
 
-        {serverError && <p className="text-sm text-red-600">{serverError}</p>}
+        {serverError && (
+          <p role="alert" aria-live="assertive" className="text-sm text-red-600">
+            {serverError}
+          </p>
+        )}
 
         <button
           type="submit"

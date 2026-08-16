@@ -53,8 +53,15 @@ export default async function HomePage() {
         // even though today's values (business_name etc.) are admin-only.
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:absolute focus:left-4 focus:top-4 focus:z-50 focus:rounded-lg focus:bg-gold focus:px-4 focus:py-2 focus:font-semibold focus:text-emerald-deep"
+      >
+        Skip to main content
+      </a>
       <Header />
 
+      <main id="main-content">
       <section className="bg-gradient-to-b from-emerald-deep to-emerald text-cream">
         <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-2 md:items-center">
           <div>
@@ -143,7 +150,17 @@ export default async function HomePage() {
           <h2 className="font-serif text-2xl font-bold">Start Your Wholesome Journey</h2>
           <p className="mx-auto mt-3 max-w-2xl text-cream/80">
             Handcrafted in small batches in Vellore, Tamil Nadu. Sealed with an oxygen absorber
-            for a 6-month shelf life. FSSAI-licensed and lab-tested, batch after batch.
+            for a 6-month shelf life
+            {settings.fssai_license ? `, FSSAI licensed (${settings.fssai_license})` : ""}. Lab
+            reports available on request —{" "}
+            {settings.support_email ? (
+              <a href={`mailto:${settings.support_email.toLowerCase()}`} className="underline">
+                {settings.support_email.toLowerCase()}
+              </a>
+            ) : (
+              "contact us"
+            )}
+            .
           </p>
           <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-cream/90">
             {[
@@ -158,6 +175,7 @@ export default async function HomePage() {
           </ul>
         </div>
       </section>
+      </main>
 
       <Footer settings={settings} />
     </>

@@ -71,7 +71,7 @@ export default async function TermsPage() {
 
       <PolicySection title="8. Contact">
         <p>
-          {settings.support_email && <>Email: {settings.support_email}<br /></>}
+          {settings.support_email && <>Email: {settings.support_email.toLowerCase()}<br /></>}
           {settings.support_phone && <>Phone: {settings.support_phone}</>}
         </p>
       </PolicySection>

@@ -6,7 +6,15 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: "*",
         allow: "/",
-        disallow: ["/admin", "/api", "/account", "/checkout", "/order/confirmed"],
+        disallow: [
+          "/admin",
+          "/api",
+          "/account",
+          "/checkout",
+          "/order/confirmed",
+          "/login",
+          "/signup",
+        ],
       },
     ],
     sitemap: "https://livewholesome.in/sitemap.xml",

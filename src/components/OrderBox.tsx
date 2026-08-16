@@ -3,6 +3,8 @@
 import { useCart } from "@/components/CartProvider";
 import { PRODUCT } from "@/lib/product";
 
+const TRUST_BADGES = ["🔒 Secure checkout", "🚚 Free shipping, India-wide", "📱 WhatsApp order updates"];
+
 export function OrderBox() {
   const { quantity, setQuantity, config, unitPrice, isSubscription, setIsSubscription, launchCheckout } =
     useCart();
@@ -92,6 +94,12 @@ export function OrderBox() {
       <p className="mt-2 text-center text-xs text-ink/50">
         Payment on confirmation — pay by UPI/card, we&apos;ll follow up. Online payment coming soon.
       </p>
+
+      <ul className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-ink/10 pt-3 text-xs text-ink/50">
+        {TRUST_BADGES.map((badge) => (
+          <li key={badge}>{badge}</li>
+        ))}
+      </ul>
     </div>
   );
 }

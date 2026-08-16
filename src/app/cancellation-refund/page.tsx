@@ -44,7 +44,7 @@ export default async function CancellationRefundPage() {
 
       <PolicySection title="Contact us">
         <p>
-          {settings.support_email && <>Email: {settings.support_email}<br /></>}
+          {settings.support_email && <>Email: {settings.support_email.toLowerCase()}<br /></>}
           {settings.support_phone && <>Phone/WhatsApp: {settings.support_phone}</>}
         </p>
       </PolicySection>

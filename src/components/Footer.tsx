@@ -63,8 +63,11 @@ export function Footer({ settings }: { settings: Settings }) {
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
               {settings.support_email && (
                 <li>
-                  <a href={`mailto:${settings.support_email}`} className="hover:text-gold">
-                    {settings.support_email}
+                  <a
+                    href={`mailto:${settings.support_email.toLowerCase()}`}
+                    className="hover:text-gold"
+                  >
+                    {settings.support_email.toLowerCase()}
                   </a>
                 </li>
               )}

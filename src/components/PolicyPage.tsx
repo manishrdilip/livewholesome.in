@@ -10,8 +10,23 @@ export function PolicyPage({
   updated: string;
   children: ReactNode;
 }) {
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Home", item: "https://livewholesome.in/" },
+      { "@type": "ListItem", position: 2, name: title },
+    ],
+  };
+
   return (
     <div className="mx-auto max-w-3xl px-6 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{
+          __html: JSON.stringify(breadcrumbJsonLd).replace(/</g, "\\u003c"),
+        }}
+      />
       <Link href="/" className="text-sm text-emerald hover:underline">
         ← Back to shop
       </Link>
