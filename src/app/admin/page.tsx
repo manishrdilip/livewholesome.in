@@ -1,6 +1,9 @@
+import Link from "next/link";
 import { createServiceClient } from "@/lib/supabase/server";
 import { OrdersTable, type OrderRow } from "@/components/admin/OrdersTable";
 import { RevenueChart } from "@/components/admin/RevenueChart";
+
+const CLOSED_STATUSES = ["DELIVERED", "CANCELLED", "RETURNED"];
 
 const CHART_DAYS = 30;
 
@@ -20,8 +23,11 @@ export default async function AdminOrdersPage() {
 
   const todaysOrders = (orders ?? []).filter((o) => new Date(o.placed_at) >= startOfDay).length;
   const unshippedCount = (orders ?? []).filter((o) =>
-    ["CONFIRMED", "PACKED"].includes(o.status)
+    ["CONFIRMED", "COOKING", "PACKED"].includes(o.status)
   ).length;
+  const todaysOpenOrderNumbers = (orders ?? [])
+    .filter((o) => new Date(o.placed_at) >= startOfDay && !CLOSED_STATUSES.includes(o.status))
+    .map((o) => o.order_number);
   const unpaidTotal = (orders ?? [])
     .filter((o) => o.payment_status === "UNPAID")
     .reduce((sum, o) => sum + Number(o.grand_total), 0);
@@ -59,7 +65,20 @@ export default async function AdminOrdersPage() {
 
   return (
     <div>
-      <h1 className="font-serif text-2xl font-bold">Orders</h1>
+      <div className="flex items-center justify-between">
+        <h1 className="font-serif text-2xl font-bold">Orders</h1>
+        {todaysOpenOrderNumbers.length > 0 ? (
+          <Link
+            href={`/admin/orders/labels-bulk?ids=${encodeURIComponent(todaysOpenOrderNumbers.join(","))}`}
+            target="_blank"
+            className="rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
+          >
+            Print today&apos;s shipping labels ({todaysOpenOrderNumbers.length})
+          </Link>
+        ) : (
+          <span className="text-sm text-ink/40">No open orders today</span>
+        )}
+      </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">
         <Stat label="Today's orders" value={todaysOrders} />
