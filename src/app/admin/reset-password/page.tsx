@@ -4,15 +4,6 @@ import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 
-type ExchangeResult = { error: string | null };
-
-// The auth code is single-use, but Suspense can unmount and remount
-// ResetPasswordForm during hydration, giving a fresh component instance (and
-// thus a fresh useRef) that would otherwise re-exchange an already-consumed
-// code and clobber a successful "ready" state with a spurious error. Keying
-// by code at module scope survives that remount.
-const exchangesByCode = new Map<string, Promise<ExchangeResult>>();
-
 function ResetPasswordForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -23,34 +14,28 @@ function ResetPasswordForm() {
   );
   const [errorMessage, setErrorMessage] = useState("");
 
-  // Real password-reset emails (browser-initiated resetPasswordForEmail) use
-  // PKCE, landing here with `?code=`. Admin-generated test links (via the
-  // service-role generateLink helper, no PKCE verifier available) instead
-  // carry access/refresh tokens in the URL hash — handle both.
+  // The code exchange now happens once, server-side, in /auth/callback
+  // before the browser ever lands here — a client-effect exchange was prone
+  // to Suspense remounting the component and re-invoking it against an
+  // already single-use code. This page just confirms a session landed
+  // (or reads the error /auth/callback forwarded on failure). Admin-generated
+  // test links (via the service-role generateLink helper) still carry
+  // access/refresh tokens in the URL hash, so that path stays as a fallback.
   useEffect(() => {
-    const code = searchParams.get("code");
-    const flowId = searchParams.get("sb_flow_id");
+    const callbackError = searchParams.get("error");
     const supabase = createBrowserSupabaseClient();
 
     (async () => {
-      if (code) {
-        let exchange = exchangesByCode.get(code);
-        if (!exchange) {
-          // Pass flowId explicitly rather than letting the SDK re-derive it
-          // from window.location.href — Next's router can strip the query
-          // string shortly after hydration, which would otherwise lose it.
-          exchange = supabase.auth
-            .exchangeCodeForSession(code, flowId ? { flowId } : undefined)
-            .then(({ error }) => ({ error: error?.message ?? null }));
-          exchangesByCode.set(code, exchange);
-        }
+      if (callbackError) {
+        setStatus("link-error");
+        setErrorMessage(callbackError);
+        return;
+      }
 
-        const { error } = await exchange;
-        if (error) {
-          setStatus("link-error");
-          setErrorMessage(error);
-          return;
-        }
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
+      if (session) {
         setStatus("ready");
         return;
       }

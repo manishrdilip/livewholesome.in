@@ -15,11 +15,26 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
 export async function GET(request: NextRequest) {
   const { searchParams, origin } = new URL(request.url);
   const code = searchParams.get("code");
+  const flowId = searchParams.get("sb_flow_id");
+  // Password recovery links point here with next=/admin/reset-password so
+  // the exchange runs once, server-side, instead of in a client effect that
+  // Suspense can remount and re-invoke against an already-consumed code.
+  const next = searchParams.get("next");
 
   if (code) {
     const supabase = await createServerAuthClient();
-    const { data } = await supabase.auth.exchangeCodeForSession(code);
+    const { data, error } = await supabase.auth.exchangeCodeForSession(
+      code,
+      flowId ? { flowId } : undefined
+    );
     const user = data?.user;
+
+    if (next) {
+      const target = user
+        ? `${origin}${next}`
+        : `${origin}${next}?error=${encodeURIComponent(error?.message ?? "Invalid or expired link")}`;
+      return NextResponse.redirect(target);
+    }
 
     if (user) {
       const name = typeof user.user_metadata?.name === "string" ? user.user_metadata.name : null;

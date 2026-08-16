@@ -40,8 +40,11 @@ export default function AdminLoginPage() {
     setErrorMessage("");
 
     const supabase = createBrowserSupabaseClient();
+    // Route through /auth/callback so the code exchange happens once,
+    // server-side, rather than in a client effect (which Suspense can
+    // remount and re-invoke against an already single-use code).
     const { error } = await supabase.auth.resetPasswordForEmail(email, {
-      redirectTo: `${window.location.origin}/admin/reset-password`,
+      redirectTo: `${window.location.origin}/auth/callback?next=/admin/reset-password`,
     });
 
     if (error) {
