@@ -1,4 +1,5 @@
 import { Footer } from "@/components/Footer";
+import { HeroOrderButton } from "@/components/HeroOrderButton";
 import { IngredientCard } from "@/components/IngredientCard";
 import { OrderBox } from "@/components/OrderBox";
 import { ReviewsSection } from "@/components/ReviewsSection";
@@ -87,12 +88,7 @@ export default async function HomePage() {
             </dl>
 
             <div className="mt-8 flex flex-wrap gap-3">
-              <a
-                href="#order"
-                className="rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep"
-              >
-                Order Now — ₹{pricing.offerPrice}
-              </a>
+              <HeroOrderButton />
               <a
                 href="#ingredients"
                 className="rounded-full border border-cream/40 px-6 py-3 font-semibold"

@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createServerAuthClient } from "@/lib/supabase/server-auth";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getCustomerForUser, linkOrCreateCustomer } from "@/lib/customer-account";
+import { getInvoiceSignedUrl } from "@/lib/invoice/generate";
 import { AccountSignOutButton } from "@/components/account/SignOutButton";
 import { AddAddressForm } from "@/components/account/AddAddressForm";
 import { AccountTabs } from "@/components/account/AccountTabs";
@@ -93,7 +94,7 @@ export default async function AccountPage() {
       .order("created_at"),
     service
       .from("orders")
-      .select("order_number, status, grand_total, placed_at")
+      .select("id, order_number, status, grand_total, placed_at")
       .eq("customer_id", customer.id)
       .order("placed_at", { ascending: false }),
     service
@@ -102,6 +103,34 @@ export default async function AccountPage() {
       .eq("customer_id", customer.id)
       .order("created_at", { ascending: false }),
   ]);
+
+  const orderIds = orders?.map((o) => o.id) ?? [];
+  const { data: invoices } = orderIds.length
+    ? await service
+        .from("invoices")
+        .select("order_id, storage_path, issued_at")
+        .in("order_id", orderIds)
+        .order("issued_at", { ascending: false })
+    : { data: null };
+
+  // Latest invoice per order — invoices is ordered issued_at desc, so the
+  // first one seen per order_id wins.
+  const latestInvoiceByOrder = new Map<string, string>();
+  for (const inv of invoices ?? []) {
+    if (inv.storage_path && !latestInvoiceByOrder.has(inv.order_id)) {
+      latestInvoiceByOrder.set(inv.order_id, inv.storage_path);
+    }
+  }
+  const invoiceUrlByOrder = new Map<string, string>();
+  await Promise.all(
+    [...latestInvoiceByOrder.entries()].map(async ([orderId, storagePath]) => {
+      try {
+        invoiceUrlByOrder.set(orderId, await getInvoiceSignedUrl(storagePath));
+      } catch {
+        // No signed URL available — the order just won't show a download link.
+      }
+    })
+  );
 
   async function deleteAddress(formData: FormData) {
     "use server";
@@ -238,12 +267,22 @@ export default async function AccountPage() {
             <h2 className="font-semibold">Order history</h2>
             <ul className="mt-2 divide-y divide-ink/10 text-sm">
               {orders?.map((o) => (
-                <li key={o.order_number} className="flex justify-between py-2">
+                <li key={o.order_number} className="flex items-center justify-between gap-3 py-2">
                   <span>
                     {o.order_number} — {new Date(o.placed_at).toLocaleDateString("en-IN")}
                   </span>
-                  <span className="text-ink/50">
-                    {o.status} · ₹{o.grand_total}
+                  <span className="flex items-center gap-3">
+                    <span className="text-ink/50">
+                      {o.status} · ₹{o.grand_total}
+                    </span>
+                    {invoiceUrlByOrder.get(o.id) && (
+                      <a
+                        href={invoiceUrlByOrder.get(o.id)}
+                        className="text-emerald hover:underline"
+                      >
+                        Invoice
+                      </a>
+                    )}
                   </span>
                 </li>
               ))}
