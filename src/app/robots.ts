@@ -14,6 +14,7 @@ export default function robots(): MetadataRoute.Robots {
           "/order/confirmed",
           "/login",
           "/signup",
+          "/reset-password",
         ],
       },
     ],
