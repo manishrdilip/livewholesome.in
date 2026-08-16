@@ -42,8 +42,8 @@ export function Header() {
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-8 py-5">
         <Link href="/" className="flex items-center gap-4">
-          <LogoMark size={72} />
-          <span className="font-serif text-5xl font-black tracking-tight">
+          <LogoMark size={60} />
+          <span className="font-serif text-4xl font-black tracking-tight">
             <span className="italic text-gold">W</span>holesome
           </span>
         </Link>
