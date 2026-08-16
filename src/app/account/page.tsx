@@ -8,6 +8,7 @@ import { getInvoiceSignedUrl } from "@/lib/invoice/generate";
 import { AccountSignOutButton } from "@/components/account/SignOutButton";
 import { AddAddressForm } from "@/components/account/AddAddressForm";
 import { AccountTabs } from "@/components/account/AccountTabs";
+import { OrderProgressTracker } from "@/components/OrderProgressTracker";
 import { reviewSchema } from "@/lib/validation";
 import { normalizePhone, PHONE_REGEX } from "@/lib/phone";
 import { z } from "zod";
@@ -131,6 +132,14 @@ export default async function AccountPage() {
       }
     })
   );
+
+  const { data: shipments } = orderIds.length
+    ? await service
+        .from("shipments")
+        .select("order_id, carrier, awb_number, tracking_url")
+        .in("order_id", orderIds)
+    : { data: null };
+  const shipmentByOrder = new Map(shipments?.map((s) => [s.order_id, s]) ?? []);
 
   async function deleteAddress(formData: FormData) {
     "use server";
@@ -266,26 +275,49 @@ export default async function AccountPage() {
           <section className="rounded-xl border border-ink/10 bg-white p-5">
             <h2 className="font-semibold">Order history</h2>
             <ul className="mt-2 divide-y divide-ink/10 text-sm">
-              {orders?.map((o) => (
-                <li key={o.order_number} className="flex items-center justify-between gap-3 py-2">
-                  <span>
-                    {o.order_number} — {new Date(o.placed_at).toLocaleDateString("en-IN")}
-                  </span>
-                  <span className="flex items-center gap-3">
-                    <span className="text-ink/50">
-                      {o.status} · ₹{o.grand_total}
-                    </span>
-                    {invoiceUrlByOrder.get(o.id) && (
-                      <a
-                        href={invoiceUrlByOrder.get(o.id)}
-                        className="text-emerald hover:underline"
-                      >
-                        Invoice
-                      </a>
+              {orders?.map((o) => {
+                const shipment = shipmentByOrder.get(o.id);
+                return (
+                  <li key={o.order_number} className="py-3">
+                    <div className="flex items-center justify-between gap-3">
+                      <span>
+                        {o.order_number} — {new Date(o.placed_at).toLocaleDateString("en-IN")}
+                      </span>
+                      <span className="flex items-center gap-3">
+                        <span className="text-ink/50">₹{o.grand_total}</span>
+                        {invoiceUrlByOrder.get(o.id) && (
+                          <a
+                            href={invoiceUrlByOrder.get(o.id)}
+                            className="text-emerald hover:underline"
+                          >
+                            Invoice
+                          </a>
+                        )}
+                      </span>
+                    </div>
+                    <div className="mt-3 max-w-sm">
+                      <OrderProgressTracker status={o.status} />
+                    </div>
+                    {shipment?.awb_number && (
+                      <p className="mt-2 text-xs text-ink/50">
+                        Tracking: {shipment.tracking_url ? (
+                          <a
+                            href={shipment.tracking_url}
+                            target="_blank"
+                            rel="noreferrer"
+                            className="text-emerald hover:underline"
+                          >
+                            {shipment.awb_number}
+                          </a>
+                        ) : (
+                          shipment.awb_number
+                        )}
+                        {shipment.carrier ? ` via ${shipment.carrier}` : ""}
+                      </p>
                     )}
-                  </span>
-                </li>
-              ))}
+                  </li>
+                );
+              })}
               {!orders?.length && <p className="text-sm text-ink/50">No orders yet.</p>}
             </ul>
           </section>

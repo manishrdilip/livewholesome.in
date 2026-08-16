@@ -4,6 +4,8 @@ import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
 import { generateInvoice, getInvoiceSignedUrl } from "@/lib/invoice/generate";
 import { sendOrderConfirmedEmail } from "@/lib/email/send";
+import { OrderProgressTracker } from "@/components/OrderProgressTracker";
+import { ORDER_STATUSES, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status";
 
 export default async function AdminOrderDetailPage({
   params,
@@ -21,7 +23,7 @@ export default async function AdminOrderDetailPage({
 
   if (!order) notFound();
 
-  const [{ data: items }, { data: events }, { data: invoice }, { data: notifications }] =
+  const [{ data: items }, { data: events }, { data: invoice }, { data: notifications }, { data: shipment }] =
     await Promise.all([
       supabase.from("order_items").select("*").eq("order_id", order.id),
       supabase.from("order_events").select("*").eq("order_id", order.id).order("created_at"),
@@ -37,6 +39,7 @@ export default async function AdminOrderDetailPage({
         .select("*")
         .eq("order_id", order.id)
         .order("sent_at", { ascending: false, nullsFirst: true }),
+      supabase.from("shipments").select("*").eq("order_id", order.id).maybeSingle(),
     ]);
 
   const invoiceUrl = invoice?.storage_path
@@ -52,6 +55,98 @@ export default async function AdminOrderDetailPage({
   async function resendEmail() {
     "use server";
     await sendOrderConfirmedEmail(orderNumber);
+    revalidatePath(`/admin/orders/${orderNumber}`);
+  }
+
+  async function updateStatus(formData: FormData) {
+    "use server";
+    const newStatus = formData.get("status");
+    if (typeof newStatus !== "string" || !ORDER_STATUSES.includes(newStatus as OrderStatus)) return;
+
+    const service = createServiceClient();
+    const { data: current } = await service
+      .from("orders")
+      .select("id, status")
+      .eq("order_number", orderNumber)
+      .single();
+    if (!current || current.status === newStatus) return;
+
+    await service
+      .from("orders")
+      .update({ status: newStatus, updated_at: new Date().toISOString() })
+      .eq("id", current.id);
+
+    await service.from("order_events").insert({
+      order_id: current.id,
+      status: newStatus,
+      label: ORDER_STATUS_LABELS[newStatus as OrderStatus],
+    });
+
+    // First time hitting SHIPPED/DELIVERED, record the timestamp on the
+    // shipment row (created if it doesn't exist yet).
+    if (newStatus === "SHIPPED" || newStatus === "DELIVERED") {
+      const { data: existingShipment } = await service
+        .from("shipments")
+        .select("dispatched_at, delivered_at")
+        .eq("order_id", current.id)
+        .maybeSingle();
+
+      const patch: Record<string, string> = {};
+      if (newStatus === "SHIPPED" && !existingShipment?.dispatched_at) {
+        patch.dispatched_at = new Date().toISOString();
+      }
+      if (newStatus === "DELIVERED" && !existingShipment?.delivered_at) {
+        patch.delivered_at = new Date().toISOString();
+      }
+      if (Object.keys(patch).length) {
+        await service
+          .from("shipments")
+          .upsert({ order_id: current.id, ...patch }, { onConflict: "order_id" });
+      }
+    }
+
+    revalidatePath(`/admin/orders/${orderNumber}`);
+    revalidatePath("/admin");
+  }
+
+  async function updateShipment(formData: FormData) {
+    "use server";
+    const carrier = formData.get("carrier");
+    const awbNumber = formData.get("awb_number");
+    const trackingUrl = formData.get("tracking_url");
+    const expectedDeliveryDate = formData.get("expected_delivery_date");
+
+    const service = createServiceClient();
+    const { data: current } = await service
+      .from("orders")
+      .select("id")
+      .eq("order_number", orderNumber)
+      .single();
+    if (!current) return;
+
+    const trimmedAwb = typeof awbNumber === "string" ? awbNumber.trim() : "";
+    const { error } = await service.from("shipments").upsert(
+      {
+        order_id: current.id,
+        carrier: typeof carrier === "string" && carrier.trim() ? carrier.trim() : null,
+        awb_number: trimmedAwb || null,
+        tracking_url:
+          typeof trackingUrl === "string" && trackingUrl.trim() ? trackingUrl.trim() : null,
+        expected_delivery_date:
+          typeof expectedDeliveryDate === "string" && expectedDeliveryDate
+            ? expectedDeliveryDate
+            : null,
+      },
+      { onConflict: "order_id" }
+    );
+    if (error) return;
+
+    await service.from("order_events").insert({
+      order_id: current.id,
+      status: "TRACKING_UPDATED",
+      label: trimmedAwb ? `Tracking number added: ${trimmedAwb}` : "Shipping details updated",
+    });
+
     revalidatePath(`/admin/orders/${orderNumber}`);
   }
 
@@ -95,6 +190,28 @@ export default async function AdminOrderDetailPage({
       <p className="text-sm text-ink/50">
         Placed {new Date(order.placed_at).toLocaleString("en-IN")}
       </p>
+
+      <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+        <h2 className="font-semibold">Order status</h2>
+        <div className="mt-4">
+          <OrderProgressTracker status={order.status} />
+        </div>
+        <form action={updateStatus} className="mt-4 flex items-center gap-3 text-sm">
+          <select name="status" defaultValue={order.status} className="input w-auto">
+            {ORDER_STATUSES.map((s) => (
+              <option key={s} value={s}>
+                {ORDER_STATUS_LABELS[s]}
+              </option>
+            ))}
+          </select>
+          <button
+            type="submit"
+            className="rounded-full bg-emerald px-4 py-1.5 text-cream"
+          >
+            Update status
+          </button>
+        </form>
+      </section>
 
       <div className="mt-6 grid gap-6 md:grid-cols-2">
         <section className="rounded-xl border border-ink/10 bg-white p-5">
@@ -232,6 +349,64 @@ export default async function AdminOrderDetailPage({
             </form>
           </div>
         )}
+      </section>
+
+      <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+        <h2 className="font-semibold">Shipping &amp; tracking</h2>
+        {shipment?.awb_number && (
+          <p className="mt-1 text-sm text-ink/50">
+            Currently: <span className="font-medium text-ink">{shipment.awb_number}</span>
+            {shipment.carrier ? ` via ${shipment.carrier}` : ""}
+            {shipment.dispatched_at &&
+              ` — dispatched ${new Date(shipment.dispatched_at).toLocaleDateString("en-IN")}`}
+            {shipment.delivered_at &&
+              ` — delivered ${new Date(shipment.delivered_at).toLocaleDateString("en-IN")}`}
+          </p>
+        )}
+        <form action={updateShipment} className="mt-3 grid gap-3 text-sm sm:grid-cols-2">
+          <div>
+            <label className="text-ink/60">Carrier</label>
+            <input
+              name="carrier"
+              defaultValue={shipment?.carrier ?? ""}
+              placeholder="e.g. Delhivery, India Post"
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="text-ink/60">Tracking / AWB number</label>
+            <input
+              name="awb_number"
+              defaultValue={shipment?.awb_number ?? ""}
+              placeholder="e.g. 1234567890"
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="text-ink/60">Tracking URL (optional)</label>
+            <input
+              name="tracking_url"
+              type="url"
+              defaultValue={shipment?.tracking_url ?? ""}
+              placeholder="https://…"
+              className="input"
+            />
+          </div>
+          <div>
+            <label className="text-ink/60">Expected delivery date (optional)</label>
+            <input
+              name="expected_delivery_date"
+              type="date"
+              defaultValue={shipment?.expected_delivery_date ?? ""}
+              className="input"
+            />
+          </div>
+          <div className="sm:col-span-2">
+            <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
+              Save tracking details
+            </button>
+          </div>
+        </form>
       </section>
 
       <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
