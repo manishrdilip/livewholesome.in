@@ -9,6 +9,7 @@ function ResetPasswordForm() {
   const searchParams = useSearchParams();
   const [password, setPassword] = useState("");
   const [confirmPassword, setConfirmPassword] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
   const [status, setStatus] = useState<"checking" | "ready" | "saving" | "error" | "link-error">(
     "checking"
   );
@@ -103,17 +104,27 @@ function ResetPasswordForm() {
         <p className="mt-6 text-sm text-ink/60">Verifying your reset link…</p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
+          <div className="relative">
+            <input
+              required
+              type={showPassword ? "text" : "password"}
+              placeholder="New password (min. 8 characters)"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input pr-16"
+            />
+            <button
+              type="button"
+              onClick={() => setShowPassword((v) => !v)}
+              aria-label={showPassword ? "Hide passwords" : "Show passwords"}
+              className="absolute inset-y-0 right-3 text-xs font-semibold text-emerald hover:underline"
+            >
+              {showPassword ? "Hide" : "Show"}
+            </button>
+          </div>
           <input
             required
-            type="password"
-            placeholder="New password (min. 8 characters)"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input"
-          />
-          <input
-            required
-            type="password"
+            type={showPassword ? "text" : "password"}
             placeholder="Confirm new password"
             value={confirmPassword}
             onChange={(e) => setConfirmPassword(e.target.value)}
