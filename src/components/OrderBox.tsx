@@ -1,18 +1,11 @@
 "use client";
 
-import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { PRODUCT } from "@/lib/product";
 
 export function OrderBox() {
-  const { quantity, setQuantity } = useCart();
-  const router = useRouter();
+  const { quantity, setQuantity, launchCheckout } = useCart();
   const effectiveQuantity = quantity > 0 ? quantity : 1;
-
-  function goToCheckout() {
-    if (quantity === 0) setQuantity(1);
-    router.push("/checkout");
-  }
 
   return (
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
@@ -68,7 +61,7 @@ export function OrderBox() {
 
       <button
         type="button"
-        onClick={goToCheckout}
+        onClick={launchCheckout}
         className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep"
       >
         ⚡ Order Now — Checkout

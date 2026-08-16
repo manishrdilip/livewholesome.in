@@ -65,8 +65,7 @@ export default function CheckoutPage() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function handlePincodeBlur() {
-    const pin = form.pincode.trim();
+  async function lookupAndFillPincode(pin: string) {
     if (!/^\d{6}$/.test(pin)) return;
     setPincodeStatus("checking");
     const result = await lookupPincode(pin).catch(() => null);
@@ -260,8 +259,13 @@ export default function CheckoutPage() {
               inputMode="numeric"
               maxLength={6}
               value={form.pincode}
-              onChange={(e) => update("pincode", e.target.value.replace(/\D/g, ""))}
-              onBlur={handlePincodeBlur}
+              onChange={(e) => {
+                const next = e.target.value.replace(/\D/g, "");
+                update("pincode", next);
+                if (next.length === 6) lookupAndFillPincode(next);
+                else setPincodeStatus("idle");
+              }}
+              onBlur={() => lookupAndFillPincode(form.pincode)}
               className="input"
             />
             {pincodeStatus === "checking" && (

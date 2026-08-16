@@ -41,8 +41,7 @@ export function AddAddressForm() {
     setForm((f) => ({ ...f, [key]: value }));
   }
 
-  async function handlePincodeBlur() {
-    const pin = form.pincode.trim();
+  async function lookupAndFillPincode(pin: string) {
     if (!/^\d{6}$/.test(pin)) return;
     const result = await lookupPincode(pin).catch(() => null);
     if (result) {
@@ -130,8 +129,12 @@ export function AddAddressForm() {
         required
         placeholder="Pincode"
         value={form.pincode}
-        onChange={(e) => update("pincode", e.target.value.replace(/\D/g, "").slice(0, 6))}
-        onBlur={handlePincodeBlur}
+        onChange={(e) => {
+          const next = e.target.value.replace(/\D/g, "").slice(0, 6);
+          update("pincode", next);
+          if (next.length === 6) lookupAndFillPincode(next);
+        }}
+        onBlur={() => lookupAndFillPincode(form.pincode)}
         className="input"
         maxLength={6}
       />

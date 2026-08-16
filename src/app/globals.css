@@ -33,3 +33,72 @@ body {
   outline: 2px solid var(--emerald);
   outline-offset: 1px;
 }
+
+@keyframes chariot-overlay-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes chariot-ride {
+  0% {
+    transform: translateX(-35vw);
+  }
+  100% {
+    transform: translateX(135vw);
+  }
+}
+
+@keyframes chariot-gallop {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes chariot-wheel-spin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(1080deg);
+  }
+}
+
+@keyframes chariot-dust {
+  0% {
+    opacity: 0.55;
+    transform: scale(0.5) translateX(0);
+  }
+  100% {
+    opacity: 0;
+    transform: scale(1.6) translateX(-50px);
+  }
+}
+
+@keyframes chariot-crown-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.15);
+  }
+}
+
+@keyframes chariot-text-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

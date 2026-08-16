@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { LogoMark } from "@/components/LogoMark";
@@ -15,7 +16,8 @@ const NAV_LINKS = [
 ];
 
 export function Header() {
-  const { quantity } = useCart();
+  const { quantity, launchCheckout } = useCart();
+  const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -27,6 +29,15 @@ export function Header() {
     } = supabase.auth.onAuthStateChange((_event, session) => setLoggedIn(!!session));
     return () => subscription.unsubscribe();
   }, []);
+
+  async function handleSignOut() {
+    const supabase = createBrowserSupabaseClient();
+    await supabase.auth.signOut();
+    setLoggedIn(false);
+    setMenuOpen(false);
+    router.push("/");
+    router.refresh();
+  }
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
@@ -44,14 +55,20 @@ export function Header() {
           <Link href={loggedIn ? "/account" : "/login"} className="hover:text-gold">
             {loggedIn ? "My Account" : "Log in"}
           </Link>
+          {loggedIn && (
+            <button type="button" onClick={handleSignOut} className="hover:text-gold">
+              Sign out
+            </button>
+          )}
         </nav>
         <div className="flex items-center gap-2">
-          <a
-            href="#order"
+          <button
+            type="button"
+            onClick={launchCheckout}
             className="rounded-full bg-gold px-4 py-2 text-xs font-semibold text-emerald-deep sm:px-5 sm:text-sm"
           >
             {quantity > 0 ? `Cart (${quantity}) — ₹${quantity * PRODUCT.unitPrice}` : `Buy Now — ₹${PRODUCT.unitPrice}`}
-          </a>
+          </button>
           <button
             type="button"
             onClick={() => setMenuOpen((v) => !v)}
@@ -93,6 +110,15 @@ export function Header() {
           >
             {loggedIn ? "My Account" : "Log in"}
           </Link>
+          {loggedIn && (
+            <button
+              type="button"
+              onClick={handleSignOut}
+              className="rounded-lg px-2 py-2.5 text-left hover:bg-cream/10 hover:text-gold"
+            >
+              Sign out
+            </button>
+          )}
         </nav>
       )}
     </header>
