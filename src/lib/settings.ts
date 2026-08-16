@@ -24,6 +24,8 @@ export type Settings = {
   facebook_url: string | null;
   instagram_url: string | null;
   youtube_url: string | null;
+  /** Kitchen's daily production cap, in units (500g pouches). */
+  daily_order_limit_units: number;
 };
 
 export async function getSettings(): Promise<Settings> {

@@ -16,7 +16,7 @@ const NAV_LINKS = [
 ];
 
 export function Header() {
-  const { quantity, unitPrice, launchCheckout } = useCart();
+  const { quantity, unitPrice, remainingUnits, launchCheckout } = useCart();
   const router = useRouter();
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -72,9 +72,14 @@ export function Header() {
           <button
             type="button"
             onClick={launchCheckout}
-            className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-emerald-deep sm:px-4 sm:py-2 sm:text-sm"
+            disabled={quantity === 0 && remainingUnits <= 0}
+            className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-emerald-deep disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
           >
-            {quantity > 0 ? `Cart (${quantity}) — ₹${quantity * unitPrice}` : `Buy Now — ₹${unitPrice}`}
+            {quantity > 0
+              ? `Cart (${quantity}) — ₹${quantity * unitPrice}`
+              : remainingUnits <= 0
+                ? "Sold out for today"
+                : `Buy Now — ₹${unitPrice}`}
           </button>
           <button
             type="button"

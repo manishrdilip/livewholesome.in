@@ -30,6 +30,7 @@ async function updateSettings(formData: FormData) {
       facebook_url: String(formData.get("facebook_url") ?? "").trim() || null,
       instagram_url: String(formData.get("instagram_url") ?? "").trim() || null,
       youtube_url: String(formData.get("youtube_url") ?? "").trim() || null,
+      daily_order_limit_units: Number(formData.get("daily_order_limit_units") ?? 20),
     })
     .eq("id", true);
 
@@ -139,6 +140,24 @@ export default async function AdminSettingsPage() {
               type="number"
               step="0.01"
               defaultValue={String(settings.subscribe_discount_percent)}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-ink/10 bg-white p-5">
+          <h2 className="font-semibold">Daily order cap</h2>
+          <p className="mt-1 text-xs text-ink/50">
+            The kitchen&apos;s daily production limit, in 500g pouches. Once today&apos;s orders
+            reach this many units, the storefront stops taking new orders until midnight
+            (India time).
+          </p>
+          <div className="mt-3 space-y-3">
+            <Field
+              label="Daily order limit (units)"
+              name="daily_order_limit_units"
+              type="number"
+              step="1"
+              defaultValue={String(settings.daily_order_limit_units)}
             />
           </div>
         </section>

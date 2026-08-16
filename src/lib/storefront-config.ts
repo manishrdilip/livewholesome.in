@@ -1,6 +1,7 @@
 import "server-only";
 import { getSettings } from "@/lib/settings";
 import { getEffectivePricing } from "@/lib/pricing";
+import { createServiceClient } from "@/lib/supabase/server";
 
 export type StorefrontConfig = {
   basePrice: number;
@@ -17,6 +18,10 @@ export type StorefrontConfig = {
   youtubeUrl: string | null;
   paymentGatewayEnabled: boolean;
   cashfreeMode: "sandbox" | "production";
+  /** Kitchen's daily production cap, in units (500g pouches). Admin-configurable. */
+  dailyOrderLimitUnits: number;
+  /** Units already ordered today (India time), across all non-cancelled orders. */
+  unitsOrderedToday: number;
 };
 
 // Single source of truth for the storefront's public pricing/config —
@@ -25,6 +30,9 @@ export type StorefrontConfig = {
 export async function getStorefrontConfig(): Promise<StorefrontConfig> {
   const settings = await getSettings();
   const pricing = getEffectivePricing(settings);
+
+  const supabase = createServiceClient();
+  const { data: unitsUsed } = await supabase.rpc("daily_order_units_used");
 
   return {
     ...pricing,
@@ -39,5 +47,7 @@ export async function getStorefrontConfig(): Promise<StorefrontConfig> {
       process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY
     ),
     cashfreeMode: process.env.CASHFREE_ENVIRONMENT === "PRODUCTION" ? "production" : "sandbox",
+    dailyOrderLimitUnits: settings.daily_order_limit_units,
+    unitsOrderedToday: unitsUsed ?? 0,
   };
 }

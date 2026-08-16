@@ -45,7 +45,7 @@ const initialState: FormState = {
 };
 
 export default function CheckoutPage() {
-  const { quantity, config, unitPrice, isSubscription, setIsSubscription } = useCart();
+  const { quantity, config, unitPrice, isSubscription, setIsSubscription, remainingUnits } = useCart();
   const router = useRouter();
   const effectiveQuantity = quantity > 0 ? quantity : 1;
 
@@ -175,6 +175,20 @@ export default function CheckoutPage() {
       console.error(`Could not launch Cashfree checkout for ${orderNumber}`, err);
       return false;
     }
+  }
+
+  if (remainingUnits <= 0) {
+    return (
+      <div className="mx-auto max-w-2xl px-6 py-12">
+        <Link href="/" className="text-sm text-emerald hover:underline">
+          ← Back to shop
+        </Link>
+        <div className="mt-8 rounded-xl bg-red-50 p-6 text-center text-red-700">
+          <h1 className="font-serif text-2xl font-bold">Day order limit reached</h1>
+          <p className="mt-2 text-sm">Please come back after 12:00 AM.</p>
+        </div>
+      </div>
+    );
   }
 
   return (

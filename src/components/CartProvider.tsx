@@ -27,6 +27,9 @@ type CartContextValue = {
   subtotal: number;
   isSubscription: boolean;
   setIsSubscription: (value: boolean) => void;
+  /** Units still available today against the kitchen's daily cap — 0 means
+   * ordering is closed until midnight (India time). */
+  remainingUnits: number;
   /** Ensures at least 1 unit is in the cart, then navigates to checkout.
    * Shared by the header cart button and the product order box so both
    * behave identically. */
@@ -66,13 +69,16 @@ export function CartProvider({
       .catch(() => {});
   }, []);
 
+  const remainingUnits = Math.max(0, config.dailyOrderLimitUnits - config.unitsOrderedToday);
+
   function setQuantity(next: number) {
-    const clamped = Math.max(0, Math.min(20, Math.round(next)));
+    const clamped = Math.max(0, Math.min(20, remainingUnits, Math.round(next)));
     const items: CartItem[] = clamped > 0 ? [{ sku: PRODUCT.sku, quantity: clamped }] : [];
     writeCart(items);
   }
 
   function launchCheckout() {
+    if (remainingUnits <= 0) return;
     if (getQuantitySnapshot() === 0) setQuantity(1);
     router.push("/checkout");
   }
@@ -90,6 +96,7 @@ export function CartProvider({
         subtotal,
         isSubscription,
         setIsSubscription,
+        remainingUnits,
         launchCheckout,
       }}
     >

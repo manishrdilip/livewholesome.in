@@ -117,6 +117,12 @@ export async function POST(request: NextRequest) {
   });
 
   if (error) {
+    if (error.message.includes("DAILY_LIMIT_REACHED")) {
+      return NextResponse.json(
+        { error: "Day order limit reached. Please come back after 12:00 AM." },
+        { status: 409 }
+      );
+    }
     console.error("create_order failed", error.message);
     return NextResponse.json(
       { error: "Could not place your order. Please try again." },
