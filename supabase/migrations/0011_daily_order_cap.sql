@@ -43,9 +43,9 @@ declare
 begin
   select daily_order_limit_units into v_limit from settings limit 1;
   v_used := daily_order_units_used();
-  select coalesce(sum((item->>'quantity')::integer), 0)
+  select coalesce(sum((req_item->>'quantity')::integer), 0)
   into v_requested
-  from jsonb_array_elements(p_items) item;
+  from jsonb_array_elements(p_items) req_item;
 
   if v_limit is not null and v_used + v_requested > v_limit then
     raise exception 'DAILY_LIMIT_REACHED' using errcode = 'P0001';
