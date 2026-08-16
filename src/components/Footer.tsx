@@ -31,10 +31,15 @@ export function Footer({ settings }: { settings: Settings }) {
       <div className="mx-auto max-w-7xl px-8 py-14">
         <div className="grid gap-10 md:grid-cols-3">
           <div>
-            <Link href="/" className="flex items-center gap-3 text-lg font-semibold">
+            <Link href="/" className="flex items-center gap-3">
               <LogoMark size={40} />
-              Live<span className="text-gold-pale">W</span>holesome
-              <span className="text-gold">.in</span>
+              <span className="flex items-baseline gap-1">
+                <span className="text-sm font-medium text-cream/60">Live</span>
+                <span className="font-serif text-2xl font-black tracking-tight">
+                  <span className="italic text-gold">W</span>holesome
+                </span>
+                <span className="text-sm font-medium text-gold">.in</span>
+              </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-cream/60">
               Sprouted multigrain health mix — the drink of kings. Crafted in Vellore, Tamil

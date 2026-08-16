@@ -33,7 +33,8 @@ function AdminLoginForm() {
   }
 
   async function handleForgotPassword() {
-    if (!email) {
+    const normalizedEmail = email.trim().toLowerCase();
+    if (!normalizedEmail) {
       setStatus("error");
       setErrorMessage("Enter your email above first, then click \"Forgot password\".");
       return;
@@ -45,7 +46,7 @@ function AdminLoginForm() {
     // Route through /auth/callback so the code exchange happens once,
     // server-side, rather than in a client effect (which Suspense can
     // remount and re-invoke against an already single-use code).
-    const { error } = await supabase.auth.resetPasswordForEmail(email, {
+    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo: `${window.location.origin}/auth/callback?next=/admin/reset-password`,
     });
 
@@ -71,7 +72,9 @@ function AdminLoginForm() {
 
       {status === "reset-sent" ? (
         <p className="mt-6 rounded-xl bg-emerald/10 p-4 text-sm text-emerald">
-          Check your inbox for a password reset link.
+          Check <strong>{email.trim().toLowerCase()}</strong> for a password reset link. Double
+          check the spelling of that address — if it&apos;s wrong, the email won&apos;t arrive and
+          nothing will tell you it failed.
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">

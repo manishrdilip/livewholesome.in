@@ -1,21 +1,19 @@
 @import "tailwindcss";
 
+/* Exact 5-colour brand palette — Forest, Forest Mid, Burnished Gold,
+   Warm Parchment, Deep Ink. Do not introduce other shades. */
 :root {
-  --emerald: #0c4a34;
-  --emerald-deep: #072a1e;
-  --gold: #c9a227;
-  /* Lighter "burnished gold" from the brand identity spec — used for the
-     "W" in the wordmark, matching the logo emblem's gradient. */
-  --gold-pale: #e8c96d;
-  --cream: #f7f3e8;
-  --ink: #16211c;
+  --emerald: #2d5a2d;
+  --emerald-deep: #1a3a1a;
+  --gold: #a67c00;
+  --cream: #f8f2e3;
+  --ink: #1c1a14;
 }
 
 @theme inline {
   --color-emerald: var(--emerald);
   --color-emerald-deep: var(--emerald-deep);
   --color-gold: var(--gold);
-  --color-gold-pale: var(--gold-pale);
   --color-cream: var(--cream);
   --color-ink: var(--ink);
   --font-sans: var(--font-sans);
