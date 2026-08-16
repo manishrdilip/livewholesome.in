@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { getSettings } from "@/lib/settings";
 import { createServiceClient } from "@/lib/supabase/server";
+import { PRODUCT } from "@/lib/product";
 
 async function updateSettings(formData: FormData) {
   "use server";
@@ -21,6 +22,14 @@ async function updateSettings(formData: FormData) {
       invoice_prefix: String(formData.get("invoice_prefix") ?? "WP").trim(),
       shipping_fee: Number(formData.get("shipping_fee") ?? 0),
       ship_from_address: String(formData.get("ship_from_address") ?? "").trim() || null,
+      product_price: formData.get("product_price")
+        ? Number(formData.get("product_price"))
+        : null,
+      discount_percent: Number(formData.get("discount_percent") ?? 0),
+      subscribe_discount_percent: Number(formData.get("subscribe_discount_percent") ?? 10),
+      facebook_url: String(formData.get("facebook_url") ?? "").trim() || null,
+      instagram_url: String(formData.get("instagram_url") ?? "").trim() || null,
+      youtube_url: String(formData.get("youtube_url") ?? "").trim() || null,
     })
     .eq("id", true);
 
@@ -100,6 +109,49 @@ export default async function AdminSettingsPage() {
               defaultValue={settings.ship_from_address ?? ""}
               textarea
             />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-ink/10 bg-white p-5">
+          <h2 className="font-semibold">Pricing &amp; offers</h2>
+          <p className="mt-1 text-xs text-ink/50">
+            Leave price blank to use the code default (₹{PRODUCT.unitPrice}). Changes apply
+            immediately across the site — no redeploy needed.
+          </p>
+          <div className="mt-3 space-y-3">
+            <Field
+              label="Product price override (₹)"
+              name="product_price"
+              type="number"
+              step="0.01"
+              defaultValue={settings.product_price != null ? String(settings.product_price) : ""}
+            />
+            <Field
+              label="Sitewide offer (% off)"
+              name="discount_percent"
+              type="number"
+              step="0.01"
+              defaultValue={String(settings.discount_percent)}
+            />
+            <Field
+              label="Subscribe & Save discount (%)"
+              name="subscribe_discount_percent"
+              type="number"
+              step="0.01"
+              defaultValue={String(settings.subscribe_discount_percent)}
+            />
+          </div>
+        </section>
+
+        <section className="rounded-xl border border-ink/10 bg-white p-5">
+          <h2 className="font-semibold">Social links</h2>
+          <p className="mt-1 text-xs text-ink/50">
+            Leave blank to hide that icon in the footer.
+          </p>
+          <div className="mt-3 space-y-3">
+            <Field label="Facebook URL" name="facebook_url" defaultValue={settings.facebook_url ?? ""} />
+            <Field label="Instagram URL" name="instagram_url" defaultValue={settings.instagram_url ?? ""} />
+            <Field label="YouTube URL" name="youtube_url" defaultValue={settings.youtube_url ?? ""} />
           </div>
         </section>
 

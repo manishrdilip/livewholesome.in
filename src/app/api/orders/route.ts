@@ -3,6 +3,8 @@ import { checkoutSchema } from "@/lib/validation";
 import { checkRateLimit } from "@/lib/rate-limit";
 import { createServiceClient } from "@/lib/supabase/server";
 import { PRODUCT } from "@/lib/product";
+import { getSettings } from "@/lib/settings";
+import { getEffectivePricing } from "@/lib/pricing";
 import { generateInvoice } from "@/lib/invoice/generate";
 import { sendOrderConfirmedEmail } from "@/lib/email/send";
 
@@ -47,11 +49,13 @@ export async function POST(request: NextRequest) {
   }
 
   // Prices are always recomputed server-side — never trust the client.
+  const settings = await getSettings();
+  const pricing = getEffectivePricing(settings);
   const quantity = data.quantity;
-  const unitPrice = PRODUCT.unitPrice;
+  const unitPrice = data.isSubscription ? pricing.subscribePrice : pricing.offerPrice;
   const subtotal = Math.round(unitPrice * quantity * 100) / 100;
   const discount = 0;
-  const shippingFee = 0;
+  const shippingFee = settings.shipping_fee ?? 0;
   const taxTotal = 0;
   const grandTotal = Math.round((subtotal - discount + shippingFee + taxTotal) * 100) / 100;
 
@@ -102,7 +106,9 @@ export async function POST(request: NextRequest) {
       tax_total: taxTotal,
       grand_total: grandTotal,
     },
-    p_customer_note: data.customerNote || null,
+    p_customer_note: data.isSubscription
+      ? `[Monthly Subscribe & Save] ${data.customerNote || ""}`.trim()
+      : data.customerNote || null,
   });
 
   if (error) {

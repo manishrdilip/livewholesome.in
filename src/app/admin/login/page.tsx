@@ -1,11 +1,13 @@
 "use client";
 
-import { useState, type FormEvent } from "react";
-import { useRouter } from "next/navigation";
+import { Suspense, useState, type FormEvent } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 
-export default function AdminLoginPage() {
+function AdminLoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const wrongAccount = searchParams.get("error") === "not_admin";
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<
@@ -60,6 +62,13 @@ export default function AdminLoginPage() {
       <h1 className="font-serif text-2xl font-bold">WHOLESOME Admin</h1>
       <p className="mt-1 text-sm text-ink/60">Sign in with your admin email and password.</p>
 
+      {wrongAccount && status !== "reset-sent" && (
+        <p className="mt-4 rounded-xl bg-amber-100 p-4 text-sm text-amber-800">
+          You&apos;re signed in with an account that doesn&apos;t have admin access. Sign in below
+          with your admin email instead.
+        </p>
+      )}
+
       {status === "reset-sent" ? (
         <p className="mt-6 rounded-xl bg-emerald/10 p-4 text-sm text-emerald">
           Check your inbox for a password reset link.
@@ -101,5 +110,13 @@ export default function AdminLoginPage() {
         </form>
       )}
     </div>
+  );
+}
+
+export default function AdminLoginPage() {
+  return (
+    <Suspense>
+      <AdminLoginForm />
+    </Suspense>
   );
 }

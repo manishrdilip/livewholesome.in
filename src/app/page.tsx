@@ -1,15 +1,19 @@
 import { Header } from "@/components/Header";
+import { Footer } from "@/components/Footer";
 import { IngredientCard } from "@/components/IngredientCard";
 import { OrderBox } from "@/components/OrderBox";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
 import { PRODUCT } from "@/lib/product";
+import { getSettings } from "@/lib/settings";
 
 // Reviews change via admin moderation, not a redeploy — revalidate periodically
 // rather than baking the homepage's review list in at build time forever.
 export const revalidate = 60;
 
-export default function HomePage() {
+export default async function HomePage() {
+  const settings = await getSettings();
+
   return (
     <>
       <Header />
@@ -114,14 +118,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <footer className="bg-ink py-10 text-cream/70">
-        <div className="mx-auto max-w-6xl px-6 text-center text-sm">
-          <div className="font-serif text-lg text-cream">LiveWholesome.in</div>
-          <p className="mt-1">Wholesome Purna — பூர்ணா</p>
-          <p className="mt-1">Crafted in Vellore, Tamil Nadu • Shipped across India</p>
-          <p className="mt-4">© {new Date().getFullYear()} LiveWholesome.in • FSSAI Licensed • Formula v1.1</p>
-        </div>
-      </footer>
+      <Footer settings={settings} />
     </>
   );
 }

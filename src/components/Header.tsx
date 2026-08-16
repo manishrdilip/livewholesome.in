@@ -6,7 +6,6 @@ import { useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { LogoMark } from "@/components/LogoMark";
-import { PRODUCT } from "@/lib/product";
 
 const NAV_LINKS = [
   { href: "#ingredients", label: "Ingredients" },
@@ -16,7 +15,7 @@ const NAV_LINKS = [
 ];
 
 export function Header() {
-  const { quantity, launchCheckout } = useCart();
+  const { quantity, unitPrice, launchCheckout } = useCart();
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
@@ -41,10 +40,11 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
-      <div className="mx-auto flex max-w-6xl items-center justify-between gap-3 px-6 py-4">
-        <Link href="/" className="flex items-center gap-2 font-semibold">
-          <LogoMark size={32} />
-          LiveWholesome<span className="text-gold">.in</span>
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-8 py-5">
+        <Link href="/" className="flex items-center gap-3 text-lg font-semibold">
+          <LogoMark size={44} />
+          Live<span className="text-gold-pale">W</span>holesome
+          <span className="text-gold">.in</span>
         </Link>
         <nav className="hidden gap-6 text-sm md:flex">
           {NAV_LINKS.map((link) => (
@@ -67,7 +67,7 @@ export function Header() {
             onClick={launchCheckout}
             className="rounded-full bg-gold px-4 py-2 text-xs font-semibold text-emerald-deep sm:px-5 sm:text-sm"
           >
-            {quantity > 0 ? `Cart (${quantity}) — ₹${quantity * PRODUCT.unitPrice}` : `Buy Now — ₹${PRODUCT.unitPrice}`}
+            {quantity > 0 ? `Cart (${quantity}) — ₹${quantity * unitPrice}` : `Buy Now — ₹${unitPrice}`}
           </button>
           <button
             type="button"

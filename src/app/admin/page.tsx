@@ -1,15 +1,8 @@
-import Link from "next/link";
 import { createServiceClient } from "@/lib/supabase/server";
+import { OrdersTable, type OrderRow } from "@/components/admin/OrdersTable";
+import { RevenueChart } from "@/components/admin/RevenueChart";
 
-const STATUS_STYLES: Record<string, string> = {
-  CONFIRMED: "bg-blue-100 text-blue-700",
-  PACKED: "bg-purple-100 text-purple-700",
-  SHIPPED: "bg-amber-100 text-amber-700",
-  OUT_FOR_DELIVERY: "bg-amber-100 text-amber-700",
-  DELIVERED: "bg-emerald-100 text-emerald-700",
-  CANCELLED: "bg-red-100 text-red-700",
-  RETURNED: "bg-red-100 text-red-700",
-};
+const CHART_DAYS = 30;
 
 export default async function AdminOrdersPage() {
   const supabase = createServiceClient();
@@ -19,7 +12,7 @@ export default async function AdminOrdersPage() {
       "order_number, placed_at, customer_snapshot, shipping_address_snapshot, grand_total, payment_status, status"
     )
     .order("placed_at", { ascending: false })
-    .limit(100);
+    .limit(200);
 
   const startOfDay = new Date();
   startOfDay.setHours(0, 0, 0, 0);
@@ -36,6 +29,34 @@ export default async function AdminOrdersPage() {
     .filter((o) => new Date(o.placed_at) >= startOfMonth)
     .reduce((sum, o) => sum + Number(o.grand_total), 0);
 
+  const chartData = Array.from({ length: CHART_DAYS }, (_, i) => {
+    const day = new Date(startOfDay);
+    day.setDate(day.getDate() - (CHART_DAYS - 1 - i));
+    const nextDay = new Date(day);
+    nextDay.setDate(day.getDate() + 1);
+    const revenue = (orders ?? [])
+      .filter((o) => {
+        const placed = new Date(o.placed_at);
+        return placed >= day && placed < nextDay;
+      })
+      .reduce((sum, o) => sum + Number(o.grand_total), 0);
+    return {
+      date: day.toISOString().slice(0, 10),
+      label: day.toLocaleDateString("en-IN", { day: "numeric", month: "short" }),
+      revenue,
+    };
+  });
+
+  const tableRows: OrderRow[] = (orders ?? []).map((order) => ({
+    order_number: order.order_number,
+    placed_at: order.placed_at,
+    customer_name: (order.customer_snapshot as { name?: string })?.name ?? "",
+    city: (order.shipping_address_snapshot as { city?: string })?.city ?? "",
+    grand_total: Number(order.grand_total),
+    payment_status: order.payment_status,
+    status: order.status,
+  }));
+
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">Orders</h1>
@@ -47,59 +68,12 @@ export default async function AdminOrdersPage() {
         <Stat label="This month's revenue" value={`₹${monthRevenue.toFixed(2)}`} />
       </div>
 
-      <div className="mt-6 overflow-x-auto rounded-xl border border-ink/10 bg-white">
-        <table className="w-full text-sm">
-          <thead className="border-b border-ink/10 bg-ink/5 text-left">
-            <tr>
-              <th className="px-4 py-2">Order #</th>
-              <th className="px-4 py-2">Date</th>
-              <th className="px-4 py-2">Customer</th>
-              <th className="px-4 py-2">City</th>
-              <th className="px-4 py-2">Amount</th>
-              <th className="px-4 py-2">Payment</th>
-              <th className="px-4 py-2">Status</th>
-            </tr>
-          </thead>
-          <tbody>
-            {(orders ?? []).map((order) => {
-              const customer = order.customer_snapshot as { name?: string };
-              const address = order.shipping_address_snapshot as { city?: string };
-              return (
-                <tr key={order.order_number} className="border-b border-ink/5 last:border-0">
-                  <td className="px-4 py-2">
-                    <Link
-                      href={`/admin/orders/${order.order_number}`}
-                      className="font-medium text-emerald hover:underline"
-                    >
-                      {order.order_number}
-                    </Link>
-                  </td>
-                  <td className="px-4 py-2 text-ink/60">
-                    {new Date(order.placed_at).toLocaleDateString("en-IN")}
-                  </td>
-                  <td className="px-4 py-2">{customer?.name ?? "—"}</td>
-                  <td className="px-4 py-2">{address?.city ?? "—"}</td>
-                  <td className="px-4 py-2">₹{order.grand_total}</td>
-                  <td className="px-4 py-2">{order.payment_status}</td>
-                  <td className="px-4 py-2">
-                    <span
-                      className={`rounded-full px-2 py-0.5 text-xs font-semibold ${STATUS_STYLES[order.status] ?? ""}`}
-                    >
-                      {order.status}
-                    </span>
-                  </td>
-                </tr>
-              );
-            })}
-            {(!orders || orders.length === 0) && (
-              <tr>
-                <td colSpan={7} className="px-4 py-8 text-center text-ink/50">
-                  No orders yet.
-                </td>
-              </tr>
-            )}
-          </tbody>
-        </table>
+      <div className="mt-6">
+        <RevenueChart data={chartData} />
+      </div>
+
+      <div className="mt-6">
+        <OrdersTable orders={tableRows} />
       </div>
     </div>
   );

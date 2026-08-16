@@ -15,6 +15,15 @@ export type Settings = {
   shipping_fee: number;
   logo_path: string | null;
   ship_from_address: string | null;
+  /** Overrides PRODUCT.unitPrice when set; null falls back to the code default. */
+  product_price: number | null;
+  /** Sitewide offer, applied on top of the effective price. 0 = no offer. */
+  discount_percent: number;
+  /** Extra % off when a customer picks the monthly Subscribe & Save option. */
+  subscribe_discount_percent: number;
+  facebook_url: string | null;
+  instagram_url: string | null;
+  youtube_url: string | null;
 };
 
 export async function getSettings(): Promise<Settings> {

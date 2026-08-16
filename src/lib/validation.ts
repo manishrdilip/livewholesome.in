@@ -23,6 +23,7 @@ export const checkoutSchema = z.object({
   state: z.enum(INDIAN_STATES),
   customerNote: z.string().trim().max(1000).optional().or(z.literal("")),
   quantity: z.number().int().min(1).max(20),
+  isSubscription: z.boolean().optional(),
   consent: z.literal(true, "You must agree to receive order updates on WhatsApp and email"),
   latitude: z.number().min(-90).max(90).optional(),
   longitude: z.number().min(-180).max(180).optional(),

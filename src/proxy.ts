@@ -12,6 +12,18 @@ export async function proxy(request: NextRequest) {
   const isAdminPublicRoute =
     pathname.startsWith("/admin/login") || pathname.startsWith("/admin/reset-password");
 
+  if (pathname.startsWith("/api/admin")) {
+    const { supabase } = createMiddlewareClient(request);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user?.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+      return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+    }
+    return NextResponse.next();
+  }
+
   if (pathname.startsWith("/admin") && !isAdminPublicRoute) {
     const { supabase, response } = createMiddlewareClient(request);
     const {
@@ -22,7 +34,10 @@ export async function proxy(request: NextRequest) {
       return NextResponse.redirect(new URL("/admin/login", request.url));
     }
     if (!user.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-      return new NextResponse("Forbidden", { status: 403 });
+      // Signed in, but as the wrong account — send them back to the login
+      // form (with an explanatory message) instead of a dead-end 403, so
+      // they can sign in again as the admin account.
+      return NextResponse.redirect(new URL("/admin/login?error=not_admin", request.url));
     }
     return response;
   }
@@ -43,5 +58,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*", "/api/admin/:path*"],
 };

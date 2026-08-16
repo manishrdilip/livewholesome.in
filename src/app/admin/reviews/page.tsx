@@ -1,5 +1,6 @@
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
+import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 
 type ReviewMedia = { type: "image" | "video"; storage_path: string };
 
@@ -23,6 +24,25 @@ export default async function AdminReviewsPage() {
       .from("reviews")
       .update({ status: decision, moderated_at: new Date().toISOString() })
       .eq("id", reviewId);
+    revalidatePath("/admin/reviews");
+  }
+
+  async function deleteReview(formData: FormData) {
+    "use server";
+    const reviewId = formData.get("reviewId");
+    if (typeof reviewId !== "string") return;
+
+    const supabase = createServiceClient();
+    const { data: review } = await supabase
+      .from("reviews")
+      .select("media")
+      .eq("id", reviewId)
+      .single();
+    const media = (review?.media ?? []) as ReviewMedia[];
+    if (media.length) {
+      await supabase.storage.from("reviews").remove(media.map((m) => m.storage_path));
+    }
+    await supabase.from("reviews").delete().eq("id", reviewId);
     revalidatePath("/admin/reviews");
   }
 
@@ -72,30 +92,41 @@ export default async function AdminReviewsPage() {
               <p className="mt-2 text-xs text-ink/50">
                 {new Date(review.created_at).toLocaleString("en-IN")}
               </p>
-              {review.status === "PENDING" && (
-                <div className="mt-3 flex gap-3">
-                  <form action={moderate}>
-                    <input type="hidden" name="reviewId" value={review.id} />
-                    <input type="hidden" name="decision" value="APPROVED" />
-                    <button
-                      type="submit"
-                      className="rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
-                    >
-                      Approve
-                    </button>
-                  </form>
-                  <form action={moderate}>
-                    <input type="hidden" name="reviewId" value={review.id} />
-                    <input type="hidden" name="decision" value="REJECTED" />
-                    <button
-                      type="submit"
-                      className="rounded-full border border-red-600 px-4 py-1.5 text-sm text-red-600"
-                    >
-                      Reject
-                    </button>
-                  </form>
-                </div>
-              )}
+              <div className="mt-3 flex gap-3">
+                {review.status === "PENDING" && (
+                  <>
+                    <form action={moderate}>
+                      <input type="hidden" name="reviewId" value={review.id} />
+                      <input type="hidden" name="decision" value="APPROVED" />
+                      <button
+                        type="submit"
+                        className="rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
+                      >
+                        Approve
+                      </button>
+                    </form>
+                    <form action={moderate}>
+                      <input type="hidden" name="reviewId" value={review.id} />
+                      <input type="hidden" name="decision" value="REJECTED" />
+                      <button
+                        type="submit"
+                        className="rounded-full border border-red-600 px-4 py-1.5 text-sm text-red-600"
+                      >
+                        Reject
+                      </button>
+                    </form>
+                  </>
+                )}
+                <form action={deleteReview}>
+                  <input type="hidden" name="reviewId" value={review.id} />
+                  <ConfirmSubmitButton
+                    confirmText="Delete this review permanently? This can't be undone."
+                    className="text-sm text-ink/40 hover:text-red-600"
+                  >
+                    Delete
+                  </ConfirmSubmitButton>
+                </form>
+              </div>
             </div>
           );
         })}

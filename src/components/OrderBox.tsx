@@ -4,8 +4,10 @@ import { useCart } from "@/components/CartProvider";
 import { PRODUCT } from "@/lib/product";
 
 export function OrderBox() {
-  const { quantity, setQuantity, launchCheckout } = useCart();
+  const { quantity, setQuantity, config, unitPrice, isSubscription, setIsSubscription, launchCheckout } =
+    useCart();
   const effectiveQuantity = quantity > 0 ? quantity : 1;
+  const hasOffer = config.offerPrice < config.basePrice;
 
   return (
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
@@ -18,7 +20,10 @@ export function OrderBox() {
       </div>
 
       <div className="mt-4 flex items-baseline gap-2">
-        <span className="text-2xl font-bold text-emerald">₹{PRODUCT.unitPrice}</span>
+        <span className="text-2xl font-bold text-emerald">₹{unitPrice}</span>
+        {(hasOffer || isSubscription) && (
+          <span className="text-sm text-ink/40 line-through">₹{config.basePrice}</span>
+        )}
       </div>
 
       <div className="mt-4 flex items-center justify-between">
@@ -44,18 +49,36 @@ export function OrderBox() {
         </div>
       </div>
 
+      <label className="mt-4 flex items-start gap-2 rounded-xl bg-emerald/5 p-3 text-sm">
+        <input
+          type="checkbox"
+          checked={isSubscription}
+          onChange={(e) => setIsSubscription(e.target.checked)}
+          className="mt-0.5"
+        />
+        <span>
+          <span className="font-semibold text-emerald">
+            Subscribe monthly &amp; save {config.subscribeDiscountPercent}%
+          </span>
+          <br />
+          <span className="text-ink/60">
+            We&apos;ll message you every month to reconfirm — cancel anytime.
+          </span>
+        </span>
+      </label>
+
       <dl className="mt-4 space-y-1 text-sm">
         <div className="flex justify-between">
           <dt className="text-ink/60">Subtotal</dt>
-          <dd>₹{effectiveQuantity * PRODUCT.unitPrice}</dd>
+          <dd>₹{effectiveQuantity * unitPrice}</dd>
         </div>
         <div className="flex justify-between">
           <dt className="text-ink/60">Shipping</dt>
-          <dd>FREE</dd>
+          <dd>{config.shippingFee > 0 ? `₹${config.shippingFee}` : "FREE"}</dd>
         </div>
         <div className="flex justify-between border-t border-ink/10 pt-1 font-semibold">
           <dt>Total</dt>
-          <dd>₹{effectiveQuantity * PRODUCT.unitPrice}</dd>
+          <dd>₹{effectiveQuantity * unitPrice + config.shippingFee}</dd>
         </div>
       </dl>
 

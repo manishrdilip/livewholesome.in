@@ -44,7 +44,7 @@ const initialState: FormState = {
 };
 
 export default function CheckoutPage() {
-  const { quantity } = useCart();
+  const { quantity, config, unitPrice, isSubscription, setIsSubscription } = useCart();
   const router = useRouter();
   const effectiveQuantity = quantity > 0 ? quantity : 1;
 
@@ -123,6 +123,7 @@ export default function CheckoutPage() {
           ...form,
           whatsappNumber: form.whatsappSameAsPhone ? "" : form.whatsappNumber,
           quantity: effectiveQuantity,
+          isSubscription,
           ...(location ?? {}),
         }),
       });
@@ -151,7 +152,34 @@ export default function CheckoutPage() {
       <h1 className="mt-4 font-serif text-3xl font-bold">Checkout</h1>
 
       <div className="mt-4 rounded-xl bg-cream p-4 text-sm">
-        {PRODUCT.name} × {effectiveQuantity} — ₹{effectiveQuantity * PRODUCT.unitPrice}
+        <div className="flex items-center justify-between">
+          <span>
+            {PRODUCT.name} × {effectiveQuantity}
+          </span>
+          <span>₹{effectiveQuantity * unitPrice}</span>
+        </div>
+        {config.shippingFee > 0 && (
+          <div className="mt-1 flex items-center justify-between text-ink/60">
+            <span>Shipping</span>
+            <span>₹{config.shippingFee}</span>
+          </div>
+        )}
+        <label className="mt-3 flex items-start gap-2 border-t border-ink/10 pt-3">
+          <input
+            type="checkbox"
+            checked={isSubscription}
+            onChange={(e) => setIsSubscription(e.target.checked)}
+            className="mt-0.5"
+          />
+          <span>
+            <span className="font-semibold text-emerald">
+              Subscribe monthly &amp; save {config.subscribeDiscountPercent}%
+            </span>
+            <span className="block text-xs text-ink/60">
+              We&apos;ll message you every month to reconfirm — cancel anytime.
+            </span>
+          </span>
+        </label>
       </div>
 
       <form onSubmit={handleSubmit} className="mt-8 space-y-8">
