@@ -32,13 +32,9 @@ export function Footer({ settings }: { settings: Settings }) {
         <div className="grid gap-10 md:grid-cols-3">
           <div>
             <Link href="/" className="flex items-center gap-3">
-              <LogoMark size={40} />
-              <span className="flex items-baseline gap-1">
-                <span className="text-sm font-medium text-cream/60">Live</span>
-                <span className="font-serif text-2xl font-black tracking-tight">
-                  <span className="italic text-gold">W</span>holesome
-                </span>
-                <span className="text-sm font-medium text-gold">.in</span>
+              <LogoMark size={48} />
+              <span className="font-serif text-3xl font-black tracking-tight">
+                <span className="italic text-gold">W</span>holesome
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-cream/60">

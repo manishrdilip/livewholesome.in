@@ -41,14 +41,10 @@ export function Header() {
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
       <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-8 py-5">
-        <Link href="/" className="flex items-center gap-3">
-          <LogoMark size={48} />
-          <span className="flex items-baseline gap-1">
-            <span className="text-sm font-medium text-cream/60">Live</span>
-            <span className="font-serif text-3xl font-black tracking-tight">
-              <span className="italic text-gold">W</span>holesome
-            </span>
-            <span className="text-sm font-medium text-gold">.in</span>
+        <Link href="/" className="flex items-center gap-4">
+          <LogoMark size={72} />
+          <span className="font-serif text-5xl font-black tracking-tight">
+            <span className="italic text-gold">W</span>holesome
           </span>
         </Link>
         <nav className="hidden gap-6 text-sm md:flex">
