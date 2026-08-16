@@ -48,7 +48,10 @@ export default async function HomePage() {
     <>
       <script
         type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        // JSON.stringify doesn't escape "<", so a value containing
+        // "</script>" could break out of this tag — replace it defensively
+        // even though today's values (business_name etc.) are admin-only.
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd).replace(/</g, "\\u003c") }}
       />
       <Header />
 

@@ -1,6 +1,5 @@
 import { NextResponse, type NextRequest, after } from "next/server";
 import { checkoutSchema } from "@/lib/validation";
-import { checkRateLimit } from "@/lib/rate-limit";
 import { createServiceClient } from "@/lib/supabase/server";
 import { PRODUCT } from "@/lib/product";
 import { getSettings } from "@/lib/settings";
@@ -14,7 +13,19 @@ export async function POST(request: NextRequest) {
     request.headers.get("x-real-ip") ??
     "unknown";
 
-  if (!checkRateLimit(`orders:${ip}`, 5, 60 * 60 * 1000)) {
+  const supabase = createServiceClient();
+
+  // DB-backed so the limit is atomic and shared across serverless
+  // instances — an in-memory Map resets per cold start and doesn't see
+  // concurrent invocations on other instances, so it can't actually cap
+  // a burst.
+  const { data: withinLimit, error: rateLimitError } = await supabase.rpc(
+    "check_rate_limit",
+    { p_key: `orders:${ip}`, p_max: 5, p_window_seconds: 60 * 60 }
+  );
+  if (rateLimitError) {
+    console.error("check_rate_limit failed", rateLimitError.message);
+  } else if (!withinLimit) {
     return NextResponse.json(
       { error: "Too many orders from this connection. Please try again later." },
       { status: 429 }
@@ -65,8 +76,6 @@ export async function POST(request: NextRequest) {
     : data.whatsappNumber
       ? `+91${data.whatsappNumber}`
       : phone;
-
-  const supabase = createServiceClient();
 
   const { data: result, error } = await supabase.rpc("create_order", {
     p_customer: {
