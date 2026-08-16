@@ -182,7 +182,7 @@ export default function CheckoutPage() {
         </label>
       </div>
 
-      <form onSubmit={handleSubmit} className="mt-8 space-y-8">
+      <form method="post" onSubmit={handleSubmit} className="mt-8 space-y-8">
         {/* Honeypot — hidden from real users */}
         <div className="hidden" aria-hidden="true">
           <label>

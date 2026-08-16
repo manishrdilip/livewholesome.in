@@ -18,7 +18,11 @@ export const metadata: Metadata = {
   title: "Wholesome Purna — Sprouted Multigrain Health Mix | LiveWholesome.in",
   description:
     "A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked, germinated, sun-dried, roasted, and stone-ground.",
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
+    type: "website",
     title: "Wholesome Purna — Sprouted Multigrain Health Mix",
     description:
       "A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked, germinated, sun-dried, roasted, and stone-ground.",

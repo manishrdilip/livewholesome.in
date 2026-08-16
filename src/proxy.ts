@@ -25,6 +25,14 @@ function securityHeaders(response: NextResponse) {
     "Strict-Transport-Security",
     "max-age=63072000; includeSubDomains; preload"
   );
+  // Deliberately omits default-src/script-src/style-src: a nonce-based
+  // script-src was tried before and broke a production-only client chunk
+  // (see git history). These four directives are additive-only — they
+  // don't gate scripts/styles at all, so they carry none of that risk.
+  response.headers.set(
+    "Content-Security-Policy",
+    "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+  );
   return response;
 }
 

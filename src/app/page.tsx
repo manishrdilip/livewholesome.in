@@ -5,6 +5,7 @@ import { OrderBox } from "@/components/OrderBox";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
 import { PRODUCT } from "@/lib/product";
+import { getEffectivePricing } from "@/lib/pricing";
 import { getSettings } from "@/lib/settings";
 
 // Reviews change via admin moderation, not a redeploy — revalidate periodically
@@ -13,9 +14,42 @@ export const revalidate = 60;
 
 export default async function HomePage() {
   const settings = await getSettings();
+  const pricing = getEffectivePricing(settings);
+
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@graph": [
+      {
+        "@type": "Product",
+        name: PRODUCT.name,
+        description: PRODUCT.description,
+        sku: PRODUCT.sku,
+        brand: { "@type": "Brand", name: settings.business_name },
+        offers: {
+          "@type": "Offer",
+          url: "https://livewholesome.in/#order",
+          priceCurrency: "INR",
+          price: pricing.offerPrice,
+          availability: "https://schema.org/InStock",
+        },
+      },
+      {
+        "@type": "Organization",
+        name: settings.business_name,
+        url: "https://livewholesome.in",
+        logo: "https://livewholesome.in/icon.svg",
+        ...(settings.support_email && { email: settings.support_email }),
+        ...(settings.support_phone && { telephone: settings.support_phone }),
+      },
+    ],
+  };
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
       <Header />
 
       <section className="bg-gradient-to-b from-emerald-deep to-emerald text-cream">
@@ -49,7 +83,7 @@ export default async function HomePage() {
                 href="#order"
                 className="rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep"
               >
-                Order Now — ₹{PRODUCT.unitPrice}
+                Order Now — ₹{pricing.offerPrice}
               </a>
               <a
                 href="#ingredients"
@@ -78,6 +112,10 @@ export default async function HomePage() {
             <IngredientCard key={ing.name} ingredient={ing} />
           ))}
         </div>
+        <p className="mt-6 text-sm text-ink/60">
+          <strong className="font-semibold text-ink/80">Allergen note:</strong> Contains almond
+          and sesame. Made in a facility that also handles other tree nuts.
+        </p>
       </section>
 
       <ReviewsSection />
@@ -108,9 +146,9 @@ export default async function HomePage() {
             {[
               "500g — approx. 25 servings",
               "Oxygen absorber sealed",
-              "Free shipping across Tamil Nadu",
+              "Free shipping across India",
               "Batch-tracked",
-              "90 days freshness",
+              "6-month shelf life",
             ].map((item) => (
               <li key={item}>✓ {item}</li>
             ))}

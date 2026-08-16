@@ -45,7 +45,12 @@ export async function ReviewsSection() {
                           <video key={i} src={url} controls className="h-20 rounded-lg" />
                         ) : (
                           // eslint-disable-next-line @next/next/no-img-element
-                          <img key={i} src={url} alt="" className="h-20 rounded-lg object-cover" />
+                          <img
+                            key={i}
+                            src={url}
+                            alt={`Photo shared by ${review.reviewer_name}`}
+                            className="h-20 rounded-lg object-cover"
+                          />
                         );
                       })}
                     </div>
