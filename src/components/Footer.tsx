@@ -5,6 +5,7 @@ import type { Settings } from "@/lib/settings";
 const QUICK_LINKS = [
   { href: "/", label: "Home" },
   { href: "/ingredients", label: "Ingredients" },
+  { href: "/about", label: "Our Story" },
   { href: "#reviews", label: "Reviews" },
   { href: "#order", label: "Order" },
   { href: "/faq", label: "FAQ" },

@@ -10,6 +10,7 @@ import { LogoMark } from "@/components/LogoMark";
 const NAV_LINKS = [
   { href: "/", label: "Home" },
   { href: "/ingredients", label: "Ingredients" },
+  { href: "/about", label: "Our Story" },
   { href: "/#reviews", label: "Reviews" },
   { href: "/#nutrition", label: "Nutrition" },
   { href: "/#order", label: "Order" },
