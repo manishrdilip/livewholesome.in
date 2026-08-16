@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
 import { Header } from "@/components/Header";
+import { getStorefrontConfig } from "@/lib/storefront-config";
 import "./globals.css";
 
 const inter = Inter({
@@ -35,14 +36,16 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({ children }: LayoutProps<"/">) {
+export default async function RootLayout({ children }: LayoutProps<"/">) {
+  const config = await getStorefrontConfig();
+
   return (
     <html
       lang="en"
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
-        <CartProvider>
+        <CartProvider initialConfig={config}>
           <Header />
           {children}
         </CartProvider>

@@ -11,46 +11,15 @@ import {
 import { useRouter } from "next/navigation";
 import { PRODUCT } from "@/lib/product";
 import { readCart, writeCart, subscribeCart, type CartItem } from "@/lib/cart";
+import type { StorefrontConfig } from "@/lib/storefront-config";
 
-export type StorefrontConfig = {
-  basePrice: number;
-  offerPrice: number;
-  discountPercent: number;
-  subscribePrice: number;
-  subscribeDiscountPercent: number;
-  shippingFee: number;
-  supportPhone: string | null;
-  supportEmail: string | null;
-  fssaiLicense: string | null;
-  facebookUrl: string | null;
-  instagramUrl: string | null;
-  youtubeUrl: string | null;
-  paymentGatewayEnabled: boolean;
-  cashfreeMode: "sandbox" | "production";
-};
-
-const DEFAULT_CONFIG: StorefrontConfig = {
-  basePrice: PRODUCT.unitPrice,
-  offerPrice: PRODUCT.unitPrice,
-  discountPercent: 0,
-  subscribePrice: PRODUCT.unitPrice,
-  subscribeDiscountPercent: 10,
-  shippingFee: 0,
-  supportPhone: null,
-  supportEmail: null,
-  fssaiLicense: null,
-  facebookUrl: null,
-  instagramUrl: null,
-  youtubeUrl: null,
-  paymentGatewayEnabled: false,
-  cashfreeMode: "sandbox",
-};
+export type { StorefrontConfig };
 
 type CartContextValue = {
   quantity: number;
   setQuantity: (quantity: number) => void;
-  /** Admin-editable price/offer/social config — falls back to code defaults
-   * (unitPrice, no offer) until the fetch resolves. */
+  /** Admin-editable price/offer/social config, seeded server-side on first
+   * render and kept fresh by a background client refetch. */
   config: StorefrontConfig;
   /** Effective per-unit price for the current cart (accounts for the
    * Subscribe & Save toggle). */
@@ -74,14 +43,20 @@ function getServerQuantitySnapshot(): number {
   return 0;
 }
 
-export function CartProvider({ children }: { children: ReactNode }) {
+export function CartProvider({
+  initialConfig,
+  children,
+}: {
+  initialConfig: StorefrontConfig;
+  children: ReactNode;
+}) {
   const router = useRouter();
   const quantity = useSyncExternalStore(
     subscribeCart,
     getQuantitySnapshot,
     getServerQuantitySnapshot
   );
-  const [config, setConfig] = useState<StorefrontConfig>(DEFAULT_CONFIG);
+  const [config, setConfig] = useState<StorefrontConfig>(initialConfig);
   const [isSubscription, setIsSubscription] = useState(false);
 
   useEffect(() => {
