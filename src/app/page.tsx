@@ -1,4 +1,3 @@
-import { Header } from "@/components/Header";
 import { Footer } from "@/components/Footer";
 import { IngredientCard } from "@/components/IngredientCard";
 import { OrderBox } from "@/components/OrderBox";
@@ -59,7 +58,6 @@ export default async function HomePage() {
       >
         Skip to main content
       </a>
-      <Header />
 
       <main id="main-content">
       <section className="bg-gradient-to-b from-emerald-deep to-emerald text-cream">

@@ -2,21 +2,23 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { LogoMark } from "@/components/LogoMark";
 
 const NAV_LINKS = [
-  { href: "#ingredients", label: "Ingredients" },
-  { href: "#reviews", label: "Reviews" },
-  { href: "#nutrition", label: "Nutrition" },
-  { href: "#order", label: "Order" },
+  { href: "/", label: "Home" },
+  { href: "/#ingredients", label: "Ingredients" },
+  { href: "/#reviews", label: "Reviews" },
+  { href: "/#nutrition", label: "Nutrition" },
+  { href: "/#order", label: "Order" },
 ];
 
 export function Header() {
   const { quantity, unitPrice, launchCheckout } = useCart();
   const router = useRouter();
+  const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -37,6 +39,10 @@ export function Header() {
     router.push("/");
     router.refresh();
   }
+
+  // Admin has its own header/nav (src/app/admin/layout.tsx) — this
+  // storefront header would just duplicate/clash with it.
+  if (pathname?.startsWith("/admin")) return null;
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
