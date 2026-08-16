@@ -13,6 +13,7 @@ const NAV_LINKS = [
   { href: "/#reviews", label: "Reviews" },
   { href: "/#nutrition", label: "Nutrition" },
   { href: "/#order", label: "Order" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 export function Header() {

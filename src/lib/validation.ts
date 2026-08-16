@@ -38,6 +38,12 @@ export const checkoutSchema = z.object({
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
+export const trackOrderSchema = z.object({
+  orderNumber: z.string().trim().min(1, "Order number is required").max(30),
+  phone: phoneSchema,
+});
+export type TrackOrderInput = z.infer<typeof trackOrderSchema>;
+
 export const signupSchema = z.object({
   name: z.string().trim().min(1, "Full name is required").max(200),
   phone: phoneSchema,

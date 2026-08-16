@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
 import { Header } from "@/components/Header";
+import { SupportWidget } from "@/components/support/SupportWidget";
 import { getStorefrontConfig } from "@/lib/storefront-config";
 import "./globals.css";
 
@@ -48,6 +49,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
         <CartProvider initialConfig={config}>
           <Header />
           {children}
+          <SupportWidget />
         </CartProvider>
       </body>
     </html>

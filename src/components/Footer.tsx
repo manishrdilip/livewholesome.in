@@ -7,6 +7,7 @@ const QUICK_LINKS = [
   { href: "/ingredients", label: "Ingredients" },
   { href: "#reviews", label: "Reviews" },
   { href: "#order", label: "Order" },
+  { href: "/faq", label: "FAQ" },
 ];
 
 function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
