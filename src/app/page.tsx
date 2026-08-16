@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { HeroOrderButton } from "@/components/HeroOrderButton";
 import { IngredientCard } from "@/components/IngredientCard";
@@ -89,12 +90,12 @@ export default async function HomePage() {
 
             <div className="mt-8 flex flex-wrap gap-3">
               <HeroOrderButton />
-              <a
-                href="#ingredients"
+              <Link
+                href="/ingredients"
                 className="rounded-full border border-cream/40 px-6 py-3 font-semibold"
               >
                 Explore Ingredients
-              </a>
+              </Link>
             </div>
           </div>
 
@@ -108,14 +109,19 @@ export default async function HomePage() {
         <p className="text-sm font-semibold uppercase tracking-widest text-gold">The Formula</p>
         <h2 className="mt-2 font-serif text-3xl font-bold">20 Ingredients. Zero Fillers.</h2>
         <p className="mt-3 max-w-2xl text-ink/70">
-          Every gram earns its place. Sprouted, roasted or stone-ground for a reason — tap any
-          card to see why.
+          Every gram earns its place. Sprouted, roasted or stone-ground for a reason.
         </p>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
-          {INGREDIENTS.map((ing) => (
+          {INGREDIENTS.slice(0, 6).map((ing) => (
             <IngredientCard key={ing.name} ingredient={ing} />
           ))}
         </div>
+        <Link
+          href="/ingredients"
+          className="mt-6 inline-block font-semibold text-emerald hover:underline"
+        >
+          Explore All 20 Ingredients →
+        </Link>
         <p className="mt-6 text-sm text-ink/60">
           <strong className="font-semibold text-ink/80">Allergen note:</strong> Contains almond
           and sesame. Made in a facility that also handles other tree nuts.

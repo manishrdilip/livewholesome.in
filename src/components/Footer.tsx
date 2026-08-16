@@ -4,7 +4,7 @@ import type { Settings } from "@/lib/settings";
 
 const QUICK_LINKS = [
   { href: "/", label: "Home" },
-  { href: "#ingredients", label: "Ingredients" },
+  { href: "/ingredients", label: "Ingredients" },
   { href: "#reviews", label: "Reviews" },
   { href: "#order", label: "Order" },
 ];
