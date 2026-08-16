@@ -1,8 +1,17 @@
 "use client";
 
-import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
+
+type ExchangeResult = { error: string | null };
+
+// The auth code is single-use, but Suspense can unmount and remount
+// ResetPasswordForm during hydration, giving a fresh component instance (and
+// thus a fresh useRef) that would otherwise re-exchange an already-consumed
+// code and clobber a successful "ready" state with a spurious error. Keying
+// by code at module scope survives that remount.
+const exchangesByCode = new Map<string, Promise<ExchangeResult>>();
 
 function ResetPasswordForm() {
   const router = useRouter();
@@ -13,35 +22,33 @@ function ResetPasswordForm() {
     "checking"
   );
   const [errorMessage, setErrorMessage] = useState("");
-  // The auth code is single-use: a second effect run (e.g. from a
-  // Suspense/useSearchParams re-render) would burn an already-consumed code
-  // and clobber the successful "ready" state with a spurious error.
-  const verificationStarted = useRef(false);
 
   // Real password-reset emails (browser-initiated resetPasswordForEmail) use
   // PKCE, landing here with `?code=`. Admin-generated test links (via the
   // service-role generateLink helper, no PKCE verifier available) instead
   // carry access/refresh tokens in the URL hash — handle both.
   useEffect(() => {
-    if (verificationStarted.current) return;
-    verificationStarted.current = true;
-
     const code = searchParams.get("code");
     const flowId = searchParams.get("sb_flow_id");
     const supabase = createBrowserSupabaseClient();
 
     (async () => {
       if (code) {
-        // Pass flowId explicitly rather than letting the SDK re-derive it from
-        // window.location.href — Next's router can strip the query string
-        // shortly after hydration, which would otherwise lose it.
-        const { error } = await supabase.auth.exchangeCodeForSession(
-          code,
-          flowId ? { flowId } : undefined
-        );
+        let exchange = exchangesByCode.get(code);
+        if (!exchange) {
+          // Pass flowId explicitly rather than letting the SDK re-derive it
+          // from window.location.href — Next's router can strip the query
+          // string shortly after hydration, which would otherwise lose it.
+          exchange = supabase.auth
+            .exchangeCodeForSession(code, flowId ? { flowId } : undefined)
+            .then(({ error }) => ({ error: error?.message ?? null }));
+          exchangesByCode.set(code, exchange);
+        }
+
+        const { error } = await exchange;
         if (error) {
           setStatus("link-error");
-          setErrorMessage(error.message);
+          setErrorMessage(error);
           return;
         }
         setStatus("ready");
