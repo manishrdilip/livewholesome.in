@@ -40,10 +40,10 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-3 px-8 py-5">
-        <Link href="/" className="flex items-center gap-4">
-          <LogoMark size={60} />
-          <span className="font-serif text-4xl font-black tracking-tight">
+      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-4 sm:gap-3 sm:px-8 sm:py-5">
+        <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-4 md:min-w-fit">
+          <LogoMark size={60} className="h-8 w-8 shrink-0 sm:h-[60px] sm:w-[60px]" />
+          <span className="truncate whitespace-nowrap font-serif text-xl font-black tracking-tight sm:text-3xl md:overflow-visible md:text-clip md:text-4xl">
             <span className="italic text-gold">W</span>holesome
           </span>
         </Link>
@@ -66,7 +66,7 @@ export function Header() {
           <button
             type="button"
             onClick={launchCheckout}
-            className="rounded-full bg-gold px-4 py-2 text-xs font-semibold text-emerald-deep sm:px-5 sm:text-sm"
+            className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-emerald-deep sm:px-4 sm:py-2 sm:text-sm"
           >
             {quantity > 0 ? `Cart (${quantity}) — ₹${quantity * unitPrice}` : `Buy Now — ₹${unitPrice}`}
           </button>

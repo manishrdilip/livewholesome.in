@@ -20,6 +20,11 @@
   --font-serif: var(--font-serif);
 }
 
+html,
+body {
+  overflow-x: hidden;
+}
+
 body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
