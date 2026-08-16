@@ -20,13 +20,13 @@ export const INGREDIENTS: Ingredient[] = [
       "The protein and folate backbone of the mix — folate builds new red blood cells, protein repairs muscle. Sprouting predigests the starches, so it sits light even on a sensitive stomach.",
   },
   {
-    emoji: "🫛",
+    emoji: "🥜",
     name: "Roasted Gram",
     detail:
       "Slow-digesting protein and fibre that blunts blood sugar swings — roasted dry, with zero added oil, so you get the nutty crunch without the extra fat.",
   },
   {
-    emoji: "🟤",
+    emoji: "🫓",
     name: "Sprouted Ragi",
     detail:
       "344mg calcium per 100g — more than milk, gram for gram. Sprouting also unlocks tryptophan, the amino acid your body uses to make serotonin and, later, melatonin for sleep.",
@@ -44,13 +44,13 @@ export const INGREDIENTS: Ingredient[] = [
       "A rare complete plant protein — it has lysine, the amino acid most grains are missing. Naturally gluten-free, and rich in calcium, iron and magnesium.",
   },
   {
-    emoji: "⚫",
+    emoji: "🥯",
     name: "Sesame",
     detail:
       "Gram for gram, one of the richest plant sources of calcium and copper. Natural lignans (sesamin) support healthy cholesterol and give the mix its roasted depth.",
   },
   {
-    emoji: "🟠",
+    emoji: "🍲",
     name: "Sprouted Masoor",
     detail:
       "Fast-absorbing iron and folate in a lentil that's already been sprouted for you — easier on digestion, and it works alongside the Amla in this mix so that iron doesn't just sit there, it gets absorbed.",
@@ -68,13 +68,13 @@ export const INGREDIENTS: Ingredient[] = [
       "Fibre and resistant starch that feed your gut bacteria, plus manganese and folate. Sprouting breaks down the raffinose sugars that usually cause bloating.",
   },
   {
-    emoji: "🎃",
+    emoji: "🫒",
     name: "Pumpkin Seed",
     detail:
       "One of the best plant sources of zinc — your body's go-to mineral for immunity and wound healing — plus magnesium and plant-based omega-3s.",
   },
   {
-    emoji: "🟡",
+    emoji: "🌾",
     name: "Sprouted Bajra",
     detail:
       "A warming grain traditionally eaten in winter, rich in iron, magnesium and phosphorus. Naturally gluten-free and high in fibre for steady digestion.",
@@ -110,7 +110,7 @@ export const INGREDIENTS: Ingredient[] = [
       "The absorption key of the whole formula. Amla is one of the richest natural sources of vitamin C, and vitamin C converts the plant iron in this mix — from the millets, lentils and grams — into the form your gut can actually absorb. Without it, most of that iron would simply pass through.",
   },
   {
-    emoji: "🟢",
+    emoji: "🫛",
     name: "Cardamom",
     detail:
       "Its volatile oils have been used for centuries to calm digestion and reduce bloating — a natural way to add warmth and flavour without a spoon of sugar.",
