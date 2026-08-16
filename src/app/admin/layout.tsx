@@ -16,7 +16,7 @@ export default async function AdminLayout({ children }: { children: ReactNode })
 
   return (
     <div className="min-h-screen bg-cream">
-      <header className="border-b border-ink/10 bg-white">
+      <header className="print:hidden border-b border-ink/10 bg-white">
         <div className="mx-auto flex max-w-6xl items-center justify-between px-6 py-4">
           <Link href="/admin" className="font-serif font-semibold">
             WHOLESOME Admin
@@ -24,6 +24,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
           <nav className="flex items-center gap-6 text-sm">
             <Link href="/admin" className="hover:text-emerald">
               Orders
+            </Link>
+            <Link href="/admin/reviews" className="hover:text-emerald">
+              Reviews
             </Link>
             <Link href="/admin/settings" className="hover:text-emerald">
               Settings

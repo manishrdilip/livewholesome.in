@@ -6,6 +6,8 @@ import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
 import { PRODUCT } from "@/lib/product";
 import { INDIAN_STATES } from "@/lib/indian-states";
+import { lookupPincode } from "@/lib/pincode";
+import { getCurrentPosition, reverseGeocode } from "@/lib/geolocation";
 
 type FormState = {
   name: string;
@@ -50,6 +52,11 @@ export default function CheckoutPage() {
   const [pincodeStatus, setPincodeStatus] = useState<
     "idle" | "checking" | "found" | "not_found"
   >("idle");
+  const [location, setLocation] = useState<{ latitude: number; longitude: number } | null>(null);
+  const [locationStatus, setLocationStatus] = useState<
+    "idle" | "locating" | "found" | "error"
+  >("idle");
+  const [locationError, setLocationError] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
@@ -62,20 +69,44 @@ export default function CheckoutPage() {
     const pin = form.pincode.trim();
     if (!/^\d{6}$/.test(pin)) return;
     setPincodeStatus("checking");
-    try {
-      const res = await fetch(`https://api.postalpincode.in/pincode/${pin}`);
-      const data = await res.json();
-      const record = data?.[0];
-      if (record?.Status === "Success" && record.PostOffice?.length) {
-        const po = record.PostOffice[0];
-        update("city", po.District ?? "");
-        update("state", po.State ?? "");
-        setPincodeStatus("found");
-      } else {
-        setPincodeStatus("not_found");
-      }
-    } catch {
+    const result = await lookupPincode(pin).catch(() => null);
+    if (result) {
+      update("city", result.city);
+      update("state", result.state);
+      setPincodeStatus("found");
+    } else {
       setPincodeStatus("not_found");
+    }
+  }
+
+  async function handleUseLocation() {
+    setLocationStatus("locating");
+    setLocationError("");
+    try {
+      const position = await getCurrentPosition();
+      const { latitude, longitude } = position.coords;
+      setLocation({ latitude, longitude });
+
+      const geocoded = await reverseGeocode(latitude, longitude).catch(() => null);
+      if (geocoded?.pincode) {
+        update("pincode", geocoded.pincode);
+        const pinResult = await lookupPincode(geocoded.pincode).catch(() => null);
+        if (pinResult) {
+          update("city", pinResult.city);
+          update("state", pinResult.state);
+        }
+      }
+      if (geocoded?.line1Guess && !form.line1) {
+        update("line1", geocoded.line1Guess);
+      }
+      setLocationStatus("found");
+    } catch (err) {
+      setLocationStatus("error");
+      setLocationError(
+        err instanceof GeolocationPositionError
+          ? "Location permission denied. You can still fill the address in manually."
+          : "Couldn't get your location. You can still fill the address in manually."
+      );
     }
   }
 
@@ -93,6 +124,7 @@ export default function CheckoutPage() {
           ...form,
           whatsappNumber: form.whatsappSameAsPhone ? "" : form.whatsappNumber,
           quantity: effectiveQuantity,
+          ...(location ?? {}),
         }),
       });
 
@@ -202,6 +234,25 @@ export default function CheckoutPage() {
 
         <fieldset className="space-y-4">
           <legend className="font-semibold">Shipping address</legend>
+
+          <div>
+            <button
+              type="button"
+              onClick={handleUseLocation}
+              disabled={locationStatus === "locating"}
+              className="rounded-full border border-emerald px-4 py-1.5 text-sm text-emerald hover:bg-emerald hover:text-cream disabled:opacity-50"
+            >
+              {locationStatus === "locating" ? "Locating…" : "📍 Use my current location"}
+            </button>
+            {locationStatus === "found" && (
+              <p className="mt-1 text-xs text-emerald">
+                Location captured — please check the fields below and edit anything that&apos;s off.
+              </p>
+            )}
+            {locationStatus === "error" && (
+              <p className="mt-1 text-xs text-amber-700">{locationError}</p>
+            )}
+          </div>
 
           <Field label="Pincode" error={errors.pincode}>
             <input

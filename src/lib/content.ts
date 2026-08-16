@@ -54,59 +54,6 @@ export const INGREDIENTS: Ingredient[] = [
   },
 ];
 
-export const SOP_STEPS = [
-  {
-    n: "01",
-    title: "Source & Inspect",
-    body: "Every grain inspected for mold, stones, pests. Reject anything sour or damaged.",
-  },
-  {
-    n: "02",
-    title: "Clean & Sort",
-    body: "Wash 2-3 times in RO water. Remove broken grains. Never use hard or hot water.",
-  },
-  {
-    n: "03",
-    title: "Soak (Wet Zone)",
-    body: "Soak separately in 3-4x cold RO water for 6-24 hours. Green gram: 8h. Horse gram: 10h.",
-  },
-  {
-    n: "04",
-    title: "Sanitize Rinse",
-    body: "Diluted food-grade hydrogen peroxide or vinegar rinse, then 2x RO water. Bacteria control.",
-  },
-  {
-    n: "05",
-    title: "Germinate (Wet Zone)",
-    body: "Muslin cloth at 25-30°C in shade. Rinse 2-3x daily. Stop at 1-3mm sprouts.",
-  },
-  {
-    n: "06",
-    title: "Sun Dry",
-    body: "1cm thick on cotton cloth. 8am-4pm only. 1.5-2 days. Snap test, bite test, salt test.",
-  },
-  {
-    n: "07",
-    title: "Roast (Kill Step)",
-    body: "Heavy kadai. Low-to-medium flame. 1-2kg batches. Constant stirring. Critical food safety step.",
-  },
-  {
-    n: "08",
-    title: "Cool & Rest",
-    body: "Spread wide, cool to room temp. Never grind hot — steam ruins shelf life.",
-  },
-  {
-    n: "09",
-    title: "Grind & Blend",
-    body: "Medium grind (60 mesh). Nuts blended WITH grains (1:2 ratio). Amla & palm candy added last.",
-  },
-  {
-    n: "10",
-    title: "Pack with Oxygen Absorber",
-    body: "Light-proof metallised pouch. Oxygen absorber inside. Airtight seal. Batch + best-before printed.",
-  },
-];
-
 export const NUTRITION_STATS = [
   { emoji: "📈", value: "300%", label: "More Bioavailable Iron", sub: "Via sprouting" },
   { emoji: "🦴", value: "344mg", label: "Calcium per 100g", sub: "From Ragi" },

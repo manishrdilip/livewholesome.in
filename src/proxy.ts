@@ -7,29 +7,41 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .filter(Boolean);
 
 export async function proxy(request: NextRequest) {
-  if (!request.nextUrl.pathname.startsWith("/admin")) {
-    return NextResponse.next();
-  }
-  if (request.nextUrl.pathname.startsWith("/admin/login")) {
-    return NextResponse.next();
+  const { pathname } = request.nextUrl;
+
+  const isAdminPublicRoute =
+    pathname.startsWith("/admin/login") || pathname.startsWith("/admin/reset-password");
+
+  if (pathname.startsWith("/admin") && !isAdminPublicRoute) {
+    const { supabase, response } = createMiddlewareClient(request);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
+
+    if (!user) {
+      return NextResponse.redirect(new URL("/admin/login", request.url));
+    }
+    if (!user.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
+      return new NextResponse("Forbidden", { status: 403 });
+    }
+    return response;
   }
 
-  const { supabase, response } = createMiddlewareClient(request);
-  const {
-    data: { user },
-  } = await supabase.auth.getUser();
+  if (pathname.startsWith("/account")) {
+    const { supabase, response } = createMiddlewareClient(request);
+    const {
+      data: { user },
+    } = await supabase.auth.getUser();
 
-  if (!user) {
-    return NextResponse.redirect(new URL("/admin/login", request.url));
+    if (!user) {
+      return NextResponse.redirect(new URL("/login", request.url));
+    }
+    return response;
   }
 
-  if (!user.email || !ADMIN_EMAILS.includes(user.email.toLowerCase())) {
-    return new NextResponse("Forbidden", { status: 403 });
-  }
-
-  return response;
+  return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*"],
+  matcher: ["/admin/:path*", "/account/:path*"],
 };

@@ -81,6 +81,8 @@ export async function POST(request: NextRequest) {
       state: data.state,
       pincode: data.pincode,
       country: "India",
+      latitude: data.latitude ?? null,
+      longitude: data.longitude ?? null,
     },
     p_items: [
       {

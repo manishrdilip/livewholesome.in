@@ -20,6 +20,7 @@ async function updateSettings(formData: FormData) {
       hsn_code: String(formData.get("hsn_code") ?? "").trim(),
       invoice_prefix: String(formData.get("invoice_prefix") ?? "WP").trim(),
       shipping_fee: Number(formData.get("shipping_fee") ?? 0),
+      ship_from_address: String(formData.get("ship_from_address") ?? "").trim() || null,
     })
     .eq("id", true);
 
@@ -92,6 +93,12 @@ export default async function AdminSettingsPage() {
               type="number"
               step="0.01"
               defaultValue={String(settings.shipping_fee)}
+            />
+            <Field
+              label="Ship-from address (for shipping labels)"
+              name="ship_from_address"
+              defaultValue={settings.ship_from_address ?? ""}
+              textarea
             />
           </div>
         </section>

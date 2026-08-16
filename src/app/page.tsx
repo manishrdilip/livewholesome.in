@@ -1,8 +1,13 @@
 import { Header } from "@/components/Header";
 import { IngredientCard } from "@/components/IngredientCard";
 import { OrderBox } from "@/components/OrderBox";
-import { INGREDIENTS, SOP_STEPS, NUTRITION_STATS } from "@/lib/content";
+import { ReviewsSection } from "@/components/ReviewsSection";
+import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
 import { PRODUCT } from "@/lib/product";
+
+// Reviews change via admin moderation, not a redeploy — revalidate periodically
+// rather than baking the homepage's review list in at build time forever.
+export const revalidate = 60;
 
 export default function HomePage() {
   return (
@@ -71,25 +76,7 @@ export default function HomePage() {
         </div>
       </section>
 
-      <section id="process" className="scroll-mt-20 bg-emerald-deep/5 py-20">
-        <div className="mx-auto max-w-6xl px-6">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold">The SOP</p>
-          <h2 className="mt-2 font-serif text-3xl font-bold">From Seed to Scoop</h2>
-          <p className="mt-3 max-w-2xl text-ink/70">
-            A 10-step standard operating procedure, followed batch after batch, so every scoop is
-            identical.
-          </p>
-          <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-5">
-            {SOP_STEPS.map((step) => (
-              <div key={step.n} className="rounded-2xl bg-white p-4">
-                <div className="font-serif text-2xl font-bold text-gold">{step.n}</div>
-                <div className="mt-1 font-medium">{step.title}</div>
-                <p className="mt-1 text-sm text-ink/60">{step.body}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <ReviewsSection />
 
       <section id="nutrition" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
         <p className="text-sm font-semibold uppercase tracking-widest text-gold">Nutrition</p>

@@ -24,8 +24,46 @@ export const checkoutSchema = z.object({
   customerNote: z.string().trim().max(1000).optional().or(z.literal("")),
   quantity: z.number().int().min(1).max(20),
   consent: z.literal(true, "You must agree to receive order updates on WhatsApp and email"),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
   // Honeypot — real users never fill this in.
   companyWebsite: z.string().max(0).optional().or(z.literal("")),
 });
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
+
+export const signupSchema = z.object({
+  name: z.string().trim().min(1, "Full name is required").max(200),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+  email: z.string().trim().email("Enter a valid email address"),
+  password: z.string().min(8, "Password must be at least 8 characters").max(72),
+});
+export type SignupInput = z.infer<typeof signupSchema>;
+
+export const loginSchema = z.object({
+  email: z.string().trim().email("Enter a valid email address"),
+  password: z.string().min(1, "Password is required"),
+});
+export type LoginInput = z.infer<typeof loginSchema>;
+
+export const savedAddressSchema = z.object({
+  label: z.string().trim().max(50).optional().or(z.literal("")),
+  pincode: z.string().trim().regex(/^\d{6}$/, "Pincode must be 6 digits"),
+  line1: z.string().trim().min(1, "House/street is required").max(300),
+  line2: z.string().trim().max(300).optional().or(z.literal("")),
+  landmark: z.string().trim().max(200).optional().or(z.literal("")),
+  city: z.string().trim().min(1, "City is required").max(100),
+  state: z.enum(INDIAN_STATES),
+  latitude: z.number().min(-90).max(90).optional(),
+  longitude: z.number().min(-180).max(180).optional(),
+});
+export type SavedAddressInput = z.infer<typeof savedAddressSchema>;
+
+export const reviewSchema = z.object({
+  rating: z.coerce.number().int().min(1).max(5),
+  body: z.string().trim().max(2000).optional().or(z.literal("")),
+});
+export type ReviewInput = z.infer<typeof reviewSchema>;

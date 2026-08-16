@@ -14,6 +14,7 @@ export type Settings = {
   invoice_prefix: string;
   shipping_fee: number;
   logo_path: string | null;
+  ship_from_address: string | null;
 };
 
 export async function getSettings(): Promise<Settings> {

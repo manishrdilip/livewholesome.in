@@ -69,6 +69,8 @@ export default async function AdminOrderDetailPage({
     state: string;
     pincode: string;
     country: string;
+    latitude?: number | null;
+    longitude?: number | null;
   };
 
   return (
@@ -78,9 +80,17 @@ export default async function AdminOrderDetailPage({
       </Link>
       <div className="mt-2 flex items-center justify-between">
         <h1 className="font-serif text-2xl font-bold">{order.order_number}</h1>
-        <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-semibold">
-          {order.status}
-        </span>
+        <div className="flex items-center gap-3">
+          <Link
+            href={`/admin/orders/${order.order_number}/label`}
+            className="rounded-full border border-emerald px-3 py-1 text-xs font-semibold text-emerald hover:bg-emerald hover:text-cream"
+          >
+            Print shipping label
+          </Link>
+          <span className="rounded-full bg-ink/5 px-3 py-1 text-xs font-semibold">
+            {order.status}
+          </span>
+        </div>
       </div>
       <p className="text-sm text-ink/50">
         Placed {new Date(order.placed_at).toLocaleString("en-IN")}
@@ -130,6 +140,16 @@ export default async function AdminOrderDetailPage({
             <br />
             {address.country}
           </p>
+          {address.latitude != null && address.longitude != null && (
+            <a
+              href={`https://www.google.com/maps?q=${address.latitude},${address.longitude}`}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-1 inline-block text-xs text-emerald hover:underline"
+            >
+              📍 View pinned location
+            </a>
+          )}
         </section>
 
         <section className="rounded-xl border border-ink/10 bg-white p-5">

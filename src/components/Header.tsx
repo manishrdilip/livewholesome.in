@@ -1,11 +1,23 @@
 "use client";
 
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
+import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { PRODUCT } from "@/lib/product";
 
 export function Header() {
   const { quantity } = useCart();
+  const [loggedIn, setLoggedIn] = useState(false);
+
+  useEffect(() => {
+    const supabase = createBrowserSupabaseClient();
+    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => setLoggedIn(!!session));
+    return () => subscription.unsubscribe();
+  }, []);
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
@@ -18,8 +30,8 @@ export function Header() {
           <a href="#ingredients" className="hover:text-gold">
             Ingredients
           </a>
-          <a href="#process" className="hover:text-gold">
-            Process
+          <a href="#reviews" className="hover:text-gold">
+            Reviews
           </a>
           <a href="#nutrition" className="hover:text-gold">
             Nutrition
@@ -27,6 +39,9 @@ export function Header() {
           <a href="#order" className="hover:text-gold">
             Order
           </a>
+          <Link href={loggedIn ? "/account" : "/login"} className="hover:text-gold">
+            {loggedIn ? "My Account" : "Log in"}
+          </Link>
         </nav>
         <a
           href="#order"
