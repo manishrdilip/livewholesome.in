@@ -19,7 +19,7 @@ export async function GET() {
       ...pricing,
       shippingFee: settings.shipping_fee,
       supportPhone: settings.support_phone,
-      supportEmail: settings.support_email,
+      supportEmail: settings.support_email?.toLowerCase() ?? null,
       fssaiLicense: settings.fssai_license,
       facebookUrl: settings.facebook_url,
       instagramUrl: settings.instagram_url,

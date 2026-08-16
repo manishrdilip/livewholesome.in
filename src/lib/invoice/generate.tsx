@@ -129,7 +129,7 @@ export async function generateInvoice(
       gstin: settings.gstin,
       fssaiLicense: settings.fssai_license,
       supportPhone: settings.support_phone,
-      supportEmail: settings.support_email,
+      supportEmail: settings.support_email?.toLowerCase() ?? null,
       gstRegistered,
     },
   };
