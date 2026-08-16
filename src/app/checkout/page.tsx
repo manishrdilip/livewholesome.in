@@ -248,17 +248,17 @@ export default function CheckoutPage() {
           </Field>
 
           <Field label="Mobile number" error={errors.phone}>
-            <div className="flex items-center gap-2">
-              <span className="text-ink/60">+91</span>
-              <input
-                required
-                inputMode="numeric"
-                maxLength={10}
-                value={form.phone}
-                onChange={(e) => update("phone", e.target.value.replace(/\D/g, ""))}
-                className="input"
-              />
-            </div>
+            <input
+              required
+              type="tel"
+              placeholder="+91 98765 43210"
+              value={form.phone}
+              onChange={(e) => update("phone", e.target.value)}
+              className="input"
+            />
+            <p className="mt-1 text-xs text-ink/50">
+              Include your country code — we ship internationally.
+            </p>
           </Field>
 
           <label className="flex items-center gap-2 text-sm">
@@ -272,16 +272,13 @@ export default function CheckoutPage() {
 
           {!form.whatsappSameAsPhone && (
             <Field label="WhatsApp number" error={errors.whatsappNumber}>
-              <div className="flex items-center gap-2">
-                <span className="text-ink/60">+91</span>
-                <input
-                  inputMode="numeric"
-                  maxLength={10}
-                  value={form.whatsappNumber}
-                  onChange={(e) => update("whatsappNumber", e.target.value.replace(/\D/g, ""))}
-                  className="input"
-                />
-              </div>
+              <input
+                type="tel"
+                placeholder="+91 98765 43210"
+                value={form.whatsappNumber}
+                onChange={(e) => update("whatsappNumber", e.target.value)}
+                className="input"
+              />
             </Field>
           )}
 

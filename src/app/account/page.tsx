@@ -6,7 +6,9 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { getCustomerForUser, linkOrCreateCustomer } from "@/lib/customer-account";
 import { AccountSignOutButton } from "@/components/account/SignOutButton";
 import { AddAddressForm } from "@/components/account/AddAddressForm";
+import { AccountTabs } from "@/components/account/AccountTabs";
 import { reviewSchema } from "@/lib/validation";
+import { normalizePhone, PHONE_REGEX } from "@/lib/phone";
 import { z } from "zod";
 
 const profileSchema = z.object({
@@ -14,7 +16,8 @@ const profileSchema = z.object({
   phone: z
     .string()
     .trim()
-    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+    .transform(normalizePhone)
+    .refine((v) => PHONE_REGEX.test(v), "Enter a valid phone number with country code, e.g. +91 98765 43210"),
 });
 
 const MAX_ADDRESSES = 3;
@@ -63,17 +66,13 @@ export default async function AccountPage() {
         </p>
         <form action={completeProfile} className="mt-6 space-y-4">
           <input required name="name" placeholder="Full name" className="input" />
-          <div className="flex items-center gap-2">
-            <span className="text-sm text-ink/60">+91</span>
-            <input
-              required
-              name="phone"
-              placeholder="Mobile number"
-              pattern="[6-9]\d{9}"
-              maxLength={10}
-              className="input"
-            />
-          </div>
+          <input
+            required
+            type="tel"
+            name="phone"
+            placeholder="Mobile number, e.g. +91 98765 43210"
+            className="input"
+          />
           <button
             type="submit"
             className="w-full rounded-full bg-emerald py-2.5 font-semibold text-cream"
@@ -192,103 +191,109 @@ export default async function AccountPage() {
         <AccountSignOutButton />
       </div>
 
-      <section className="mt-8 rounded-xl border border-ink/10 bg-white p-5">
-        <h2 className="font-semibold">Saved addresses</h2>
-        <p className="text-sm text-ink/50">Up to {MAX_ADDRESSES} addresses.</p>
-        <ul className="mt-3 space-y-3">
-          {addresses?.map((a) => (
-            <li key={a.id} className="flex items-start justify-between rounded-lg border border-ink/10 p-3 text-sm">
-              <div>
-                {a.label && <div className="font-medium">{a.label}</div>}
-                <div className="text-ink/70">
-                  {a.line1}
-                  {a.line2 ? `, ${a.line2}` : ""}
-                  {a.landmark ? `, ${a.landmark}` : ""}
-                  <br />
-                  {a.city}, {a.state} — {a.pincode}
-                </div>
-                {a.latitude && a.longitude && (
-                  <a
-                    href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
-                    target="_blank"
-                    rel="noreferrer"
-                    className="text-xs text-emerald hover:underline"
-                  >
-                    📍 View pinned location
-                  </a>
-                )}
-              </div>
-              <form action={deleteAddress}>
-                <input type="hidden" name="addressId" value={a.id} />
-                <button type="submit" className="text-red-600 hover:underline">
-                  Remove
-                </button>
-              </form>
-            </li>
-          ))}
-          {!addresses?.length && <p className="text-sm text-ink/50">No saved addresses yet.</p>}
-        </ul>
-
-        {(addresses?.length ?? 0) < MAX_ADDRESSES && <AddAddressForm />}
-      </section>
-
-      <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
-        <h2 className="font-semibold">Order history</h2>
-        <ul className="mt-2 divide-y divide-ink/10 text-sm">
-          {orders?.map((o) => (
-            <li key={o.order_number} className="flex justify-between py-2">
-              <span>
-                {o.order_number} — {new Date(o.placed_at).toLocaleDateString("en-IN")}
-              </span>
-              <span className="text-ink/50">
-                {o.status} · ₹{o.grand_total}
-              </span>
-            </li>
-          ))}
-          {!orders?.length && <p className="text-sm text-ink/50">No orders yet.</p>}
-        </ul>
-      </section>
-
-      <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
-        <h2 className="font-semibold">Write a review</h2>
-        <form action={submitReview} className="mt-3 space-y-3 text-sm">
-          <div>
-            <label className="text-ink/60">Rating</label>
-            <select name="rating" required defaultValue="5" className="input">
-              {[5, 4, 3, 2, 1].map((n) => (
-                <option key={n} value={n}>
-                  {n} star{n > 1 ? "s" : ""}
-                </option>
+      <AccountTabs
+        addresses={
+          <section className="rounded-xl border border-ink/10 bg-white p-5">
+            <h2 className="font-semibold">Saved addresses</h2>
+            <p className="text-sm text-ink/50">Up to {MAX_ADDRESSES} addresses.</p>
+            <ul className="mt-3 space-y-3">
+              {addresses?.map((a) => (
+                <li key={a.id} className="flex items-start justify-between rounded-lg border border-ink/10 p-3 text-sm">
+                  <div>
+                    {a.label && <div className="font-medium">{a.label}</div>}
+                    <div className="text-ink/70">
+                      {a.line1}
+                      {a.line2 ? `, ${a.line2}` : ""}
+                      {a.landmark ? `, ${a.landmark}` : ""}
+                      <br />
+                      {a.city}, {a.state} — {a.pincode}
+                    </div>
+                    {a.latitude && a.longitude && (
+                      <a
+                        href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="text-xs text-emerald hover:underline"
+                      >
+                        📍 View pinned location
+                      </a>
+                    )}
+                  </div>
+                  <form action={deleteAddress}>
+                    <input type="hidden" name="addressId" value={a.id} />
+                    <button type="submit" className="text-red-600 hover:underline">
+                      Remove
+                    </button>
+                  </form>
+                </li>
               ))}
-            </select>
-          </div>
-          <textarea name="body" placeholder="Tell us what you think" className="input" rows={3} />
-          <div>
-            <label className="text-ink/60">
-              Photos or videos (optional, up to {MAX_REVIEW_FILES})
-            </label>
-            <input type="file" name="media" accept="image/*,video/*" multiple className="input" />
-          </div>
-          <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
-            Submit review
-          </button>
-          <p className="text-xs text-ink/50">
-            Reviews are checked before they appear publicly on the site.
-          </p>
-        </form>
+              {!addresses?.length && <p className="text-sm text-ink/50">No saved addresses yet.</p>}
+            </ul>
 
-        {!!reviews?.length && (
-          <ul className="mt-4 space-y-2 border-t border-ink/10 pt-4">
-            {reviews.map((r) => (
-              <li key={r.id} className="text-sm">
-                {"★".repeat(r.rating)}
-                {"☆".repeat(5 - r.rating)} — <span className="text-ink/50">{r.status}</span>
-                {r.body && <p className="text-ink/70">{r.body}</p>}
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
+            {(addresses?.length ?? 0) < MAX_ADDRESSES && <AddAddressForm />}
+          </section>
+        }
+        orders={
+          <section className="rounded-xl border border-ink/10 bg-white p-5">
+            <h2 className="font-semibold">Order history</h2>
+            <ul className="mt-2 divide-y divide-ink/10 text-sm">
+              {orders?.map((o) => (
+                <li key={o.order_number} className="flex justify-between py-2">
+                  <span>
+                    {o.order_number} — {new Date(o.placed_at).toLocaleDateString("en-IN")}
+                  </span>
+                  <span className="text-ink/50">
+                    {o.status} · ₹{o.grand_total}
+                  </span>
+                </li>
+              ))}
+              {!orders?.length && <p className="text-sm text-ink/50">No orders yet.</p>}
+            </ul>
+          </section>
+        }
+        reviews={
+          <section className="rounded-xl border border-ink/10 bg-white p-5">
+            <h2 className="font-semibold">Write a review</h2>
+            <form action={submitReview} className="mt-3 space-y-3 text-sm">
+              <div>
+                <label className="text-ink/60">Rating</label>
+                <select name="rating" required defaultValue="5" className="input">
+                  {[5, 4, 3, 2, 1].map((n) => (
+                    <option key={n} value={n}>
+                      {n} star{n > 1 ? "s" : ""}
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <textarea name="body" placeholder="Tell us what you think" className="input" rows={3} />
+              <div>
+                <label className="text-ink/60">
+                  Photos or videos (optional, up to {MAX_REVIEW_FILES})
+                </label>
+                <input type="file" name="media" accept="image/*,video/*" multiple className="input" />
+              </div>
+              <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
+                Submit review
+              </button>
+              <p className="text-xs text-ink/50">
+                Reviews are checked before they appear publicly on the site.
+              </p>
+            </form>
+
+            {!!reviews?.length && (
+              <ul className="mt-4 space-y-2 border-t border-ink/10 pt-4">
+                {reviews.map((r) => (
+                  <li key={r.id} className="text-sm">
+                    {"★".repeat(r.rating)}
+                    {"☆".repeat(5 - r.rating)} — <span className="text-ink/50">{r.status}</span>
+                    {r.body && <p className="text-ink/70">{r.body}</p>}
+                  </li>
+                ))}
+              </ul>
+            )}
+          </section>
+        }
+      />
 
       <Link href="/" className="mt-8 inline-block text-emerald hover:underline">
         ← Back to shop

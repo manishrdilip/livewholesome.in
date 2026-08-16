@@ -120,7 +120,7 @@ export default async function AdminOrderDetailPage({
               <dt className="inline text-ink/50">WhatsApp: </dt>
               <dd className="inline">
                 <a
-                  href={`https://wa.me/${(customer.whatsapp_number ?? customer.phone).replace("+", "")}`}
+                  href={`https://wa.me/${(customer.whatsapp_number ?? customer.phone).replace(/\D/g, "")}`}
                   target="_blank"
                   className="text-emerald hover:underline"
                 >

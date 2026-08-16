@@ -19,7 +19,7 @@ export async function linkOrCreateCustomer(
 ): Promise<CustomerRecord> {
   const supabase = createServiceClient();
   const email = user.email!;
-  const phone = `+91${profile.phone}`;
+  const phone = profile.phone;
 
   const { data: existing } = await supabase
     .from("customers")

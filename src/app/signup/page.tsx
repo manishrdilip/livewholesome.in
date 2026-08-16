@@ -62,16 +62,14 @@ export default function SignupPage() {
           onChange={(e) => setName(e.target.value)}
           className="input"
         />
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-ink/60">+91</span>
-          <input
-            required
-            placeholder="Mobile number"
-            value={phone}
-            onChange={(e) => setPhone(e.target.value.replace(/\D/g, "").slice(0, 10))}
-            className="input"
-          />
-        </div>
+        <input
+          required
+          type="tel"
+          placeholder="Mobile number, e.g. +91 98765 43210"
+          value={phone}
+          onChange={(e) => setPhone(e.target.value)}
+          className="input"
+        />
         <input
           required
           type="email"

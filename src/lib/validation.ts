@@ -1,19 +1,24 @@
 import { z } from "zod";
 import { INDIAN_STATES } from "@/lib/indian-states";
+import { normalizePhone, PHONE_REGEX } from "@/lib/phone";
+
+const phoneSchema = z
+  .string()
+  .trim()
+  .transform(normalizePhone)
+  .refine((v) => PHONE_REGEX.test(v), "Enter a valid phone number with country code, e.g. +91 98765 43210");
+
+const optionalPhoneSchema = z
+  .string()
+  .trim()
+  .transform(normalizePhone)
+  .refine((v) => v === "" || PHONE_REGEX.test(v), "Enter a valid WhatsApp number with country code");
 
 export const checkoutSchema = z.object({
   name: z.string().trim().min(1, "Full name is required").max(200),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+  phone: phoneSchema,
   whatsappSameAsPhone: z.boolean(),
-  whatsappNumber: z
-    .string()
-    .trim()
-    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit WhatsApp number")
-    .optional()
-    .or(z.literal("")),
+  whatsappNumber: optionalPhoneSchema,
   email: z.string().trim().email("Enter a valid email address"),
   pincode: z.string().trim().regex(/^\d{6}$/, "Pincode must be 6 digits"),
   line1: z.string().trim().min(1, "House/street is required").max(300),
@@ -35,10 +40,7 @@ export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
 export const signupSchema = z.object({
   name: z.string().trim().min(1, "Full name is required").max(200),
-  phone: z
-    .string()
-    .trim()
-    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+  phone: phoneSchema,
   email: z.string().trim().email("Enter a valid email address"),
   password: z.string().min(8, "Password must be at least 8 characters").max(72),
 });

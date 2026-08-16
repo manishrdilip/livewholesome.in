@@ -70,12 +70,8 @@ export async function POST(request: NextRequest) {
   const taxTotal = 0;
   const grandTotal = Math.round((subtotal - discount + shippingFee + taxTotal) * 100) / 100;
 
-  const phone = `+91${data.phone}`;
-  const whatsappNumber = data.whatsappSameAsPhone
-    ? phone
-    : data.whatsappNumber
-      ? `+91${data.whatsappNumber}`
-      : phone;
+  const phone = data.phone;
+  const whatsappNumber = data.whatsappSameAsPhone || !data.whatsappNumber ? phone : data.whatsappNumber;
 
   const { data: result, error } = await supabase.rpc("create_order", {
     p_customer: {
