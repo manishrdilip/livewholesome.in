@@ -14,9 +14,20 @@ const playfair = Playfair_Display({
 });
 
 export const metadata: Metadata = {
+  metadataBase: new URL("https://livewholesome.in"),
   title: "Wholesome Purna — Sprouted Multigrain Health Mix | LiveWholesome.in",
   description:
     "A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked, germinated, sun-dried, roasted, and stone-ground.",
+  openGraph: {
+    title: "Wholesome Purna — Sprouted Multigrain Health Mix",
+    description:
+      "A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked, germinated, sun-dried, roasted, and stone-ground.",
+    url: "https://livewholesome.in",
+    siteName: "LiveWholesome.in",
+  },
+  twitter: {
+    card: "summary_large_image",
+  },
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {
