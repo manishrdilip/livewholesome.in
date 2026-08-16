@@ -38,7 +38,7 @@ export default async function HomePage() {
         name: settings.business_name,
         url: "https://livewholesome.in",
         logo: "https://livewholesome.in/icon.svg",
-        ...(settings.support_email && { email: settings.support_email }),
+        ...(settings.support_email && { email: settings.support_email.toLowerCase() }),
         ...(settings.support_phone && { telephone: settings.support_phone }),
       },
     ],
