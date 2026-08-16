@@ -3,10 +3,19 @@ import { redirect } from "next/navigation";
 import { revalidatePath } from "next/cache";
 import { createServerAuthClient } from "@/lib/supabase/server-auth";
 import { createServiceClient } from "@/lib/supabase/server";
-import { getCustomerForUser } from "@/lib/customer-account";
+import { getCustomerForUser, linkOrCreateCustomer } from "@/lib/customer-account";
 import { AccountSignOutButton } from "@/components/account/SignOutButton";
 import { AddAddressForm } from "@/components/account/AddAddressForm";
 import { reviewSchema } from "@/lib/validation";
+import { z } from "zod";
+
+const profileSchema = z.object({
+  name: z.string().trim().min(1, "Full name is required").max(200),
+  phone: z
+    .string()
+    .trim()
+    .regex(/^[6-9]\d{9}$/, "Enter a valid 10-digit Indian mobile number"),
+});
 
 const MAX_ADDRESSES = 3;
 const MAX_REVIEW_FILES = 4;
@@ -28,11 +37,50 @@ export default async function AccountPage() {
 
   const customer = await getCustomerForUser(user.id);
   if (!customer) {
+    async function completeProfile(formData: FormData) {
+      "use server";
+      const parsed = profileSchema.safeParse({
+        name: formData.get("name"),
+        phone: formData.get("phone"),
+      });
+      if (!parsed.success) return;
+
+      const supabase = await createServerAuthClient();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) return;
+
+      await linkOrCreateCustomer(user, parsed.data);
+      revalidatePath("/account");
+    }
+
     return (
-      <div className="mx-auto max-w-xl px-6 py-16 text-center">
-        <p className="text-ink/70">
-          We couldn&apos;t find your account details. Please contact support.
+      <div className="mx-auto max-w-sm px-6 py-16">
+        <h1 className="font-serif text-2xl font-bold">One more step</h1>
+        <p className="mt-1 text-sm text-ink/60">
+          We just need your name and phone number to set up your account.
         </p>
+        <form action={completeProfile} className="mt-6 space-y-4">
+          <input required name="name" placeholder="Full name" className="input" />
+          <div className="flex items-center gap-2">
+            <span className="text-sm text-ink/60">+91</span>
+            <input
+              required
+              name="phone"
+              placeholder="Mobile number"
+              pattern="[6-9]\d{9}"
+              maxLength={10}
+              className="input"
+            />
+          </div>
+          <button
+            type="submit"
+            className="w-full rounded-full bg-emerald py-2.5 font-semibold text-cream"
+          >
+            Continue
+          </button>
+        </form>
       </div>
     );
   }

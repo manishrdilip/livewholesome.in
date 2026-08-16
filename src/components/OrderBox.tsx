@@ -15,7 +15,7 @@ export function OrderBox() {
   }
 
   return (
-    <div className="rounded-3xl border border-gold/30 bg-white p-6 shadow-lg">
+    <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
       <div className="flex items-center gap-3">
         <div className="text-3xl">🥣</div>
         <div>
