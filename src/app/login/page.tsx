@@ -51,17 +51,18 @@ export default function LoginPage() {
     setStatus("sending-reset");
     setErrorMessage("");
 
-    const supabase = createBrowserSupabaseClient();
-    // Routed through /auth/callback so the code exchange happens once,
-    // server-side — same pattern as the admin login's reset flow.
-    const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
-      redirectTo: `${window.location.origin}/auth/callback?next=/reset-password`,
-    });
-
-    if (error) {
-      setStatus("error");
-      setErrorMessage(error.message);
-      return;
+    // Routed through a server API rather than calling Supabase directly,
+    // so admin-flagged emails can be blocked from resetting via this public
+    // flow without exposing ADMIN_EMAILS to the client.
+    try {
+      await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ email: normalizedEmail }),
+      });
+    } catch {
+      // Network error — fall through to the same generic confirmation
+      // rather than revealing anything about whether it actually sent.
     }
     setStatus("reset-sent");
   }
