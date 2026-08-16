@@ -1,6 +1,6 @@
 "use client";
 
-import { Suspense, useEffect, useState, type FormEvent } from "react";
+import { Suspense, useEffect, useRef, useState, type FormEvent } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 
@@ -13,12 +13,19 @@ function ResetPasswordForm() {
     "checking"
   );
   const [errorMessage, setErrorMessage] = useState("");
+  // The auth code is single-use: a second effect run (e.g. from a
+  // Suspense/useSearchParams re-render) would burn an already-consumed code
+  // and clobber the successful "ready" state with a spurious error.
+  const verificationStarted = useRef(false);
 
   // Real password-reset emails (browser-initiated resetPasswordForEmail) use
   // PKCE, landing here with `?code=`. Admin-generated test links (via the
   // service-role generateLink helper, no PKCE verifier available) instead
   // carry access/refresh tokens in the URL hash — handle both.
   useEffect(() => {
+    if (verificationStarted.current) return;
+    verificationStarted.current = true;
+
     const code = searchParams.get("code");
     const flowId = searchParams.get("sb_flow_id");
     const supabase = createBrowserSupabaseClient();
