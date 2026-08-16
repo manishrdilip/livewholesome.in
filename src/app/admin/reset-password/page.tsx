@@ -20,11 +20,18 @@ function ResetPasswordForm() {
   // carry access/refresh tokens in the URL hash — handle both.
   useEffect(() => {
     const code = searchParams.get("code");
+    const flowId = searchParams.get("sb_flow_id");
     const supabase = createBrowserSupabaseClient();
 
     (async () => {
       if (code) {
-        const { error } = await supabase.auth.exchangeCodeForSession(code);
+        // Pass flowId explicitly rather than letting the SDK re-derive it from
+        // window.location.href — Next's router can strip the query string
+        // shortly after hydration, which would otherwise lose it.
+        const { error } = await supabase.auth.exchangeCodeForSession(
+          code,
+          flowId ? { flowId } : undefined
+        );
         if (error) {
           setStatus("link-error");
           setErrorMessage(error.message);
