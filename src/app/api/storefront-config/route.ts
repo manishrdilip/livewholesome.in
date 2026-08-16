@@ -24,6 +24,10 @@ export async function GET() {
       facebookUrl: settings.facebook_url,
       instagramUrl: settings.instagram_url,
       youtubeUrl: settings.youtube_url,
+      paymentGatewayEnabled: Boolean(
+        process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY
+      ),
+      cashfreeMode: process.env.CASHFREE_ENVIRONMENT === "PRODUCTION" ? "production" : "sandbox",
     },
     { headers: { "Cache-Control": "no-store" } }
   );

@@ -8,6 +8,7 @@ import { PRODUCT } from "@/lib/product";
 import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
 import { getCurrentPosition, reverseGeocode } from "@/lib/geolocation";
+import { loadCashfreeSdk } from "@/lib/payment/loadCashfreeSdk";
 
 type FormState = {
   name: string;
@@ -136,11 +137,43 @@ export default function CheckoutPage() {
         return;
       }
 
+      if (config.paymentGatewayEnabled) {
+        const launched = await tryLaunchCashfree(data.orderNumber, config.cashfreeMode);
+        if (launched) return; // browser is navigating to Cashfree's checkout
+      }
+
+      // Either payment isn't configured yet, or launching it failed — the
+      // order already exists either way, so fall back to the same
+      // "we'll follow up" confirmation instead of stranding the customer.
       router.push(`/order/confirmed?ref=${data.orderNumber}`);
     } catch {
       setServerError("Network error. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  /** Returns true if the browser is now navigating to Cashfree's checkout
+   * (caller should not do anything further). Returns false on any failure
+   * so the caller can fall back — a payment-setup hiccup must never look
+   * like the order itself failed, since the order was already created. */
+  async function tryLaunchCashfree(orderNumber: string, mode: "sandbox" | "production") {
+    try {
+      const res = await fetch("/api/payment/create-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumber }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Payment session creation failed");
+
+      await loadCashfreeSdk();
+      const cashfree = window.Cashfree!({ mode });
+      cashfree.checkout({ paymentSessionId: data.paymentSessionId, redirectTarget: "_self" });
+      return true;
+    } catch (err) {
+      console.error(`Could not launch Cashfree checkout for ${orderNumber}`, err);
+      return false;
     }
   }
 
@@ -375,8 +408,17 @@ export default function CheckoutPage() {
         </Field>
 
         <div className="rounded-xl border border-ink/10 bg-cream p-4 text-sm">
-          <strong>Payment:</strong> We&apos;ll contact you to complete payment after confirming
-          your order. Online payment is coming soon.
+          {config.paymentGatewayEnabled ? (
+            <>
+              <strong>Payment:</strong> You&apos;ll be taken to a secure Cashfree checkout to pay
+              by UPI, card, or netbanking.
+            </>
+          ) : (
+            <>
+              <strong>Payment:</strong> We&apos;ll contact you to complete payment after
+              confirming your order. Online payment is coming soon.
+            </>
+          )}
         </div>
 
         <label className="flex items-start gap-2 text-xs text-ink/70">
@@ -402,7 +444,11 @@ export default function CheckoutPage() {
           disabled={submitting}
           className="w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep disabled:opacity-50"
         >
-          {submitting ? "Placing order…" : "Place Order"}
+          {submitting
+            ? "Placing order…"
+            : config.paymentGatewayEnabled
+              ? `Pay ₹${effectiveQuantity * unitPrice}`
+              : "Place Order"}
         </button>
       </form>
     </div>

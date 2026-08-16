@@ -25,6 +25,8 @@ export type StorefrontConfig = {
   facebookUrl: string | null;
   instagramUrl: string | null;
   youtubeUrl: string | null;
+  paymentGatewayEnabled: boolean;
+  cashfreeMode: "sandbox" | "production";
 };
 
 const DEFAULT_CONFIG: StorefrontConfig = {
@@ -40,6 +42,8 @@ const DEFAULT_CONFIG: StorefrontConfig = {
   facebookUrl: null,
   instagramUrl: null,
   youtubeUrl: null,
+  paymentGatewayEnabled: false,
+  cashfreeMode: "sandbox",
 };
 
 type CartContextValue = {

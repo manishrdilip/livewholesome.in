@@ -92,7 +92,9 @@ export function OrderBox() {
         ⚡ Order Now — Checkout
       </button>
       <p className="mt-2 text-center text-xs text-ink/50">
-        Payment on confirmation — pay by UPI/card, we&apos;ll follow up. Online payment coming soon.
+        {config.paymentGatewayEnabled
+          ? "Secure checkout via Cashfree — UPI, card & netbanking accepted."
+          : "Payment on confirmation — pay by UPI/card, we'll follow up. Online payment coming soon."}
       </p>
 
       <ul className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-ink/10 pt-3 text-xs text-ink/50">
