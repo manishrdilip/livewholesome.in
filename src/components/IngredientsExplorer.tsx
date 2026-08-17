@@ -3,17 +3,27 @@
 import { useEffect, useRef, useState } from "react";
 import type { Ingredient, IngredientFilterGroup } from "@/lib/content";
 import { IngredientIcon } from "@/components/IngredientIcon";
+import { useLanguage } from "@/components/LanguageProvider";
 
-const FILTERS: { id: IngredientFilterGroup | "all"; label: string }[] = [
-  { id: "all", label: "All" },
-  { id: "sprouted", label: "Sprouted" },
-  { id: "seeds", label: "Seeds & Nuts" },
-  { id: "spices", label: "Spices & Others" },
+const FILTERS: { id: IngredientFilterGroup | "all"; label: string; labelTa: string }[] = [
+  { id: "all", label: "All", labelTa: "அனைத்தும்" },
+  { id: "sprouted", label: "Sprouted", labelTa: "முளைகட்டியவை" },
+  { id: "seeds", label: "Seeds & Nuts", labelTa: "விதைகள் & கொட்டைகள்" },
+  { id: "spices", label: "Spices & Others", labelTa: "மசாலா & மற்றவை" },
 ];
+
+const CATEGORY_TA: Record<Ingredient["category"], string> = {
+  Sprouted: "முளைகட்டியது",
+  Roasted: "வறுக்கப்பட்டது",
+  Raw: "பச்சை",
+  Powder: "பொடி",
+  Spice: "மசாலா",
+};
 
 export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[] }) {
   const [filter, setFilter] = useState<IngredientFilterGroup | "all">("all");
   const [selected, setSelected] = useState<Ingredient | null>(null);
+  const { lang } = useLanguage();
 
   const filtered =
     filter === "all" ? ingredients : ingredients.filter((i) => i.filterGroup === filter);
@@ -34,7 +44,7 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
                 : "border-ink/15 text-ink/70 hover:border-emerald/50"
             }`}
           >
-            {f.label}
+            {lang === "ta" ? f.labelTa : f.label}
           </button>
         ))}
       </div>
@@ -53,7 +63,7 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
                   className="h-10 w-10 text-emerald transition-transform group-hover:scale-110"
                 />
                 <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
-                  {ing.category}
+                  {lang === "ta" ? CATEGORY_TA[ing.category] : ing.category}
                 </span>
               </div>
               <div className="mt-3 font-medium leading-snug">{ing.name}</div>
@@ -88,7 +98,7 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
             <p className="text-ink/50">{selected.tamilName}</p>
             <div className="mt-2 flex flex-wrap gap-2">
               <span className="rounded-full bg-gold/10 px-2 py-0.5 text-xs font-semibold uppercase tracking-wide text-gold">
-                {selected.category}
+                {lang === "ta" ? CATEGORY_TA[selected.category] : selected.category}
               </span>
               <span className="rounded-full bg-emerald/10 px-2 py-0.5 text-xs font-semibold text-emerald">
                 {selected.nutritionHighlight}

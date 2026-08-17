@@ -4,6 +4,7 @@ import { HeroOrderButton } from "@/components/HeroOrderButton";
 import { IngredientCard } from "@/components/IngredientCard";
 import { LogoMark } from "@/components/LogoMark";
 import { OrderBox } from "@/components/OrderBox";
+import { T } from "@/components/T";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
 import { PRODUCT } from "@/lib/product";
@@ -74,21 +75,24 @@ export default async function HomePage() {
             <p className="font-serif text-6xl italic text-gold">Purna</p>
             <p className="mt-4 italic tracking-wide text-cream/80">பூர்ணா — Complete. Whole. Full.</p>
             <p className="mt-6 max-w-md text-cream/90">
-              A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked,
-              germinated, sun-dried, roasted, and stone-ground — exactly as nature intended. No
-              machines. No preservatives. Just wholesome.
+              <T
+                en="A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked, germinated, sun-dried, roasted, and stone-ground — exactly as nature intended. No machines. No preservatives. Just wholesome."
+                ta="20 பழம்பெரும் பொருட்களால் தயாரிக்கப்படும் முளைகட்டிய பல தானிய ஹெல்த் மிக்ஸ். ஊற வைத்து, முளைகட்டி, வெயிலில் உலர்த்தி, வறுத்து, கல்லில் அரைக்கப்படுகிறது — இயற்கை நினைத்தது போலவே. இயந்திரங்கள் இல்லை. பதப்படுத்தும் பொருட்கள் இல்லை. வெறும் Wholesome."
+              />
             </p>
 
             <dl className="mt-8 grid grid-cols-4 gap-4 text-center">
               {[
-                ["20", "Ingredients"],
-                ["8", "Sprouted"],
-                ["0%", "Preservatives"],
-                ["100%", "Natural"],
-              ].map(([value, label]) => (
+                ["20", "Ingredients", "பொருட்கள்"],
+                ["8", "Sprouted", "முளைகட்டியவை"],
+                ["0%", "Preservatives", "பதப்படுத்திகள்"],
+                ["100%", "Natural", "இயற்கையானது"],
+              ].map(([value, label, labelTa]) => (
                 <div key={label}>
                   <dt className="font-serif text-2xl font-bold text-gold">{value}</dt>
-                  <dd className="text-xs text-cream/70">{label}</dd>
+                  <dd className="text-xs text-cream/70">
+                    <T en={label} ta={labelTa} />
+                  </dd>
                 </div>
               ))}
             </dl>
@@ -99,7 +103,7 @@ export default async function HomePage() {
                 href="/ingredients"
                 className="rounded-full border border-cream/40 px-6 py-3 font-semibold"
               >
-                Explore Ingredients
+                <T en="Explore Ingredients" ta="பொருட்களை பார்க்க" />
               </Link>
             </div>
           </div>
@@ -111,10 +115,17 @@ export default async function HomePage() {
       </section>
 
       <section id="ingredients" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
-        <p className="text-sm font-semibold uppercase tracking-widest text-gold">The Formula</p>
-        <h2 className="mt-2 font-serif text-3xl font-bold">20 Ingredients. Zero Fillers.</h2>
+        <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+          <T en="The Formula" ta="சூத்திரம்" />
+        </p>
+        <h2 className="mt-2 font-serif text-3xl font-bold">
+          <T en="20 Ingredients. Zero Fillers." ta="20 பொருட்கள். வேறு எதுவும் இல்லை." />
+        </h2>
         <p className="mt-3 max-w-2xl text-ink/70">
-          Every gram earns its place. Sprouted, roasted or stone-ground for a reason.
+          <T
+            en="Every gram earns its place. Sprouted, roasted or stone-ground for a reason."
+            ta="ஒவ்வொரு கிராமும் காரணத்துடன் சேர்க்கப்பட்டுள்ளது. முளைகட்டி, வறுத்து அல்லது கல்லில் அரைக்கப்பட்டவை."
+          />
         </p>
         <div className="mt-8 grid grid-cols-2 gap-4 sm:grid-cols-3 md:grid-cols-4">
           {INGREDIENTS.slice(0, 6).map((ing) => (
@@ -125,26 +136,39 @@ export default async function HomePage() {
           href="/ingredients"
           className="mt-6 inline-block font-semibold text-emerald hover:underline"
         >
-          Explore All 20 Ingredients →
+          <T en="Explore All 20 Ingredients →" ta="அனைத்து 20 பொருட்களையும் பார்க்க →" />
         </Link>
         <p className="mt-6 text-sm text-ink/60">
-          <strong className="font-semibold text-ink/80">Allergen note:</strong> Contains almond
-          and sesame. Made in a facility that also handles other tree nuts.
+          <strong className="font-semibold text-ink/80">
+            <T en="Allergen note:" ta="ஒவ்வாமை குறிப்பு:" />
+          </strong>{" "}
+          <T
+            en="Contains almond and sesame. Made in a facility that also handles other tree nuts."
+            ta="பாதாம் மற்றும் எள் உள்ளது. மற்ற மரக்கொட்டைகளையும் கையாளும் தொழிற்சாலையில் தயாரிக்கப்படுகிறது."
+          />
         </p>
       </section>
 
       <ReviewsSection />
 
       <section id="nutrition" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
-        <p className="text-sm font-semibold uppercase tracking-widest text-gold">Nutrition</p>
-        <h2 className="mt-2 font-serif text-3xl font-bold">Powered by Sprouting Science</h2>
+        <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+          <T en="Nutrition" ta="ஊட்டச்சத்து" />
+        </p>
+        <h2 className="mt-2 font-serif text-3xl font-bold">
+          <T en="Powered by Sprouting Science" ta="முளைகட்டும் அறிவியலால் இயக்கப்படுகிறது" />
+        </h2>
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {NUTRITION_STATS.map((stat) => (
             <div key={stat.label} className="rounded-2xl border border-ink/10 p-5 text-center">
               <div className="text-2xl">{stat.emoji}</div>
               <div className="mt-1 font-serif text-2xl font-bold text-emerald">{stat.value}</div>
-              <div className="text-sm font-medium">{stat.label}</div>
-              <div className="text-xs text-ink/50">{stat.sub}</div>
+              <div className="text-sm font-medium">
+                <T en={stat.label} ta={stat.labelTa} />
+              </div>
+              <div className="text-xs text-ink/50">
+                <T en={stat.sub} ta={stat.subTa} />
+              </div>
             </div>
           ))}
         </div>
@@ -152,30 +176,34 @@ export default async function HomePage() {
 
       <section className="bg-emerald-deep py-16 text-cream">
         <div className="mx-auto max-w-6xl px-6 text-center">
-          <h2 className="font-serif text-2xl font-bold">Start Your Wholesome Journey</h2>
+          <h2 className="font-serif text-2xl font-bold">
+            <T en="Start Your Wholesome Journey" ta="உங்கள் Wholesome பயணத்தைத் தொடங்குங்கள்" />
+          </h2>
           <p className="mx-auto mt-3 max-w-2xl text-cream/80">
-            Handcrafted in small batches in Vellore, Tamil Nadu. Sealed with an oxygen absorber
-            for a 6-month shelf life
-            {settings.fssai_license ? `, FSSAI licensed (${settings.fssai_license})` : ""}. Lab
-            reports available on request —{" "}
+            <T
+              en={`Handcrafted in small batches in Vellore, Tamil Nadu. Sealed with an oxygen absorber for a 6-month shelf life${settings.fssai_license ? `, FSSAI licensed (${settings.fssai_license})` : ""}. Lab reports available on request —`}
+              ta={`வேலூர், தமிழ்நாட்டில் சிறு தொகுதிகளாக கையால் தயாரிக்கப்படுகிறது. ஆக்ஸிஜன் அப்சார்பருடன் சீல் செய்யப்பட்டு 6 மாத சேமிப்பு காலம்${settings.fssai_license ? ` (FSSAI உரிமம்: ${settings.fssai_license})` : ""}. கோரிக்கையின் பேரில் லேப் அறிக்கைகள் கிடைக்கும் —`}
+            />{" "}
             {settings.support_email ? (
               <a href={`mailto:${settings.support_email.toLowerCase()}`} className="underline">
                 {settings.support_email.toLowerCase()}
               </a>
             ) : (
-              "contact us"
+              <T en="contact us" ta="எங்களை தொடர்பு கொள்ளவும்" />
             )}
             .
           </p>
           <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-cream/90">
             {[
-              "500g — approx. 25 servings",
-              "Oxygen absorber sealed",
-              "Free shipping across India",
-              "Batch-tracked",
-              "6-month shelf life",
-            ].map((item) => (
-              <li key={item}>✓ {item}</li>
+              ["500g — approx. 25 servings", "500g — சுமார் 25 பரிமாறல்கள்"],
+              ["Oxygen absorber sealed", "ஆக்ஸிஜன் அப்சார்பர் சீல்"],
+              ["Free shipping across India", "இந்தியா முழுவதும் இலவச டெலிவரி"],
+              ["Batch-tracked", "பேட்ச் கண்காணிக்கப்படுகிறது"],
+              ["6-month shelf life", "6 மாத சேமிப்பு காலம்"],
+            ].map(([item, itemTa]) => (
+              <li key={item}>
+                ✓ <T en={item} ta={itemTa} />
+              </li>
             ))}
           </ul>
         </div>

@@ -1,9 +1,14 @@
 "use client";
 
 import { useCart } from "@/components/CartProvider";
+import { useLanguage } from "@/components/LanguageProvider";
 import { PRODUCT } from "@/lib/product";
 
-const TRUST_BADGES = ["🔒 Secure checkout", "🚚 Free shipping, India-wide", "📱 WhatsApp order updates"];
+const TRUST_BADGES = [
+  { en: "🔒 Secure checkout", ta: "🔒 பாதுகாப்பான செக்அவுட்" },
+  { en: "🚚 Free shipping, India-wide", ta: "🚚 இந்தியா முழுவதும் இலவச டெலிவரி" },
+  { en: "📱 WhatsApp order updates", ta: "📱 WhatsApp ஆர்டர் புதுப்பிப்புகள்" },
+];
 
 export function OrderBox() {
   const {
@@ -16,6 +21,7 @@ export function OrderBox() {
     remainingUnits,
     launchCheckout,
   } = useCart();
+  const { lang } = useLanguage();
   const effectiveQuantity = quantity > 0 ? quantity : 1;
   const hasOffer = config.offerPrice < config.basePrice;
   const soldOutForToday = remainingUnits <= 0;
@@ -39,17 +45,21 @@ export function OrderBox() {
 
       {soldOutForToday ? (
         <div className="mt-4 rounded-xl bg-red-50 p-4 text-center text-sm font-medium text-red-700">
-          Day order limit reached. Please come back after 12:00 AM.
+          {lang === "ta"
+            ? "இன்றைய ஆர்டர் வரம்பு எட்டப்பட்டது. இரவு 12:00 மணிக்கு பிறகு வரவும்."
+            : "Day order limit reached. Please come back after 12:00 AM."}
         </div>
       ) : (
         <>
           {remainingUnits < 5 && (
             <p className="mt-4 text-xs font-medium text-red-600">
-              Only {remainingUnits} left in today&apos;s batch
+              {lang === "ta"
+                ? `இன்றைய பேட்சில் ${remainingUnits} மட்டுமே மீதம்`
+                : `Only ${remainingUnits} left in today's batch`}
             </p>
           )}
           <div className="mt-4 flex items-center justify-between">
-            <span className="text-sm font-medium">Quantity</span>
+            <span className="text-sm font-medium">{lang === "ta" ? "அளவு" : "Quantity"}</span>
             <div className="flex items-center gap-3 rounded-full border border-ink/20 px-2 py-1">
               <button
                 type="button"
@@ -85,26 +95,32 @@ export function OrderBox() {
             />
             <span>
               <span className="font-semibold text-emerald">
-                Subscribe monthly &amp; save {config.subscribeDiscountPercent}%
+                {lang === "ta"
+                  ? `மாதம்தோறும் சந்தா செய்து ${config.subscribeDiscountPercent}% சேமிக்கவும்`
+                  : `Subscribe monthly & save ${config.subscribeDiscountPercent}%`}
               </span>
               <br />
               <span className="text-ink/60">
-                We&apos;ll message you every month to reconfirm — cancel anytime.
+                {lang === "ta"
+                  ? "ஒவ்வொரு மாதமும் உறுதிப்படுத்த செய்தி அனுப்புவோம் — எப்போது வேண்டுமானாலும் ரத்து செய்யலாம்."
+                  : "We'll message you every month to reconfirm — cancel anytime."}
               </span>
             </span>
           </label>
 
           <dl className="mt-4 space-y-1 text-sm">
             <div className="flex justify-between">
-              <dt className="text-ink/60">Subtotal</dt>
+              <dt className="text-ink/60">{lang === "ta" ? "கூட்டுத்தொகை" : "Subtotal"}</dt>
               <dd>₹{effectiveQuantity * unitPrice}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-ink/60">Shipping</dt>
-              <dd>{config.shippingFee > 0 ? `₹${config.shippingFee}` : "FREE"}</dd>
+              <dt className="text-ink/60">{lang === "ta" ? "டெலிவரி" : "Shipping"}</dt>
+              <dd>
+                {config.shippingFee > 0 ? `₹${config.shippingFee}` : lang === "ta" ? "இலவசம்" : "FREE"}
+              </dd>
             </div>
             <div className="flex justify-between border-t border-ink/10 pt-1 font-semibold">
-              <dt>Total</dt>
+              <dt>{lang === "ta" ? "மொத்தம்" : "Total"}</dt>
               <dd>₹{effectiveQuantity * unitPrice + config.shippingFee}</dd>
             </div>
           </dl>
@@ -114,19 +130,23 @@ export function OrderBox() {
             onClick={launchCheckout}
             className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep"
           >
-            ⚡ Order Now — Checkout
+            {lang === "ta" ? "⚡ இப்போது ஆர்டர் செய் — செக்அவுட்" : "⚡ Order Now — Checkout"}
           </button>
           <p className="mt-2 text-center text-xs text-ink/50">
             {config.paymentGatewayEnabled
-              ? "Secure checkout via Cashfree — UPI, card & netbanking accepted."
-              : "Payment on confirmation — pay by UPI/card, we'll follow up. Online payment coming soon."}
+              ? lang === "ta"
+                ? "Cashfree வழியாக பாதுகாப்பான செக்அவுட் — UPI, கார்டு & நெட்பேங்கிங்."
+                : "Secure checkout via Cashfree — UPI, card & netbanking accepted."
+              : lang === "ta"
+                ? "உறுதிப்படுத்தலின் பேரில் கட்டணம் — UPI/கார்டு மூலம் செலுத்தலாம், நாங்கள் தொடர்பு கொள்வோம். ஆன்லைன் கட்டணம் விரைவில்."
+                : "Payment on confirmation — pay by UPI/card, we'll follow up. Online payment coming soon."}
           </p>
         </>
       )}
 
       <ul className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-ink/10 pt-3 text-xs text-ink/50">
         {TRUST_BADGES.map((badge) => (
-          <li key={badge}>{badge}</li>
+          <li key={badge.en}>{lang === "ta" ? badge.ta : badge.en}</li>
         ))}
       </ul>
     </div>

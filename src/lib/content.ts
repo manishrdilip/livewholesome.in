@@ -240,8 +240,36 @@ export const INGREDIENTS: Ingredient[] = [
 ];
 
 export const NUTRITION_STATS = [
-  { emoji: "📈", value: "300%", label: "More Bioavailable Iron", sub: "Via sprouting" },
-  { emoji: "🦴", value: "344mg", label: "Calcium per 100g", sub: "From Ragi" },
-  { emoji: "⚡", value: "60%", label: "Phytic Acid Reduced", sub: "Via sprouting" },
-  { emoji: "🛡️", value: "6mo", label: "Shelf Life", sub: "Oxygen absorber sealed" },
+  {
+    emoji: "📈",
+    value: "300%",
+    label: "More Bioavailable Iron",
+    labelTa: "அதிக உறிஞ்சக்கூடிய இரும்பு",
+    sub: "Via sprouting",
+    subTa: "முளைகட்டுவதன் மூலம்",
+  },
+  {
+    emoji: "🦴",
+    value: "344mg",
+    label: "Calcium per 100g",
+    labelTa: "100g-க்கு கால்சியம்",
+    sub: "From Ragi",
+    subTa: "கேழ்வரகிலிருந்து",
+  },
+  {
+    emoji: "⚡",
+    value: "60%",
+    label: "Phytic Acid Reduced",
+    labelTa: "ஃபைடிக் அமிலம் குறைப்பு",
+    sub: "Via sprouting",
+    subTa: "முளைகட்டுவதன் மூலம்",
+  },
+  {
+    emoji: "🛡️",
+    value: "6mo",
+    label: "Shelf Life",
+    labelTa: "சேமிப்பு காலம்",
+    sub: "Oxygen absorber sealed",
+    subTa: "ஆக்ஸிஜன் அப்சார்பர் சீல்",
+  },
 ];

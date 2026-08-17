@@ -3,11 +3,11 @@
 import { useState, type FormEvent, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
+import { useLanguage, type Lang } from "@/components/LanguageProvider";
 import { FAQ_ITEMS } from "@/lib/faq";
 
 type Message = { from: "bot" | "user"; text: string };
 type Screen = "menu" | "faq" | "track" | "trackResult" | "subscription" | "human";
-type Lang = "en" | "ta";
 
 const STATUS_LABELS_TA: Record<string, string> = {
   CONFIRMED: "ஆர்டர் பெறப்பட்டது",
@@ -100,8 +100,8 @@ const TEXT = {
 export function SupportWidget() {
   const pathname = usePathname();
   const { config } = useCart();
+  const { lang, setLang } = useLanguage();
   const [open, setOpen] = useState(false);
-  const [lang, setLang] = useState<Lang>("en");
   const [screen, setScreen] = useState<Screen>("menu");
   const [messages, setMessages] = useState<Message[]>([]);
   const [orderNumber, setOrderNumber] = useState("");

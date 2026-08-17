@@ -4,21 +4,23 @@ import { useEffect, useState } from "react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
+import { useLanguage } from "@/components/LanguageProvider";
 import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { LogoMark } from "@/components/LogoMark";
 
 const NAV_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/ingredients", label: "Ingredients" },
-  { href: "/about", label: "Our Story" },
-  { href: "/#reviews", label: "Reviews" },
-  { href: "/#nutrition", label: "Nutrition" },
-  { href: "/#order", label: "Order" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/", label: "Home", labelTa: "முகப்பு" },
+  { href: "/ingredients", label: "Ingredients", labelTa: "பொருட்கள்" },
+  { href: "/about", label: "Our Story", labelTa: "எங்கள் கதை" },
+  { href: "/#reviews", label: "Reviews", labelTa: "விமர்சனங்கள்" },
+  { href: "/#nutrition", label: "Nutrition", labelTa: "ஊட்டச்சத்து" },
+  { href: "/#order", label: "Order", labelTa: "ஆர்டர்" },
+  { href: "/faq", label: "FAQ", labelTa: "கேள்விகள்" },
 ];
 
 export function Header() {
   const { quantity, unitPrice, remainingUnits, launchCheckout } = useCart();
+  const { lang, setLang } = useLanguage();
   const router = useRouter();
   const pathname = usePathname();
   const [loggedIn, setLoggedIn] = useState(false);
@@ -58,19 +60,35 @@ export function Header() {
         <nav className="hidden gap-6 text-sm md:flex">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="hover:text-gold">
-              {link.label}
+              {lang === "ta" ? link.labelTa : link.label}
             </a>
           ))}
           <Link href={loggedIn ? "/account" : "/login"} className="hover:text-gold">
-            {loggedIn ? "My Account" : "Log in"}
+            {loggedIn ? (lang === "ta" ? "என் கணக்கு" : "My Account") : lang === "ta" ? "உள்நுழைய" : "Log in"}
           </Link>
           {loggedIn && (
             <button type="button" onClick={handleSignOut} className="hover:text-gold">
-              Sign out
+              {lang === "ta" ? "வெளியேறு" : "Sign out"}
             </button>
           )}
         </nav>
         <div className="flex items-center gap-2">
+          <div className="hidden overflow-hidden rounded-full border border-cream/30 text-[10px] font-semibold sm:flex">
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`px-2 py-1 ${lang === "en" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("ta")}
+              className={`px-2 py-1 ${lang === "ta" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+            >
+              தமிழ்
+            </button>
+          </div>
           <button
             type="button"
             onClick={launchCheckout}
@@ -78,10 +96,12 @@ export function Header() {
             className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-emerald-deep disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
           >
             {quantity > 0
-              ? `Cart (${quantity}) — ₹${quantity * unitPrice}`
+              ? `${lang === "ta" ? "கார்ட்" : "Cart"} (${quantity}) — ₹${quantity * unitPrice}`
               : remainingUnits <= 0
-                ? "Sold out for today"
-                : `Buy Now — ₹${unitPrice}`}
+                ? lang === "ta"
+                  ? "இன்று தீர்ந்துவிட்டது"
+                  : "Sold out for today"
+                : `${lang === "ta" ? "இப்போது வாங்க" : "Buy Now"} — ₹${unitPrice}`}
           </button>
           <button
             type="button"
@@ -107,6 +127,22 @@ export function Header() {
 
       {menuOpen && (
         <nav className="flex flex-col gap-1 border-t border-cream/10 bg-emerald-deep px-6 py-3 text-sm md:hidden">
+          <div className="mb-1 flex w-fit overflow-hidden rounded-full border border-cream/30 text-xs font-semibold sm:hidden">
+            <button
+              type="button"
+              onClick={() => setLang("en")}
+              className={`px-3 py-1.5 ${lang === "en" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+            >
+              EN
+            </button>
+            <button
+              type="button"
+              onClick={() => setLang("ta")}
+              className={`px-3 py-1.5 ${lang === "ta" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+            >
+              தமிழ்
+            </button>
+          </div>
           {NAV_LINKS.map((link) => (
             <a
               key={link.href}
@@ -114,7 +150,7 @@ export function Header() {
               onClick={() => setMenuOpen(false)}
               className="rounded-lg px-2 py-2.5 hover:bg-cream/10 hover:text-gold"
             >
-              {link.label}
+              {lang === "ta" ? link.labelTa : link.label}
             </a>
           ))}
           <Link
@@ -122,7 +158,7 @@ export function Header() {
             onClick={() => setMenuOpen(false)}
             className="rounded-lg px-2 py-2.5 hover:bg-cream/10 hover:text-gold"
           >
-            {loggedIn ? "My Account" : "Log in"}
+            {loggedIn ? (lang === "ta" ? "என் கணக்கு" : "My Account") : lang === "ta" ? "உள்நுழைய" : "Log in"}
           </Link>
           {loggedIn && (
             <button
@@ -130,7 +166,7 @@ export function Header() {
               onClick={handleSignOut}
               className="rounded-lg px-2 py-2.5 text-left hover:bg-cream/10 hover:text-gold"
             >
-              Sign out
+              {lang === "ta" ? "வெளியேறு" : "Sign out"}
             </button>
           )}
         </nav>

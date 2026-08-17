@@ -1,14 +1,15 @@
 import Link from "next/link";
 import { LogoMark } from "@/components/LogoMark";
+import { T } from "@/components/T";
 import type { Settings } from "@/lib/settings";
 
 const QUICK_LINKS = [
-  { href: "/", label: "Home" },
-  { href: "/ingredients", label: "Ingredients" },
-  { href: "/about", label: "Our Story" },
-  { href: "#reviews", label: "Reviews" },
-  { href: "#order", label: "Order" },
-  { href: "/faq", label: "FAQ" },
+  { href: "/", label: "Home", labelTa: "முகப்பு" },
+  { href: "/ingredients", label: "Ingredients", labelTa: "பொருட்கள்" },
+  { href: "/about", label: "Our Story", labelTa: "எங்கள் கதை" },
+  { href: "#reviews", label: "Reviews", labelTa: "விமர்சனங்கள்" },
+  { href: "#order", label: "Order", labelTa: "ஆர்டர்" },
+  { href: "/faq", label: "FAQ", labelTa: "கேள்விகள்" },
 ];
 
 function SocialIcon({ href, label, children }: { href: string; label: string; children: React.ReactNode }) {
@@ -40,18 +41,20 @@ export function Footer({ settings }: { settings: Settings }) {
               </span>
             </Link>
             <p className="mt-3 max-w-xs text-sm text-cream/60">
-              Sprouted multigrain health mix — the drink of kings. Crafted in Vellore, Tamil
-              Nadu.
+              <T
+                en="Sprouted multigrain health mix — the drink of kings. Crafted in Vellore, Tamil Nadu."
+                ta="முளைகட்டிய பல தானிய ஹெல்த் மிக்ஸ் — அரசர்களின் பானம். வேலூர், தமிழ்நாட்டில் தயாரிக்கப்படுகிறது."
+              />
             </p>
 
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
-              Quick Links
+              <T en="Quick Links" ta="விரைவு இணைப்புகள்" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
               {QUICK_LINKS.map((link) => (
                 <li key={link.href}>
                   <a href={link.href} className="hover:text-gold">
-                    {link.label}
+                    <T en={link.label} ta={link.labelTa} />
                   </a>
                 </li>
               ))}
@@ -60,7 +63,7 @@ export function Footer({ settings }: { settings: Settings }) {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-gold">
-              Contact Us
+              <T en="Contact Us" ta="தொடர்பு கொள்ள" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
               {settings.support_email && (
@@ -83,27 +86,27 @@ export function Footer({ settings }: { settings: Settings }) {
             </ul>
 
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
-              Legal
+              <T en="Legal" ta="சட்டப்பூர்வ" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
               <li>
                 <Link href="/terms" className="hover:text-gold">
-                  Terms and Conditions
+                  <T en="Terms and Conditions" ta="விதிமுறைகள் மற்றும் நிபந்தனைகள்" />
                 </Link>
               </li>
               <li>
                 <Link href="/privacy" className="hover:text-gold">
-                  Privacy Policy
+                  <T en="Privacy Policy" ta="தனியுரிமைக் கொள்கை" />
                 </Link>
               </li>
               <li>
                 <Link href="/shipping-delivery" className="hover:text-gold">
-                  Shipping and Delivery
+                  <T en="Shipping and Delivery" ta="ஷிப்பிங் மற்றும் டெலிவரி" />
                 </Link>
               </li>
               <li>
                 <Link href="/cancellation-refund" className="hover:text-gold">
-                  Cancellation and Refund
+                  <T en="Cancellation and Refund" ta="ரத்து மற்றும் பணத்திரும்பல்" />
                 </Link>
               </li>
             </ul>
@@ -111,22 +114,25 @@ export function Footer({ settings }: { settings: Settings }) {
 
           <div>
             <h3 className="text-sm font-semibold uppercase tracking-wide text-gold">
-              Begin your monthly plan
+              <T en="Begin your monthly plan" ta="மாத திட்டத்தை தொடங்குங்கள்" />
             </h3>
             <p className="mt-2 text-sm text-cream/60">
-              Subscribe &amp; save {settings.subscribe_discount_percent}% on every batch.
+              <T
+                en={`Subscribe & save ${settings.subscribe_discount_percent}% on every batch.`}
+                ta={`சந்தா செய்து ஒவ்வொரு பேட்சிலும் ${settings.subscribe_discount_percent}% சேமிக்கவும்.`}
+              />
             </p>
             <a
               href="#order"
               className="mt-3 block w-full rounded-full bg-gold py-2.5 text-center text-sm font-semibold text-emerald-deep"
             >
-              Subscribe
+              <T en="Subscribe" ta="சந்தா செய்ய" />
             </a>
 
             {hasSocial && (
               <>
                 <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
-                  Join Us
+                  <T en="Join Us" ta="எங்களுடன் இணையுங்கள்" />
                 </h3>
                 <div className="mt-3 flex gap-3">
                   {settings.instagram_url && (
@@ -162,25 +168,28 @@ export function Footer({ settings }: { settings: Settings }) {
 
         <div className="mt-12 border-t border-cream/10 pt-6 text-center text-xs text-cream/50">
           <p>
-            © {new Date().getFullYear()} LiveWholesome.in — All Rights Reserved &middot;{" "}
+            © {new Date().getFullYear()} LiveWholesome.in — <T en="All Rights Reserved" ta="அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை" />{" "}
+            &middot;{" "}
             <Link href="/terms" className="hover:text-gold">
-              Terms and Conditions
+              <T en="Terms and Conditions" ta="விதிமுறைகள் மற்றும் நிபந்தனைகள்" />
             </Link>{" "}
             &middot;{" "}
             <Link href="/privacy" className="hover:text-gold">
-              Privacy Policy
+              <T en="Privacy Policy" ta="தனியுரிமைக் கொள்கை" />
             </Link>{" "}
             &middot;{" "}
             <Link href="/shipping-delivery" className="hover:text-gold">
-              Shipping and Delivery
+              <T en="Shipping and Delivery" ta="ஷிப்பிங் மற்றும் டெலிவரி" />
             </Link>{" "}
             &middot;{" "}
             <Link href="/cancellation-refund" className="hover:text-gold">
-              Cancellation and Refund
+              <T en="Cancellation and Refund" ta="ரத்து மற்றும் பணத்திரும்பல்" />
             </Link>
           </p>
           {settings.fssai_license && (
-            <p className="mt-3">FSSAI Licensed &middot; {settings.fssai_license}</p>
+            <p className="mt-3">
+              <T en="FSSAI Licensed" ta="FSSAI உரிமம் பெற்றது" /> &middot; {settings.fssai_license}
+            </p>
           )}
         </div>
       </div>

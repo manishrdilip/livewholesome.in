@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
 import { Header } from "@/components/Header";
+import { LanguageProvider } from "@/components/LanguageProvider";
 import { SupportWidget } from "@/components/support/SupportWidget";
 import { getStorefrontConfig } from "@/lib/storefront-config";
 import "./globals.css";
@@ -46,11 +47,13 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
-        <CartProvider initialConfig={config}>
-          <Header />
-          {children}
-          <SupportWidget />
-        </CartProvider>
+        <LanguageProvider>
+          <CartProvider initialConfig={config}>
+            <Header />
+            {children}
+            <SupportWidget />
+          </CartProvider>
+        </LanguageProvider>
       </body>
     </html>
   );

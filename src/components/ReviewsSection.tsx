@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { T } from "@/components/T";
 import { createServiceClient } from "@/lib/supabase/server";
 
 type ReviewMedia = { type: "image" | "video"; storage_path: string };
@@ -15,14 +16,18 @@ export async function ReviewsSection() {
   return (
     <section id="reviews" className="scroll-mt-20 bg-emerald-deep/5 py-20">
       <div className="mx-auto max-w-6xl px-6">
-        <p className="text-sm font-semibold uppercase tracking-widest text-gold">Reviews</p>
-        <h2 className="mt-2 font-serif text-3xl font-bold">What customers are saying</h2>
+        <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+          <T en="Reviews" ta="விமர்சனங்கள்" />
+        </p>
+        <h2 className="mt-2 font-serif text-3xl font-bold">
+          <T en="What customers are saying" ta="வாடிக்கையாளர்கள் என்ன சொல்கிறார்கள்" />
+        </h2>
         <p className="mt-3 max-w-2xl text-ink/70">
-          Real feedback from people who&apos;ve tried Wholesome Purna.{" "}
+          <T en="Real feedback from people who've tried Wholesome Purna." ta="Wholesome Purna-வை முயற்சித்தவர்களின் உண்மையான கருத்துகள்." />{" "}
           <Link href="/account" className="text-emerald hover:underline">
-            Write a review
+            <T en="Write a review" ta="ஒரு விமர்சனம் எழுத" />
           </Link>{" "}
-          after logging in.
+          <T en="after logging in." ta="உள்நுழைந்த பிறகு." />
         </p>
 
         {reviews?.length ? (
@@ -61,7 +66,9 @@ export async function ReviewsSection() {
             })}
           </div>
         ) : (
-          <p className="mt-8 text-sm text-ink/50">No reviews yet — be the first to write one.</p>
+          <p className="mt-8 text-sm text-ink/50">
+            <T en="No reviews yet — be the first to write one." ta="இன்னும் விமர்சனங்கள் இல்லை — முதலில் நீங்கள் எழுதுங்கள்." />
+          </p>
         )}
       </div>
     </section>
