@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { HeroOrderButton } from "@/components/HeroOrderButton";
 import { IngredientCard } from "@/components/IngredientCard";
+import { LogoMark } from "@/components/LogoMark";
 import { OrderBox } from "@/components/OrderBox";
 import { ReviewsSection } from "@/components/ReviewsSection";
 import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
@@ -62,12 +63,16 @@ export default async function HomePage() {
       </a>
 
       <main id="main-content">
-      <section className="bg-gradient-to-b from-emerald-deep to-emerald text-cream">
-        <div className="mx-auto grid max-w-6xl gap-10 px-6 py-20 md:grid-cols-2 md:items-center">
-          <div>
-            <h1 className="font-serif text-5xl font-bold">Wholesome</h1>
-            <p className="font-serif text-5xl italic text-gold">Purna</p>
-            <p className="mt-3 italic text-cream/80">பூர்ணா — Complete. Whole. Full.</p>
+      <section className="relative overflow-hidden bg-gradient-to-b from-emerald-deep to-emerald text-cream">
+        <LogoMark
+          size={900}
+          className="pointer-events-none absolute -right-64 -top-64 opacity-[0.06] md:-right-40 md:-top-40"
+        />
+        <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2 md:items-center">
+          <div className="hero-enter">
+            <h1 className="font-serif text-6xl font-bold tracking-tight">Wholesome</h1>
+            <p className="font-serif text-6xl italic text-gold">Purna</p>
+            <p className="mt-4 italic tracking-wide text-cream/80">பூர்ணா — Complete. Whole. Full.</p>
             <p className="mt-6 max-w-md text-cream/90">
               A sprouted multigrain health mix crafted from 20 ancient ingredients. Soaked,
               germinated, sun-dried, roasted, and stone-ground — exactly as nature intended. No

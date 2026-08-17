@@ -63,3 +63,12 @@ body {
     animation: none;
   }
 }
+
+.hero-enter {
+  animation: fade-in-up 0.7s ease-out both;
+}
+@media (prefers-reduced-motion: reduce) {
+  .hero-enter {
+    animation: none;
+  }
+}
