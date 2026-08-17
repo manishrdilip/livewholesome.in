@@ -27,6 +27,7 @@ export default async function HomePage() {
         name: PRODUCT.name,
         description: PRODUCT.description,
         sku: PRODUCT.sku,
+        image: "https://livewholesome.in/opengraph-image",
         brand: { "@type": "Brand", name: settings.business_name },
         offers: {
           "@type": "Offer",
@@ -34,6 +35,21 @@ export default async function HomePage() {
           priceCurrency: "INR",
           price: pricing.offerPrice,
           availability: "https://schema.org/InStock",
+          hasMerchantReturnPolicy: {
+            "@type": "MerchantReturnPolicy",
+            returnPolicyCategory: "https://schema.org/MerchantReturnNotPermitted",
+            applicableCountry: "IN",
+          },
+          shippingDetails: {
+            "@type": "OfferShippingDetails",
+            shippingRate: { "@type": "MonetaryAmount", value: 0, currency: "INR" },
+            shippingDestination: { "@type": "DefinedRegion", addressCountry: "IN" },
+            deliveryTime: {
+              "@type": "ShippingDeliveryTime",
+              handlingTime: { "@type": "QuantitativeValue", minValue: 0, maxValue: 1, unitCode: "DAY" },
+              transitTime: { "@type": "QuantitativeValue", minValue: 3, maxValue: 7, unitCode: "DAY" },
+            },
+          },
         },
       },
       {
@@ -71,8 +87,10 @@ export default async function HomePage() {
         />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2 md:items-center">
           <div className="hero-enter">
-            <h1 className="font-serif text-6xl font-bold tracking-tight">Wholesome</h1>
-            <p className="font-serif text-6xl italic text-gold">Purna</p>
+            <h1 className="font-serif text-6xl font-bold tracking-tight">
+              Wholesome
+              <span className="block font-normal italic text-gold">Purna</span>
+            </h1>
             <p className="mt-4 italic tracking-wide text-cream/80">பூர்ணா — Complete. Whole. Full.</p>
             <p className="mt-6 max-w-md text-cream/90">
               <T
