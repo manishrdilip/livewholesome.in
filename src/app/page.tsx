@@ -56,9 +56,15 @@ export default async function HomePage() {
         "@type": "Organization",
         name: settings.business_name,
         url: "https://livewholesome.in",
-        logo: "https://livewholesome.in/icon.svg",
+        logo: "https://livewholesome.in/icon1.png",
         ...(settings.support_email && { email: settings.support_email.toLowerCase() }),
         ...(settings.support_phone && { telephone: settings.support_phone }),
+        ...([settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(Boolean)
+          .length > 0 && {
+          sameAs: [settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(
+            Boolean
+          ),
+        }),
       },
     ],
   };
