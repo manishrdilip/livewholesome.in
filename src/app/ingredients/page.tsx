@@ -8,6 +8,7 @@ export const metadata: Metadata = {
   title: "20 Ingredients. Zero Fillers. | Wholesome Purna",
   description:
     "Every ingredient in Wholesome Purna, explained — what it is, why it's sprouted, roasted or stone-ground, and what it actually does in the body.",
+  alternates: { canonical: "/ingredients" },
 };
 
 export default function IngredientsPage() {

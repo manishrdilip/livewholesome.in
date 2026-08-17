@@ -8,14 +8,29 @@ import { getSettings } from "@/lib/settings";
 export const metadata: Metadata = {
   title: "FAQ + Support | Wholesome Purna",
   description: "Answers to common questions about Wholesome Purna — preparation, ingredients, shipping, and subscriptions.",
+  alternates: { canonical: "/faq" },
 };
 
 export default async function FaqPage() {
   const settings = await getSettings();
   const waNumber = settings.support_phone?.replace(/\D/g, "");
 
+  const faqJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "FAQPage",
+    mainEntity: FAQ_ITEMS.map((item) => ({
+      "@type": "Question",
+      name: item.question,
+      acceptedAnswer: { "@type": "Answer", text: item.answer },
+    })),
+  };
+
   return (
     <div className="mx-auto max-w-2xl px-6 py-16">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(faqJsonLd).replace(/</g, "\\u003c") }}
+      />
       <Link href="/" className="text-sm text-emerald hover:underline">
         ← <T en="Back to shop" ta="கடைக்கு திரும்ப" />
       </Link>

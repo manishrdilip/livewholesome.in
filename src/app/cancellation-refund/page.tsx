@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
 import { PolicyPage, PolicySection } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Cancellation and Refund Policy | LiveWholesome.in" };
+export const metadata: Metadata = {
+  title: "Cancellation and Refund Policy | LiveWholesome.in",
+  alternates: { canonical: "/cancellation-refund" },
+};
 
 export default async function CancellationRefundPage() {
   const settings = await getSettings();

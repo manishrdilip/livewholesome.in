@@ -1,6 +1,7 @@
 import type { MetadataRoute } from "next";
 
-const STATIC_PAGES = ["", "terms", "privacy", "shipping-delivery", "cancellation-refund"];
+const STATIC_PAGES = ["", "about", "ingredients", "faq", "terms", "privacy", "shipping-delivery", "cancellation-refund"];
+const CONTENT_PAGES = new Set(["about", "ingredients", "faq"]);
 
 export default function sitemap(): MetadataRoute.Sitemap {
   const now = new Date();
@@ -8,6 +9,6 @@ export default function sitemap(): MetadataRoute.Sitemap {
     url: `https://livewholesome.in/${path}`,
     lastModified: now,
     changeFrequency: path === "" ? "daily" : "monthly",
-    priority: path === "" ? 1 : 0.5,
+    priority: path === "" ? 1 : CONTENT_PAGES.has(path) ? 0.7 : 0.5,
   }));
 }

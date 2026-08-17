@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
 import { PolicyPage, PolicySection } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Terms and Conditions | LiveWholesome.in" };
+export const metadata: Metadata = {
+  title: "Terms and Conditions | LiveWholesome.in",
+  alternates: { canonical: "/terms" },
+};
 
 export default async function TermsPage() {
   const settings = await getSettings();

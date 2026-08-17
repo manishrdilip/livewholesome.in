@@ -6,6 +6,7 @@ export const metadata: Metadata = {
   title: "Our Story | Wholesome Purna",
   description:
     "How a mother's kitchen in Vellore, started in 2004 to feed her own children, grew into Wholesome Purna.",
+  alternates: { canonical: "/about" },
 };
 
 export default function AboutPage() {

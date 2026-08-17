@@ -2,7 +2,10 @@ import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
 import { PolicyPage, PolicySection } from "@/components/PolicyPage";
 
-export const metadata: Metadata = { title: "Shipping and Delivery | LiveWholesome.in" };
+export const metadata: Metadata = {
+  title: "Shipping and Delivery | LiveWholesome.in",
+  alternates: { canonical: "/shipping-delivery" },
+};
 
 export default async function ShippingDeliveryPage() {
   const settings = await getSettings();
