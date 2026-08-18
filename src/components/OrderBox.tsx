@@ -31,7 +31,7 @@ export function OrderBox() {
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
       <div>
         <div className="font-serif text-lg font-semibold">{PRODUCT.name}</div>
-        <div className="text-sm text-ink/60">500g | Formula v1.1</div>
+        <div className="text-sm text-ink/60">500g</div>
       </div>
 
       <div className="mt-4 flex items-baseline gap-2">
