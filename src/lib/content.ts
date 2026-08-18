@@ -26,7 +26,7 @@ export type Ingredient = {
   name: string;
   tamilName: string;
   /** Badge shown on the card — the actual production step for this ingredient. */
-  category: "Sprouted" | "Roasted" | "Raw" | "Powder" | "Spice";
+  category: "Sprouted" | "Roasted" | "Raw" | "Traditional" | "Spice";
   /** Bucket used by the ingredients-page filter. */
   filterGroup: IngredientFilterGroup;
   nutritionHighlight: string;
@@ -198,9 +198,9 @@ export const INGREDIENTS: Ingredient[] = [
   },
   {
     icon: "amla",
-    name: "Amla Powder",
+    name: "Amla",
     tamilName: "நெல்லிக்காய்",
-    category: "Powder",
+    category: "Traditional",
     filterGroup: "spices",
     nutritionHighlight: "Vitamin C",
     detail:
@@ -238,13 +238,43 @@ export const INGREDIENTS: Ingredient[] = [
   },
 ];
 
-export const NUTRITION_STATS = [
+export type NutritionStatVisual =
+  | {
+      type: "compare";
+      beforeFrac: number;
+      afterFrac: number;
+      beforeLabel: string;
+      beforeLabelTa: string;
+      afterLabel: string;
+      afterLabelTa: string;
+    }
+  | { type: "count"; count: number };
+
+export type NutritionStat = {
+  value: string;
+  label: string;
+  labelTa: string;
+  sub: string;
+  subTa: string;
+  visual: NutritionStatVisual;
+};
+
+export const NUTRITION_STATS: NutritionStat[] = [
   {
     value: "300%",
     label: "More Bioavailable Iron",
     labelTa: "அதிக உறிஞ்சக்கூடிய இரும்பு",
     sub: "Via sprouting",
     subTa: "முளைகட்டுவதன் மூலம்",
+    visual: {
+      type: "compare",
+      beforeFrac: 0.25,
+      afterFrac: 1,
+      beforeLabel: "Raw",
+      beforeLabelTa: "பச்சை",
+      afterLabel: "Sprouted",
+      afterLabelTa: "முளைகட்டியது",
+    },
   },
   {
     value: "344mg",
@@ -252,6 +282,15 @@ export const NUTRITION_STATS = [
     labelTa: "100g-க்கு கால்சியம்",
     sub: "From Ragi",
     subTa: "கேழ்வரகிலிருந்து",
+    visual: {
+      type: "compare",
+      beforeFrac: 0.35,
+      afterFrac: 1,
+      beforeLabel: "Milk",
+      beforeLabelTa: "பால்",
+      afterLabel: "Ragi",
+      afterLabelTa: "கேழ்வரகு",
+    },
   },
   {
     value: "60%",
@@ -259,6 +298,15 @@ export const NUTRITION_STATS = [
     labelTa: "ஃபைடிக் அமிலம் குறைப்பு",
     sub: "Via sprouting",
     subTa: "முளைகட்டுவதன் மூலம்",
+    visual: {
+      type: "compare",
+      beforeFrac: 1,
+      afterFrac: 0.4,
+      beforeLabel: "Before",
+      beforeLabelTa: "முன்",
+      afterLabel: "After",
+      afterLabelTa: "பின்",
+    },
   },
   {
     value: "6mo",
@@ -266,5 +314,36 @@ export const NUTRITION_STATS = [
     labelTa: "சேமிப்பு காலம்",
     sub: "Oxygen absorber sealed",
     subTa: "ஆக்ஸிஜன் அப்சார்பர் சீல்",
+    visual: { type: "count", count: 6 },
   },
+];
+
+export type DailyNeedNutrient = {
+  key: string;
+  label: string;
+  labelTa: string;
+  amount: string;
+  percent: number;
+};
+
+// Estimated from standard published food-composition data (USDA / Indian
+// Food Composition Tables): 30g of the mix (equal-parts blend of all 20
+// ingredients, 1.5g each — the real recipe ratio isn't in this codebase)
+// prepared as a cup with 200ml whole milk, the way it's actually drunk at
+// breakfast. Shown against ONE MEAL's fair share of the day (daily RDA ÷ 3
+// meals), not the full day's total — daily values are standard adult
+// Indian RDA references (ICMR-NIN): protein 60g, fiber 30g, iron 19mg,
+// calcium 1000mg, zinc 12mg, magnesium 340mg, vitamin C 65mg, folate
+// 200µg, vitamin E 10mg. Replace with the real lab report once available —
+// these are estimates, not certified values.
+export const DAILY_NEED_ESTIMATE: DailyNeedNutrient[] = [
+  { key: "protein", label: "Protein", labelTa: "புரதம்", amount: "11.4g", percent: 57 },
+  { key: "fiber", label: "Fiber", labelTa: "நார்ச்சத்து", amount: "3.8g", percent: 38 },
+  { key: "iron", label: "Iron", labelTa: "இரும்பு", amount: "2.4mg", percent: 38 },
+  { key: "calcium", label: "Calcium", labelTa: "கால்சியம்", amount: "316mg", percent: 95 },
+  { key: "zinc", label: "Zinc", labelTa: "துத்தநாகம்", amount: "1.9mg", percent: 48 },
+  { key: "magnesium", label: "Magnesium", labelTa: "மெக்னீசியம்", amount: "89mg", percent: 79 },
+  { key: "vitaminC", label: "Vitamin C", labelTa: "வைட்டமின் சி", amount: "10mg", percent: 46 },
+  { key: "folate", label: "Folate", labelTa: "ஃபோலேட்", amount: "39µg", percent: 59 },
+  { key: "vitaminE", label: "Vitamin E", labelTa: "வைட்டமின் ஈ", amount: "0.7mg", percent: 21 },
 ];

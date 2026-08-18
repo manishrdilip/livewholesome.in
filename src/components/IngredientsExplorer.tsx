@@ -16,7 +16,7 @@ const CATEGORY_TA: Record<Ingredient["category"], string> = {
   Sprouted: "முளைகட்டியது",
   Roasted: "வறுக்கப்பட்டது",
   Raw: "பச்சை",
-  Powder: "பொடி",
+  Traditional: "பாரம்பரியம்",
   Spice: "மசாலா",
 };
 

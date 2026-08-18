@@ -1,12 +1,14 @@
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
 import { HeroOrderButton } from "@/components/HeroOrderButton";
+import { DailyNeedCard } from "@/components/DailyNeedCard";
 import { IngredientCard } from "@/components/IngredientCard";
 import { LogoMark } from "@/components/LogoMark";
+import { NutritionStatVisual } from "@/components/NutritionStatVisual";
 import { OrderBox } from "@/components/OrderBox";
 import { T } from "@/components/T";
 import { ReviewsSection } from "@/components/ReviewsSection";
-import { INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
+import { DAILY_NEED_ESTIMATE, INGREDIENTS, NUTRITION_STATS } from "@/lib/content";
 import { PRODUCT } from "@/lib/product";
 import { getEffectivePricing } from "@/lib/pricing";
 import { getSettings } from "@/lib/settings";
@@ -185,7 +187,8 @@ export default async function HomePage() {
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {NUTRITION_STATS.map((stat) => (
             <div key={stat.label} className="rounded-2xl border border-ink/10 p-5 text-center">
-              <div className="font-serif text-2xl font-bold text-emerald">{stat.value}</div>
+              <NutritionStatVisual visual={stat.visual} />
+              <div className="mt-3 font-serif text-2xl font-bold text-emerald">{stat.value}</div>
               <div className="text-sm font-medium">
                 <T en={stat.label} ta={stat.labelTa} />
               </div>
@@ -194,6 +197,32 @@ export default async function HomePage() {
               </div>
             </div>
           ))}
+        </div>
+
+        <div className="mt-14">
+          <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+            <T en="One Cup at Breakfast (30g + Milk)" ta="காலையில் ஒரு கப் (30g + பால்)" />
+          </p>
+          <h3 className="mt-1 font-serif text-xl font-bold">
+            <T en="What One Cup Gives You" ta="ஒரு கப் தரும் ஊட்டச்சத்து" />
+          </h3>
+          <p className="mt-1 text-sm text-ink/60">
+            <T
+              en="Wholesome Purna mixed with milk — % of this meal's fair share of your day, not the whole day's food."
+              ta="பாலுடன் கலந்த Wholesome Purna — இந்த வேளைக்கான தினசரி தேவையின் நியாயமான பங்கு, நாள் முழுவதும் உண்ணும் உணவு அல்ல."
+            />
+          </p>
+          <div className="mt-6 grid grid-cols-3 gap-4 sm:grid-cols-5">
+            {DAILY_NEED_ESTIMATE.map((n) => (
+              <DailyNeedCard key={n.key} nutrient={n} />
+            ))}
+          </div>
+          <p className="mt-4 text-xs text-ink/50">
+            <T
+              en="Estimated from standard food-composition data for 30g of the mix (equal parts of all 20 ingredients) prepared with 200ml milk, shown against one meal's share of daily need (daily value ÷ 3 meals) — lab-verified values coming soon."
+              ta="30g கலவை (அனைத்து 20 பொருட்களின் சம பங்கு) 200ml பாலுடன் தயாரிக்கப்பட்டதற்கான நிலையான உணவு தரவில் இருந்து மதிப்பிடப்பட்டது, ஒரு வேளைக்கான தினசரி தேவையின் பங்கிற்கு எதிராக (தினசரி மதிப்பு ÷ 3 வேளைகள்) — ஆய்வக சரிபார்க்கப்பட்ட மதிப்புகள் விரைவில்."
+            />
+          </p>
         </div>
       </section>
 
@@ -218,7 +247,7 @@ export default async function HomePage() {
           </p>
           <ul className="mx-auto mt-6 flex max-w-2xl flex-wrap justify-center gap-x-6 gap-y-2 text-sm text-cream/90">
             {[
-              ["500g — approx. 25 servings", "500g — சுமார் 25 பரிமாறல்கள்"],
+              ["500g — approx. 16 servings", "500g — சுமார் 16 பரிமாறல்கள்"],
               ["Oxygen absorber sealed", "ஆக்ஸிஜன் அப்சார்பர் சீல்"],
               ["Free shipping across India", "இந்தியா முழுவதும் இலவச டெலிவரி"],
               ["Batch-tracked", "பேட்ச் கண்காணிக்கப்படுகிறது"],
