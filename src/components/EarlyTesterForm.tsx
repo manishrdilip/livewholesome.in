@@ -18,6 +18,8 @@ export function EarlyTesterForm() {
   const [fullness, setFullness] = useState(75);
   const [name, setName] = useState("");
   const [contact, setContact] = useState("");
+  const [gender, setGender] = useState<"male" | "female" | "other" | "">("");
+  const [daysTried, setDaysTried] = useState("");
   const [body, setBody] = useState("");
   const [companyWebsite, setCompanyWebsite] = useState("");
   const [files, setFiles] = useState<FileList | null>(null);
@@ -36,6 +38,8 @@ export function EarlyTesterForm() {
     formData.set("name", name);
     formData.set("contact", contact);
     formData.set("fullness", String(fullness));
+    if (gender) formData.set("gender", gender);
+    if (daysTried) formData.set("daysTried", daysTried);
     formData.set("body", body);
     formData.set("companyWebsite", companyWebsite);
     if (files) {
@@ -138,6 +142,38 @@ export function EarlyTesterForm() {
         <p className="mt-1 text-xs text-ink/40">
           <T en="Just for us — never shown on the site." ta="எங்களுக்கு மட்டும் — தளத்தில் காட்டப்படாது." />
         </p>
+      </div>
+
+      <div className="grid grid-cols-2 gap-4">
+        <div>
+          <label className="mb-1 block text-sm font-medium">
+            <T en="Gender (optional)" ta="பாலினம் (விருப்பம்)" />
+          </label>
+          <select
+            value={gender}
+            onChange={(e) => setGender(e.target.value as "male" | "female" | "other" | "")}
+            className="input"
+          >
+            <option value="">{lang === "ta" ? "தேர்வு செய்யவும்" : "Prefer not to say"}</option>
+            <option value="female">{lang === "ta" ? "பெண்" : "Female"}</option>
+            <option value="male">{lang === "ta" ? "ஆண்" : "Male"}</option>
+            <option value="other">{lang === "ta" ? "மற்றவை" : "Other"}</option>
+          </select>
+        </div>
+        <div>
+          <label className="mb-1 block text-sm font-medium">
+            <T en="Days tried" ta="எத்தனை நாட்கள்" />
+          </label>
+          <input
+            type="number"
+            min={0}
+            max={365}
+            value={daysTried}
+            onChange={(e) => setDaysTried(e.target.value)}
+            className="input"
+            placeholder={lang === "ta" ? "எ.கா. 5" : "e.g. 5"}
+          />
+        </div>
       </div>
 
       <div>

@@ -41,11 +41,15 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid request" }, { status: 400 });
   }
 
+  const gender = formData.get("gender");
+  const daysTried = formData.get("daysTried");
   const parsed = earlyTesterReviewSchema.safeParse({
     name: formData.get("name"),
     contact: formData.get("contact"),
     fullness: formData.get("fullness"),
     body: formData.get("body"),
+    gender: gender ? gender : undefined,
+    daysTried: daysTried ? daysTried : undefined,
     companyWebsite: formData.get("companyWebsite") ?? "",
   });
   if (!parsed.success) {
@@ -70,6 +74,8 @@ export async function POST(request: NextRequest) {
       rating,
       fullness_percent: parsed.data.fullness,
       body: parsed.data.body,
+      gender: parsed.data.gender ?? null,
+      days_tried: parsed.data.daysTried ?? null,
       status: "APPROVED",
     })
     .select("id")

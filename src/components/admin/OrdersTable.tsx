@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import { useRouter } from "next/navigation";
 
 const STATUS_STYLES: Record<string, string> = {
   CONFIRMED: "bg-blue-100 text-blue-700",
@@ -24,8 +25,10 @@ export type OrderRow = {
 };
 
 export function OrdersTable({ orders }: { orders: OrderRow[] }) {
+  const router = useRouter();
   const [selected, setSelected] = useState<Set<string>>(new Set());
   const [downloading, setDownloading] = useState(false);
+  const [deleting, setDeleting] = useState(false);
 
   const allSelected = orders.length > 0 && selected.size === orders.length;
 
@@ -71,6 +74,33 @@ export function OrdersTable({ orders }: { orders: OrderRow[] }) {
     window.open(`/admin/orders/labels-bulk?ids=${encodeURIComponent(ids)}`, "_blank");
   }
 
+  async function deleteSelected() {
+    const count = selected.size;
+    if (
+      !confirm(
+        `Permanently delete ${count} order${count === 1 ? "" : "s"}? This removes the order, its items, invoices, and tracking history. This can't be undone.`
+      )
+    ) {
+      return;
+    }
+    setDeleting(true);
+    try {
+      const res = await fetch("/api/admin/bulk-delete-orders", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumbers: Array.from(selected) }),
+      });
+      if (!res.ok) {
+        alert("Couldn't delete those orders. Please try again.");
+        return;
+      }
+      setSelected(new Set());
+      router.refresh();
+    } finally {
+      setDeleting(false);
+    }
+  }
+
   return (
     <div>
       {selected.size > 0 && (
@@ -90,6 +120,14 @@ export function OrdersTable({ orders }: { orders: OrderRow[] }) {
             className="rounded-full border border-emerald px-4 py-1.5 text-emerald"
           >
             Print labels
+          </button>
+          <button
+            type="button"
+            onClick={deleteSelected}
+            disabled={deleting}
+            className="rounded-full border border-red-600 px-4 py-1.5 text-red-600 disabled:opacity-50"
+          >
+            {deleting ? "Deleting…" : "Delete"}
           </button>
           <button
             type="button"

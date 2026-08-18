@@ -9,7 +9,7 @@ export async function ReviewsSection() {
   const supabase = createServiceClient();
   const { data: reviews } = await supabase
     .from("reviews")
-    .select("id, reviewer_name, rating, body, media, source, fullness_percent, created_at")
+    .select("id, reviewer_name, rating, body, media, source, fullness_percent, days_tried, created_at")
     .eq("status", "APPROVED")
     .order("created_at", { ascending: false })
     .limit(9);
@@ -47,6 +47,14 @@ export async function ReviewsSection() {
                           <T en="Early Tester" ta="ஆரம்ப சோதனையாளர்" />
                         </span>
                       </div>
+                      {review.days_tried != null && (
+                        <span className="ml-auto text-xs text-ink/50">
+                          <T
+                            en={`Tried for ${review.days_tried} day${review.days_tried === 1 ? "" : "s"}`}
+                            ta={`${review.days_tried} நாட்கள் முயற்சி`}
+                          />
+                        </span>
+                      )}
                     </div>
                   ) : (
                     <div className="text-gold">

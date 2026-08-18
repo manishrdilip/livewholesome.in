@@ -82,6 +82,8 @@ export const earlyTesterReviewSchema = z.object({
   contact: z.string().trim().min(5, "Enter a phone number or email").max(200),
   fullness: z.coerce.number().int().min(0).max(100),
   body: z.string().trim().min(1, "Please share a few words").max(2000),
+  gender: z.enum(["male", "female", "other"]).optional(),
+  daysTried: z.coerce.number().int().min(0).max(365).optional(),
   // Honeypot — real users never fill this in.
   companyWebsite: z.string().max(0).optional().or(z.literal("")),
 });

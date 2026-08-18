@@ -70,6 +70,14 @@ export default async function AdminReviewsPage() {
                   {review.reviewer_contact && (
                     <span className="ml-2 text-xs text-ink/40">{review.reviewer_contact}</span>
                   )}
+                  {review.gender && (
+                    <span className="ml-2 text-xs text-ink/40">{review.gender}</span>
+                  )}
+                  {review.days_tried != null && (
+                    <span className="ml-2 text-xs text-ink/40">
+                      tried {review.days_tried}d
+                    </span>
+                  )}
                 </div>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-semibold ${
