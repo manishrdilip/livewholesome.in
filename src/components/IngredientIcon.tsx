@@ -64,7 +64,8 @@ export function IngredientIcon({ icon, className }: { icon: IngredientIconKey; c
   return (
     <svg
       viewBox="0 0 24 24"
-      fill="none"
+      fill="currentColor"
+      fillOpacity="0.08"
       stroke="currentColor"
       strokeWidth="1.4"
       strokeLinecap="round"

@@ -58,10 +58,12 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
               className="group flex h-full w-full flex-col items-start rounded-2xl border border-ink/10 bg-white p-4 text-left transition-shadow hover:shadow-md"
             >
               <div className="flex w-full items-start justify-between gap-2">
-                <IngredientIcon
-                  icon={ing.icon}
-                  className="h-10 w-10 text-emerald transition-transform group-hover:scale-110"
-                />
+                <span className="flex h-14 w-14 items-center justify-center rounded-xl bg-emerald/5 transition-colors group-hover:bg-emerald/10">
+                  <IngredientIcon
+                    icon={ing.icon}
+                    className="h-9 w-9 text-emerald transition-transform group-hover:scale-110"
+                  />
+                </span>
                 <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
                   {lang === "ta" ? CATEGORY_TA[ing.category] : ing.category}
                 </span>
@@ -84,7 +86,9 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
             onClick={(e) => e.stopPropagation()}
           >
             <div className="flex items-start justify-between gap-3">
-              <IngredientIcon icon={selected.icon} className="h-12 w-12 text-emerald" />
+              <span className="flex h-16 w-16 items-center justify-center rounded-xl bg-emerald/5">
+                <IngredientIcon icon={selected.icon} className="h-11 w-11 text-emerald" />
+              </span>
               <button
                 type="button"
                 onClick={() => setSelected(null)}

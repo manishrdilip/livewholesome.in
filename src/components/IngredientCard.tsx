@@ -11,7 +11,9 @@ export function IngredientCard({ ingredient }: { ingredient: Ingredient }) {
 
   return (
     <div className="rounded-2xl border border-ink/10 bg-white p-4">
-      <IngredientIcon icon={ingredient.icon} className="h-7 w-7 text-emerald" />
+      <span className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald/5">
+        <IngredientIcon icon={ingredient.icon} className="h-7 w-7 text-emerald" />
+      </span>
       <div className="mt-2 font-medium leading-snug">{ingredient.name}</div>
       <div className="text-xs text-ink/50">{ingredient.tamilName}</div>
       {open && <p className="mt-3 text-sm text-ink/70">{ingredient.detail}</p>}
