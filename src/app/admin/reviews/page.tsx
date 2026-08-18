@@ -57,10 +57,19 @@ export default async function AdminReviewsPage() {
               <div className="flex items-center justify-between">
                 <div>
                   <span className="font-medium">{review.reviewer_name}</span>{" "}
-                  <span className="text-gold">
-                    {"★".repeat(review.rating)}
-                    {"☆".repeat(5 - review.rating)}
-                  </span>
+                  {review.source === "early_tester" ? (
+                    <span className="rounded-full bg-gold/10 px-2 py-0.5 text-xs font-semibold text-gold">
+                      Early Tester · {review.fullness_percent}% full
+                    </span>
+                  ) : (
+                    <span className="text-gold">
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </span>
+                  )}
+                  {review.reviewer_contact && (
+                    <span className="ml-2 text-xs text-ink/40">{review.reviewer_contact}</span>
+                  )}
                 </div>
                 <span
                   className={`rounded-full px-2 py-0.5 text-xs font-semibold ${

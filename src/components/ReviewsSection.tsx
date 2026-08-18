@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { T } from "@/components/T";
+import { HumanFillFigure } from "@/components/HumanFillFigure";
 import { createServiceClient } from "@/lib/supabase/server";
 
 type ReviewMedia = { type: "image" | "video"; storage_path: string };
@@ -8,7 +9,7 @@ export async function ReviewsSection() {
   const supabase = createServiceClient();
   const { data: reviews } = await supabase
     .from("reviews")
-    .select("id, reviewer_name, rating, body, media, created_at")
+    .select("id, reviewer_name, rating, body, media, source, fullness_percent, created_at")
     .eq("status", "APPROVED")
     .order("created_at", { ascending: false })
     .limit(9);
@@ -34,12 +35,25 @@ export async function ReviewsSection() {
           <div className="mt-8 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
             {reviews.map((review) => {
               const media = (review.media ?? []) as ReviewMedia[];
+              const isEarlyTester = review.source === "early_tester" && review.fullness_percent != null;
               return (
                 <div key={review.id} className="rounded-2xl bg-white p-5">
-                  <div className="text-gold">
-                    {"★".repeat(review.rating)}
-                    {"☆".repeat(5 - review.rating)}
-                  </div>
+                  {isEarlyTester ? (
+                    <div className="flex items-center gap-3">
+                      <HumanFillFigure percent={review.fullness_percent!} className="h-9 w-9 shrink-0 text-emerald" />
+                      <div>
+                        <div className="text-sm font-semibold text-emerald">{review.fullness_percent}%</div>
+                        <span className="rounded-full bg-gold/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-gold">
+                          <T en="Early Tester" ta="ஆரம்ப சோதனையாளர்" />
+                        </span>
+                      </div>
+                    </div>
+                  ) : (
+                    <div className="text-gold">
+                      {"★".repeat(review.rating)}
+                      {"☆".repeat(5 - review.rating)}
+                    </div>
+                  )}
                   {review.body && <p className="mt-2 text-sm text-ink/70">{review.body}</p>}
                   {!!media.length && (
                     <div className="mt-3 flex flex-wrap gap-2">

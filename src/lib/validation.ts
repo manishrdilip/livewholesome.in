@@ -76,3 +76,13 @@ export const reviewSchema = z.object({
   body: z.string().trim().max(2000).optional().or(z.literal("")),
 });
 export type ReviewInput = z.infer<typeof reviewSchema>;
+
+export const earlyTesterReviewSchema = z.object({
+  name: z.string().trim().min(1, "Name is required").max(200),
+  contact: z.string().trim().min(5, "Enter a phone number or email").max(200),
+  fullness: z.coerce.number().int().min(0).max(100),
+  body: z.string().trim().min(1, "Please share a few words").max(2000),
+  // Honeypot — real users never fill this in.
+  companyWebsite: z.string().max(0).optional().or(z.literal("")),
+});
+export type EarlyTesterReviewInput = z.infer<typeof earlyTesterReviewSchema>;
