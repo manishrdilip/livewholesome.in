@@ -50,14 +50,14 @@ export function Header() {
 
   return (
     <header className="sticky top-0 z-40 bg-emerald-deep text-cream">
-      <div className="mx-auto flex max-w-7xl items-center justify-between gap-2 px-4 py-4 sm:gap-3 sm:px-8 sm:py-5">
-        <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-4 md:min-w-fit">
+      <div className="flex items-center justify-between gap-2 py-4 pr-4 pl-1 sm:gap-3 sm:py-5 sm:pr-8 sm:pl-2">
+        <Link href="/" className="flex min-w-0 items-center gap-2 sm:gap-4 md:shrink-0">
           <LogoMark size={60} className="h-8 w-8 shrink-0 sm:h-[60px] sm:w-[60px]" />
           <span className="truncate whitespace-nowrap font-serif text-xl font-black tracking-tight sm:text-3xl md:overflow-visible md:text-clip md:text-4xl">
             <span className="italic text-gold">W</span>holesome
           </span>
         </Link>
-        <nav className="hidden min-w-0 flex-1 items-center gap-6 overflow-x-auto text-sm whitespace-nowrap md:flex">
+        <nav className="no-scrollbar hidden min-w-0 flex-1 items-center gap-6 overflow-x-auto text-sm whitespace-nowrap md:ml-[144px] md:flex">
           {NAV_LINKS.map((link) => (
             <a key={link.href} href={link.href} className="shrink-0 hover:text-gold">
               {lang === "ta" ? link.labelTa : link.label}

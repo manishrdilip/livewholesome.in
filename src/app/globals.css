@@ -29,6 +29,17 @@ body {
   font-family: var(--font-sans), Arial, Helvetica, sans-serif;
 }
 
+/* Header nav scrolls horizontally as a safety net when it doesn't fit
+   (e.g. longer Tamil labels) rather than pushing sibling controls off
+   screen — but the scrollbar chrome itself looks out of place there. */
+.no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
 .input {
   width: 100%;
   border: 1px solid rgb(22 33 28 / 0.2);
