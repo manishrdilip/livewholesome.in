@@ -57,23 +57,23 @@ export function Header() {
             <span className="italic text-gold">W</span>holesome
           </span>
         </Link>
-        <nav className="hidden gap-6 text-sm md:flex">
+        <nav className="hidden min-w-0 flex-1 items-center gap-6 overflow-x-auto text-sm whitespace-nowrap md:flex">
           {NAV_LINKS.map((link) => (
-            <a key={link.href} href={link.href} className="hover:text-gold">
+            <a key={link.href} href={link.href} className="shrink-0 hover:text-gold">
               {lang === "ta" ? link.labelTa : link.label}
             </a>
           ))}
-          <Link href={loggedIn ? "/account" : "/login"} className="hover:text-gold">
+          <Link href={loggedIn ? "/account" : "/login"} className="shrink-0 hover:text-gold">
             {loggedIn ? (lang === "ta" ? "என் கணக்கு" : "My Account") : lang === "ta" ? "உள்நுழைய" : "Log in"}
           </Link>
           {loggedIn && (
-            <button type="button" onClick={handleSignOut} className="hover:text-gold">
+            <button type="button" onClick={handleSignOut} className="shrink-0 hover:text-gold">
               {lang === "ta" ? "வெளியேறு" : "Sign out"}
             </button>
           )}
         </nav>
-        <div className="flex items-center gap-2">
-          <div className="hidden overflow-hidden rounded-full border border-cream/30 text-[10px] font-semibold sm:flex">
+        <div className="flex shrink-0 items-center gap-2">
+          <div className="hidden shrink-0 overflow-hidden rounded-full border border-cream/30 text-[10px] font-semibold sm:flex">
             <button
               type="button"
               onClick={() => setLang("en")}
@@ -127,7 +127,7 @@ export function Header() {
 
       {menuOpen && (
         <nav className="flex flex-col gap-1 border-t border-cream/10 bg-emerald-deep px-6 py-3 text-sm md:hidden">
-          <div className="mb-1 flex w-fit overflow-hidden rounded-full border border-cream/30 text-xs font-semibold sm:hidden">
+          <div className="mb-1 flex w-fit shrink-0 overflow-hidden rounded-full border border-cream/30 text-xs font-semibold sm:hidden">
             <button
               type="button"
               onClick={() => setLang("en")}
