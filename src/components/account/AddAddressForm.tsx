@@ -2,6 +2,7 @@
 
 import { useState, type FormEvent } from "react";
 import { useRouter } from "next/navigation";
+import { PinIcon } from "@/components/Icon";
 import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
 import { getCurrentPosition, reverseGeocode } from "@/lib/geolocation";
@@ -108,9 +109,15 @@ export function AddAddressForm() {
         type="button"
         onClick={handleUseLocation}
         disabled={locationStatus === "locating"}
-        className="rounded-full border border-emerald px-4 py-1.5 text-sm text-emerald hover:bg-emerald hover:text-cream disabled:opacity-50"
+        className="inline-flex items-center gap-1.5 rounded-full border border-emerald px-4 py-1.5 text-sm text-emerald hover:bg-emerald hover:text-cream disabled:opacity-50"
       >
-        {locationStatus === "locating" ? "Locating…" : "📍 Use my current location"}
+        {locationStatus === "locating" ? (
+          "Locating…"
+        ) : (
+          <>
+            <PinIcon className="h-4 w-4" /> Use my current location
+          </>
+        )}
       </button>
       {locationStatus === "found" && (
         <p className="text-xs text-emerald">Location captured — check the fields below.</p>

@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getCashfreeOrderStatus } from "@/lib/payment/cashfree";
 import { PaymentRetryButton } from "@/components/PaymentRetryButton";
+import { CheckCircleIcon, ClockIcon } from "@/components/Icon";
 
 export default async function OrderConfirmedPage({
   searchParams,
@@ -69,8 +70,12 @@ export default async function OrderConfirmedPage({
           design (manual "we'll follow up" flow) — that's not a warning
           state, so only let payment_status change this copy once a
           gateway actually makes UNPAID mean something is outstanding. */}
-      <div className="text-5xl">
-        {!gatewayConfigured || paymentStatus === "PAID" ? "✅" : "📝"}
+      <div className="flex justify-center text-emerald">
+        {!gatewayConfigured || paymentStatus === "PAID" ? (
+          <CheckCircleIcon className="h-12 w-12" />
+        ) : (
+          <ClockIcon className="h-12 w-12" />
+        )}
       </div>
       <h1 className="mt-4 font-serif text-3xl font-bold">
         {!gatewayConfigured || paymentStatus === "PAID" ? "Order confirmed" : "Order received"}

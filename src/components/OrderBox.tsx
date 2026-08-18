@@ -2,12 +2,13 @@
 
 import { useCart } from "@/components/CartProvider";
 import { useLanguage } from "@/components/LanguageProvider";
+import { LockIcon, TruckIcon, MessageIcon } from "@/components/Icon";
 import { PRODUCT } from "@/lib/product";
 
 const TRUST_BADGES = [
-  { en: "🔒 Secure checkout", ta: "🔒 பாதுகாப்பான செக்அவுட்" },
-  { en: "🚚 Free shipping, India-wide", ta: "🚚 இந்தியா முழுவதும் இலவச டெலிவரி" },
-  { en: "📱 WhatsApp order updates", ta: "📱 WhatsApp ஆர்டர் புதுப்பிப்புகள்" },
+  { Icon: LockIcon, en: "Secure checkout", ta: "பாதுகாப்பான செக்அவுட்" },
+  { Icon: TruckIcon, en: "Free shipping, India-wide", ta: "இந்தியா முழுவதும் இலவச டெலிவரி" },
+  { Icon: MessageIcon, en: "WhatsApp order updates", ta: "WhatsApp ஆர்டர் புதுப்பிப்புகள்" },
 ];
 
 export function OrderBox() {
@@ -28,12 +29,9 @@ export function OrderBox() {
 
   return (
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
-      <div className="flex items-center gap-3">
-        <div className="text-3xl">🥣</div>
-        <div>
-          <div className="font-serif text-lg font-semibold">{PRODUCT.name}</div>
-          <div className="text-sm text-ink/60">500g | Formula v1.1</div>
-        </div>
+      <div>
+        <div className="font-serif text-lg font-semibold">{PRODUCT.name}</div>
+        <div className="text-sm text-ink/60">500g | Formula v1.1</div>
       </div>
 
       <div className="mt-4 flex items-baseline gap-2">
@@ -130,7 +128,7 @@ export function OrderBox() {
             onClick={launchCheckout}
             className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep"
           >
-            {lang === "ta" ? "⚡ இப்போது ஆர்டர் செய் — செக்அவுட்" : "⚡ Order Now — Checkout"}
+            {lang === "ta" ? "இப்போது ஆர்டர் செய் — செக்அவுட்" : "Order Now — Checkout"}
           </button>
           <p className="mt-2 text-center text-xs text-ink/50">
             {config.paymentGatewayEnabled
@@ -144,9 +142,12 @@ export function OrderBox() {
         </>
       )}
 
-      <ul className="mt-4 flex flex-wrap justify-center gap-x-3 gap-y-1 border-t border-ink/10 pt-3 text-xs text-ink/50">
+      <ul className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1.5 border-t border-ink/10 pt-3 text-xs text-ink/50">
         {TRUST_BADGES.map((badge) => (
-          <li key={badge.en}>{lang === "ta" ? badge.ta : badge.en}</li>
+          <li key={badge.en} className="flex items-center gap-1.5">
+            <badge.Icon className="h-3.5 w-3.5" />
+            {lang === "ta" ? badge.ta : badge.en}
+          </li>
         ))}
       </ul>
     </div>

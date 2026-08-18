@@ -185,8 +185,7 @@ export default async function HomePage() {
         <div className="mt-8 grid grid-cols-2 gap-4 md:grid-cols-4">
           {NUTRITION_STATS.map((stat) => (
             <div key={stat.label} className="rounded-2xl border border-ink/10 p-5 text-center">
-              <div className="text-2xl">{stat.emoji}</div>
-              <div className="mt-1 font-serif text-2xl font-bold text-emerald">{stat.value}</div>
+              <div className="font-serif text-2xl font-bold text-emerald">{stat.value}</div>
               <div className="text-sm font-medium">
                 <T en={stat.label} ta={stat.labelTa} />
               </div>

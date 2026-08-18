@@ -4,6 +4,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
+import { PinIcon } from "@/components/Icon";
 import { PRODUCT } from "@/lib/product";
 import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
@@ -316,9 +317,15 @@ export default function CheckoutPage() {
               type="button"
               onClick={handleUseLocation}
               disabled={locationStatus === "locating"}
-              className="rounded-full border border-emerald px-4 py-1.5 text-sm text-emerald hover:bg-emerald hover:text-cream disabled:opacity-50"
+              className="inline-flex items-center gap-1.5 rounded-full border border-emerald px-4 py-1.5 text-sm text-emerald hover:bg-emerald hover:text-cream disabled:opacity-50"
             >
-              {locationStatus === "locating" ? "Locating…" : "📍 Use my current location"}
+              {locationStatus === "locating" ? (
+                "Locating…"
+              ) : (
+                <>
+                  <PinIcon className="h-4 w-4" /> Use my current location
+                </>
+              )}
             </button>
             {locationStatus === "found" && (
               <p className="mt-1 text-xs text-emerald">

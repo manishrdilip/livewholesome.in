@@ -4,6 +4,7 @@ import { useState, type FormEvent, type ReactNode } from "react";
 import { usePathname } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { useLanguage, type Lang } from "@/components/LanguageProvider";
+import { LeafIcon } from "@/components/Icon";
 import { FAQ_ITEMS } from "@/lib/faq";
 
 type Message = { from: "bot" | "user"; text: string };
@@ -170,8 +171,8 @@ export function SupportWidget() {
         <div className="mb-3 flex max-h-[75vh] w-full flex-col overflow-hidden rounded-2xl border border-ink/10 bg-white shadow-xl sm:w-96">
           <div className="flex shrink-0 items-center justify-between bg-emerald-deep px-4 py-3 text-cream">
             <div className="flex items-center gap-2">
-              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/20 text-lg">
-                🌱
+              <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gold/20">
+                <LeafIcon className="h-4 w-4 text-gold" />
               </span>
               <span className="font-serif font-semibold">{t.title}</span>
             </div>
@@ -331,9 +332,9 @@ export function SupportWidget() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? t.closeLabel : t.openLabel}
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold text-2xl text-emerald-deep shadow-lg"
+        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold text-xl text-emerald-deep shadow-lg"
       >
-        {open ? "✕" : "🌱"}
+        {open ? "✕" : <LeafIcon className="h-6 w-6" />}
       </button>
     </div>
   );

@@ -9,6 +9,7 @@ import { AccountSignOutButton } from "@/components/account/SignOutButton";
 import { AddAddressForm } from "@/components/account/AddAddressForm";
 import { AccountTabs } from "@/components/account/AccountTabs";
 import { OrderProgressTracker } from "@/components/OrderProgressTracker";
+import { PinIcon } from "@/components/Icon";
 import { reviewSchema } from "@/lib/validation";
 import { normalizePhone, PHONE_REGEX } from "@/lib/phone";
 import { z } from "zod";
@@ -251,9 +252,9 @@ export default async function AccountPage() {
                         href={`https://www.google.com/maps?q=${a.latitude},${a.longitude}`}
                         target="_blank"
                         rel="noreferrer"
-                        className="text-xs text-emerald hover:underline"
+                        className="inline-flex items-center gap-1 text-xs text-emerald hover:underline"
                       >
-                        📍 View pinned location
+                        <PinIcon className="h-3.5 w-3.5" /> View pinned location
                       </a>
                     )}
                   </div>
