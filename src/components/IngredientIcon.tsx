@@ -20,10 +20,10 @@ const PATHS: Record<IngredientIconKey, string> = {
   // Fluffy plume stalk.
   amaranth:
     "M12 4.5v15 M9.8 7.5c1.4.6 3 .6 4.4 0 M9.4 10.5c1.7.7 3.5.7 5.2 0 M9.4 13.5c1.7.7 3.5.7 5.2 0 M9.8 16.5c1.4.6 3 .6 4.4 0",
-  // Tiny flat oval.
-  sesame: "M7 12a5 2.8 0 1010 0 5 2.8 0 00-10 0z",
-  // Wide flat lens/disc.
-  masoor: "M6.5 12c0-1.8 2.5-3.2 5.5-3.2s5.5 1.4 5.5 3.2-2.5 3.2-5.5 3.2-5.5-1.4-5.5-3.2z",
+  // Tiny simple flat seed, rounded ends.
+  sesame: "M8.3 12a3.7 1.9 0 107.4 0 3.7 1.9 0 00-7.4 0z",
+  // Lens/vesica shape with pointed ends (how a lentil actually looks side-on).
+  masoor: "M6 12c1.6-3.4 4-5.3 6-5.3s4.4 1.9 6 5.3c-1.6 3.4-4 5.3-6 5.3s-4.4-1.9-6-5.3z",
   // Classic almond outline.
   almond:
     "M12 5.5c3.6 0 5.8 3.2 5.8 6.9s-2.2 6.6-5.8 6.6-5.8-3-5.8-6.6S8.4 5.5 12 5.5z M8.5 11c.8-1.8 2-3 4-3.3",
