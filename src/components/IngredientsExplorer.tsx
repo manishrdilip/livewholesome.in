@@ -119,22 +119,30 @@ export function IngredientsExplorer({ ingredients }: { ingredients: Ingredient[]
 function RevealCard({ children, delay }: { children: React.ReactNode; delay: number }) {
   const ref = useRef<HTMLDivElement>(null);
   const [visible, setVisible] = useState(false);
+  // Cards already on-screen at mount (above-the-fold on initial load) skip
+  // the reveal animation entirely rather than trying to time around it.
+  // Chrome has a known compositor bug where a CSS animation started in the
+  // same tick as mount can report opacity:1/"running" via getComputedStyle
+  // while never actually painting the visible frame, until something else
+  // (e.g. a scroll) forces a repaint — timing tricks (rAF delays) don't
+  // reliably avoid it. Only elements that become visible via a genuine
+  // later scroll take the animated path.
+  const [skipAnimation, setSkipAnimation] = useState(false);
 
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
+
+    if (el.getBoundingClientRect().top < window.innerHeight) {
+      setSkipAnimation(true);
+      setVisible(true);
+      return;
+    }
+
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          // Cards already in the initial viewport get marked visible in the
-          // same tick as mount, before the browser has painted their opacity:0
-          // starting state. Starting the CSS animation in that same tick can
-          // leave Chrome's compositor stuck on the stale (invisible) frame
-          // until something else forces a repaint (e.g. a scroll). Deferring
-          // by two rAFs guarantees the initial frame paints first.
-          requestAnimationFrame(() => {
-            requestAnimationFrame(() => setVisible(true));
-          });
+          setVisible(true);
           observer.disconnect();
         }
       },
@@ -147,8 +155,8 @@ function RevealCard({ children, delay }: { children: React.ReactNode; delay: num
   return (
     <div
       ref={ref}
-      className={`reveal-on-scroll ${visible ? "is-visible" : ""}`}
-      style={{ animationDelay: `${delay * 60}ms` }}
+      className={skipAnimation ? undefined : `reveal-on-scroll ${visible ? "is-visible" : ""}`}
+      style={skipAnimation ? undefined : { animationDelay: `${delay * 60}ms` }}
     >
       {children}
     </div>
