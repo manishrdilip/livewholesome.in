@@ -6,13 +6,18 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .map((e) => e.trim().toLowerCase())
   .filter(Boolean);
 
-// Applied to every response. A nonce-based CSP script-src was tried here
-// and reverted: it silently broke a lazily-loaded client chunk in the
-// production build (CartProvider's storefront-config fetch stopped
-// applying) in a way that didn't reproduce in local dev testing —
-// getting Next.js's own chunk-loading nonce propagation exactly right
-// needs more careful, production-tested work before turning it back on.
-// The other headers below carry no such risk and stay on.
+// Applied to every response. A nonce-based CSP script-src has been tried
+// twice now (see git history) and reverted both times after it broke
+// hydration in production — most recently confirmed directly: even with
+// 'strict-dynamic', Next.js/Turbopack's own dynamically-created <script>
+// chunks aren't reliably honored by the browser's nonce check (nonces set
+// via JS after element creation aren't always treated the same as
+// parse-time nonces), and several of Next's own inline RSC-streaming
+// scripts ship with no nonce at all — so React never hydrates at all under
+// a strict script-src on this Next.js version. Needs a deeper framework-
+// level fix (or a Next.js upgrade that resolves it) before trying again —
+// not a middleware-only change. The other headers below carry no such risk
+// and stay on.
 function securityHeaders(response: NextResponse) {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -25,10 +30,7 @@ function securityHeaders(response: NextResponse) {
     "Strict-Transport-Security",
     "max-age=63072000; includeSubDomains; preload"
   );
-  // Deliberately omits default-src/script-src/style-src: a nonce-based
-  // script-src was tried before and broke a production-only client chunk
-  // (see git history). These four directives are additive-only — they
-  // don't gate scripts/styles at all, so they carry none of that risk.
+  // Deliberately omits default-src/script-src/style-src — see comment above.
   response.headers.set(
     "Content-Security-Policy",
     "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
