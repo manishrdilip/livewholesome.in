@@ -3,6 +3,29 @@ import { createServiceClient } from "@/lib/supabase/server";
 import { createPaymentSession } from "@/lib/payment/cashfree";
 
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+
+  const supabase = createServiceClient();
+
+  // Order numbers are sequential and guessable — without a limit here this
+  // endpoint could be hammered to enumerate valid orders or spin up
+  // Cashfree sessions for orders that aren't the caller's.
+  const { data: withinLimit, error: rateLimitError } = await supabase.rpc(
+    "check_rate_limit",
+    { p_key: `payment-session:${ip}`, p_max: 10, p_window_seconds: 60 * 60 }
+  );
+  if (rateLimitError) {
+    console.error("check_rate_limit failed", rateLimitError.message);
+  } else if (!withinLimit) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -14,8 +37,6 @@ export async function POST(request: NextRequest) {
   if (typeof orderNumber !== "string" || !orderNumber) {
     return NextResponse.json({ error: "orderNumber is required" }, { status: 400 });
   }
-
-  const supabase = createServiceClient();
   const { data: order } = await supabase
     .from("orders")
     .select("order_number, grand_total, payment_status, customer_snapshot")

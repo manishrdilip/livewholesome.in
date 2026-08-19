@@ -19,6 +19,28 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
 // customer, or doesn't exist at all, so this can't be used to enumerate
 // which addresses have accounts.
 export async function POST(request: NextRequest) {
+  const ip =
+    request.headers.get("x-forwarded-for")?.split(",")[0]?.trim() ??
+    request.headers.get("x-real-ip") ??
+    "unknown";
+
+  const supabase = createServiceClient();
+
+  // Same DB-backed limiter pattern as /api/orders — without it this route
+  // could be hammered to spam arbitrary email addresses with reset emails.
+  const { data: withinLimit, error: rateLimitError } = await supabase.rpc(
+    "check_rate_limit",
+    { p_key: `forgot-password:${ip}`, p_max: 5, p_window_seconds: 60 * 60 }
+  );
+  if (rateLimitError) {
+    console.error("check_rate_limit failed", rateLimitError.message);
+  } else if (!withinLimit) {
+    return NextResponse.json(
+      { error: "Too many requests. Please try again later." },
+      { status: 429 }
+    );
+  }
+
   let body: unknown;
   try {
     body = await request.json();
@@ -33,7 +55,6 @@ export async function POST(request: NextRequest) {
   const normalizedEmail = email.trim().toLowerCase();
 
   if (!ADMIN_EMAILS.includes(normalizedEmail)) {
-    const supabase = createServiceClient();
     const { error } = await supabase.auth.resetPasswordForEmail(normalizedEmail, {
       redirectTo: "https://livewholesome.in/auth/callback?next=/reset-password",
     });
