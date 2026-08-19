@@ -35,9 +35,9 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Do you ship all over India, and how much does it cost?",
-    answer: "Yes — free shipping on pre-orders over ₹799 anywhere in India.",
+    answer: "Yes — free shipping on pre-orders over ₹798 anywhere in India.",
     questionTa: "இந்தியா முழுவதும் அனுப்புவீர்களா, கட்டணம் எவ்வளவு?",
-    answerTa: "ஆம் — ₹799க்கு மேல் முன்பதிவுகளுக்கு இந்தியா முழுவதும் இலவச டெலிவரி.",
+    answerTa: "ஆம் — ₹798க்கு மேல் முன்பதிவுகளுக்கு இந்தியா முழுவதும் இலவச டெலிவரி.",
   },
   {
     question: "You're launching soon — what does a pre-order mean?",

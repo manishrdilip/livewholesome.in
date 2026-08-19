@@ -252,7 +252,7 @@ export default async function HomePage() {
             {[
               ["500g — approx. 16 servings", "500g — சுமார் 16 பரிமாறல்கள்"],
               ["Oxygen absorber sealed", "ஆக்ஸிஜன் அப்சார்பர் சீல்"],
-              ["Free shipping over ₹799", "₹799க்கு மேல் இலவச டெலிவரி"],
+              ["Free shipping over ₹798", "₹798க்கு மேல் இலவச டெலிவரி"],
               ["Batch-tracked", "பேட்ச் கண்காணிக்கப்படுகிறது"],
               ["6-month shelf life", "6 மாத சேமிப்பு காலம்"],
             ].map(([item, itemTa]) => (

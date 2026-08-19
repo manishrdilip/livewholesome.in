@@ -18,7 +18,7 @@ export type EffectivePricing = {
  * be trusted over this. */
 /** Pre-orders ship free above this subtotal; below it, the admin-set flat
  * shipping_fee applies. */
-export const FREE_SHIPPING_THRESHOLD = 799;
+export const FREE_SHIPPING_THRESHOLD = 798;
 
 export function getEffectiveShippingFee(subtotal: number, shippingFeeSetting: number): number {
   return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFeeSetting;
