@@ -7,17 +7,22 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
   .filter(Boolean);
 
 // Applied to every response. A nonce-based CSP script-src has been tried
-// twice now (see git history) and reverted both times after it broke
-// hydration in production — most recently confirmed directly: even with
-// 'strict-dynamic', Next.js/Turbopack's own dynamically-created <script>
-// chunks aren't reliably honored by the browser's nonce check (nonces set
-// via JS after element creation aren't always treated the same as
-// parse-time nonces), and several of Next's own inline RSC-streaming
-// scripts ship with no nonce at all — so React never hydrates at all under
-// a strict script-src on this Next.js version. Needs a deeper framework-
-// level fix (or a Next.js upgrade that resolves it) before trying again —
-// not a middleware-only change. The other headers below carry no such risk
-// and stay on.
+// twice (see git history) and reverted both times after it broke hydration
+// in production — even with 'strict-dynamic', Next.js/Turbopack's own
+// dynamically-created <script> chunks aren't reliably honored by the
+// browser's nonce check, and several of Next's own inline RSC-streaming
+// scripts ship with no nonce at all. That path needs a deeper framework
+// fix (or a Next.js upgrade), not a middleware-only change.
+//
+// This is the safer middle ground instead: a host+'unsafe-inline' policy
+// that doesn't touch the nonce machinery Next's internals depend on at
+// all, so it can't hit that failure mode. 'self' + the Cashfree SDK origin
+// (the only external script this app loads, in loadCashfreeSdk.ts) blocks
+// the most common XSS payload delivery method — a script tag pointing at
+// attacker-controlled infrastructure — which 'unsafe-inline' does not
+// re-open, since that only concerns *inline* script content, not *source*
+// origin. It doesn't stop inline-script XSS the way a nonce policy would,
+// but it's real, verified-safe hardening over having no script-src at all.
 function securityHeaders(response: NextResponse) {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -30,10 +35,9 @@ function securityHeaders(response: NextResponse) {
     "Strict-Transport-Security",
     "max-age=63072000; includeSubDomains; preload"
   );
-  // Deliberately omits default-src/script-src/style-src — see comment above.
   response.headers.set(
     "Content-Security-Policy",
-    "object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
   );
   return response;
 }
