@@ -80,22 +80,32 @@ export default function LoginPage() {
         </p>
       ) : (
         <form onSubmit={handleSubmit} className="mt-6 space-y-4">
-          <input
-            required
-            type="email"
-            placeholder="Email"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            className="input"
-          />
-          <input
-            required
-            type="password"
-            placeholder="Password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            className="input"
-          />
+          <label className="block text-sm">
+            <span className="font-medium">Email</span>
+            <input
+              required
+              type="email"
+              name="email"
+              autoComplete="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              className="input mt-1"
+            />
+          </label>
+          <label className="block text-sm">
+            <span className="font-medium">Password</span>
+            <input
+              required
+              type="password"
+              name="password"
+              autoComplete="current-password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              className="input mt-1"
+            />
+          </label>
           <button
             type="submit"
             disabled={status === "sending"}

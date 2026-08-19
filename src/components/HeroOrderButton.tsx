@@ -17,9 +17,9 @@ export function HeroOrderButton() {
     >
       {soldOutForToday
         ? lang === "ta"
-          ? "இன்று தீர்ந்துவிட்டது"
-          : "Sold out for today"
-        : `${lang === "ta" ? "இப்போது ஆர்டர் செய்" : "Order Now"} — ₹${unitPrice}`}
+          ? "முன்பதிவுகள் தற்காலிகமாக நிறுத்தப்பட்டுள்ளன"
+          : "Pre-orders paused"
+        : `${lang === "ta" ? "முன்பதிவு செய்" : "Pre-order Now"} — ₹${unitPrice}`}
     </button>
   );
 }

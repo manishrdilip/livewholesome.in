@@ -99,9 +99,9 @@ export function Header() {
               ? `${lang === "ta" ? "கார்ட்" : "Cart"} (${quantity}) — ₹${quantity * unitPrice}`
               : remainingUnits <= 0
                 ? lang === "ta"
-                  ? "இன்று தீர்ந்துவிட்டது"
-                  : "Sold out for today"
-                : `${lang === "ta" ? "இப்போது வாங்க" : "Buy Now"} — ₹${unitPrice}`}
+                  ? "முன்பதிவுகள் நிறுத்தப்பட்டுள்ளன"
+                  : "Pre-orders paused"
+                : `${lang === "ta" ? "முன்பதிவு செய்" : "Pre-order"} — ₹${unitPrice}`}
           </button>
           <button
             type="button"

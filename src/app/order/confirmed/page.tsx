@@ -17,13 +17,14 @@ export default async function OrderConfirmedPage({
   const { data: order } = await supabase
     .from("orders")
     .select(
-      "id, order_number, grand_total, payment_status, shipping_address_snapshot, customer_snapshot, placed_at"
+      "id, order_number, grand_total, payment_status, status, shipping_address_snapshot, customer_snapshot, placed_at"
     )
     .eq("order_number", ref)
     .single();
 
   if (!order) notFound();
 
+  const isPreorder = order.status === "PREORDER";
   let paymentStatus = order.payment_status as string;
 
   // The customer can land here before the async webhook fires (e.g.
@@ -33,7 +34,7 @@ export default async function OrderConfirmedPage({
   const gatewayConfigured = Boolean(
     process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY
   );
-  if (paymentStatus === "UNPAID" && gatewayConfigured) {
+  if (!isPreorder && paymentStatus === "UNPAID" && gatewayConfigured) {
     try {
       const live = await getCashfreeOrderStatus(order.order_number);
       if (live?.order_status === "PAID") {
@@ -71,20 +72,30 @@ export default async function OrderConfirmedPage({
           state, so only let payment_status change this copy once a
           gateway actually makes UNPAID mean something is outstanding. */}
       <div className="flex justify-center text-emerald">
-        {!gatewayConfigured || paymentStatus === "PAID" ? (
+        {isPreorder || !gatewayConfigured || paymentStatus === "PAID" ? (
           <CheckCircleIcon className="h-12 w-12" />
         ) : (
           <ClockIcon className="h-12 w-12" />
         )}
       </div>
       <h1 className="mt-4 font-serif text-3xl font-bold">
-        {!gatewayConfigured || paymentStatus === "PAID" ? "Order confirmed" : "Order received"}
+        {isPreorder
+          ? "Pre-order reserved"
+          : !gatewayConfigured || paymentStatus === "PAID"
+            ? "Order confirmed"
+            : "Order received"}
       </h1>
       <p className="mt-2 text-ink/70">
         Order <strong>{order.order_number}</strong>
       </p>
+      {isPreorder && (
+        <p className="mt-2 text-sm text-ink/60">
+          Nothing to pay yet — we&apos;ll email and WhatsApp you when Wholesome Purna launches, with
+          next steps to confirm and pay.
+        </p>
+      )}
 
-      {gatewayConfigured && paymentStatus !== "PAID" && (
+      {!isPreorder && gatewayConfigured && paymentStatus !== "PAID" && (
         <div className="mt-6 rounded-2xl border border-amber-300 bg-amber-50 p-5 text-left">
           <p className="font-semibold text-amber-800">Payment not completed yet</p>
           <p className="mt-1 text-sm text-amber-700">

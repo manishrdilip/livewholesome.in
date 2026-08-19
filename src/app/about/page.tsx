@@ -59,7 +59,7 @@ export default function AboutPage() {
           href="/#order"
           className="mt-4 inline-block rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep"
         >
-          <T en="Order Now" ta="இப்போது ஆர்டர் செய்ய" />
+          <T en="Pre-order Now" ta="முன்பதிவு செய்ய" />
         </Link>
       </div>
     </div>

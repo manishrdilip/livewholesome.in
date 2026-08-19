@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
+import { EarlyTesterRibbon } from "@/components/EarlyTesterRibbon";
 import { Header } from "@/components/Header";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { SupportWidget } from "@/components/support/SupportWidget";
@@ -49,6 +50,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       <body className="min-h-full flex flex-col bg-cream text-ink">
         <LanguageProvider>
           <CartProvider initialConfig={config}>
+            <EarlyTesterRibbon />
             <Header />
             {children}
             <SupportWidget />

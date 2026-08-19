@@ -126,7 +126,15 @@ function RevealCard({ children, delay }: { children: React.ReactNode; delay: num
     const observer = new IntersectionObserver(
       ([entry]) => {
         if (entry.isIntersecting) {
-          setVisible(true);
+          // Cards already in the initial viewport get marked visible in the
+          // same tick as mount, before the browser has painted their opacity:0
+          // starting state. Starting the CSS animation in that same tick can
+          // leave Chrome's compositor stuck on the stale (invisible) frame
+          // until something else forces a repaint (e.g. a scroll). Deferring
+          // by two rAFs guarantees the initial frame paints first.
+          requestAnimationFrame(() => {
+            requestAnimationFrame(() => setVisible(true));
+          });
           observer.disconnect();
         }
       },

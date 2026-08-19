@@ -3,7 +3,7 @@ import { checkoutSchema } from "@/lib/validation";
 import { createServiceClient } from "@/lib/supabase/server";
 import { PRODUCT } from "@/lib/product";
 import { getSettings } from "@/lib/settings";
-import { getEffectivePricing } from "@/lib/pricing";
+import { getEffectivePricing, getEffectiveShippingFee } from "@/lib/pricing";
 import { generateInvoice } from "@/lib/invoice/generate";
 import { sendOrderConfirmedEmail } from "@/lib/email/send";
 
@@ -66,7 +66,7 @@ export async function POST(request: NextRequest) {
   const unitPrice = data.isSubscription ? pricing.subscribePrice : pricing.offerPrice;
   const subtotal = Math.round(unitPrice * quantity * 100) / 100;
   const discount = 0;
-  const shippingFee = settings.shipping_fee ?? 0;
+  const shippingFee = getEffectiveShippingFee(subtotal, settings.shipping_fee ?? 0);
   const taxTotal = 0;
   const grandTotal = Math.round((subtotal - discount + shippingFee + taxTotal) * 100) / 100;
 
@@ -114,6 +114,9 @@ export async function POST(request: NextRequest) {
     p_customer_note: data.isSubscription
       ? `[Monthly Subscribe & Save] ${data.customerNote || ""}`.trim()
       : data.customerNote || null,
+    // Pre-launch: every order placed through this endpoint is a pre-order
+    // (no payment collected) rather than a confirmed, in-production order.
+    p_status: "PREORDER",
   });
 
   if (error) {

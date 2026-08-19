@@ -1,4 +1,5 @@
 export const ORDER_STATUSES = [
+  "PREORDER",
   "CONFIRMED",
   "COOKING",
   "PACKED",
@@ -12,6 +13,7 @@ export const ORDER_STATUSES = [
 export type OrderStatus = (typeof ORDER_STATUSES)[number];
 
 export const ORDER_STATUS_LABELS: Record<OrderStatus, string> = {
+  PREORDER: "Pre-order (awaiting launch)",
   CONFIRMED: "Order received",
   COOKING: "Cooking",
   PACKED: "Packing",

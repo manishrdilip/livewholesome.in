@@ -16,6 +16,14 @@ export type EffectivePricing = {
  * storefront-config endpoint (what the UI displays) and order creation
  * (what actually gets charged), so a tampered client-side price can never
  * be trusted over this. */
+/** Pre-orders ship free above this subtotal; below it, the admin-set flat
+ * shipping_fee applies. */
+export const FREE_SHIPPING_THRESHOLD = 799;
+
+export function getEffectiveShippingFee(subtotal: number, shippingFeeSetting: number): number {
+  return subtotal >= FREE_SHIPPING_THRESHOLD ? 0 : shippingFeeSetting;
+}
+
 export function getEffectivePricing(settings: Pick<
   Settings,
   "product_price" | "discount_percent" | "subscribe_discount_percent"

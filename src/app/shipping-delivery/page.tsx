@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getSettings } from "@/lib/settings";
+import { FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 import { PolicyPage, PolicySection } from "@/components/PolicyPage";
 
 export const metadata: Metadata = {
@@ -23,7 +24,7 @@ export default async function ShippingDeliveryPage() {
       <PolicySection title="Shipping fee">
         <p>
           {settings.shipping_fee > 0
-            ? `A flat shipping fee of ₹${settings.shipping_fee} applies per order.`
+            ? `Free on orders over ₹${FREE_SHIPPING_THRESHOLD}; a ₹${settings.shipping_fee} shipping fee applies below that.`
             : "Shipping is currently free on every order."}
         </p>
       </PolicySection>
