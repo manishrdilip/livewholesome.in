@@ -5,7 +5,6 @@ import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useCart } from "@/components/CartProvider";
 import { useLanguage } from "@/components/LanguageProvider";
-import { createBrowserSupabaseClient } from "@/lib/supabase/browser";
 import { LogoMark } from "@/components/LogoMark";
 
 const NAV_LINKS = [
@@ -27,15 +26,30 @@ export function Header() {
   const [menuOpen, setMenuOpen] = useState(false);
 
   useEffect(() => {
-    const supabase = createBrowserSupabaseClient();
-    supabase.auth.getSession().then(({ data }) => setLoggedIn(!!data.session));
-    const {
-      data: { subscription },
-    } = supabase.auth.onAuthStateChange((_event, session) => setLoggedIn(!!session));
-    return () => subscription.unsubscribe();
+    // Loaded lazily (rather than a top-level import) so the ~65KB Supabase
+    // client isn't in the critical bundle every page needs to hydrate —
+    // this component's own UI doesn't depend on the session check.
+    let unsubscribe: (() => void) | undefined;
+    let cancelled = false;
+    import("@/lib/supabase/browser").then(({ createBrowserSupabaseClient }) => {
+      if (cancelled) return;
+      const supabase = createBrowserSupabaseClient();
+      supabase.auth.getSession().then(({ data }) => {
+        if (!cancelled) setLoggedIn(!!data.session);
+      });
+      const {
+        data: { subscription },
+      } = supabase.auth.onAuthStateChange((_event, session) => setLoggedIn(!!session));
+      unsubscribe = () => subscription.unsubscribe();
+    });
+    return () => {
+      cancelled = true;
+      unsubscribe?.();
+    };
   }, []);
 
   async function handleSignOut() {
+    const { createBrowserSupabaseClient } = await import("@/lib/supabase/browser");
     const supabase = createBrowserSupabaseClient();
     await supabase.auth.signOut();
     setLoggedIn(false);
