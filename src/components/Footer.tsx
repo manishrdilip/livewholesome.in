@@ -47,7 +47,7 @@ export function Footer({ settings }: { settings: Settings }) {
               />
             </p>
 
-            <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
+            <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-cream">
               <T en="Quick Links" ta="விரைவு இணைப்புகள்" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
@@ -62,7 +62,7 @@ export function Footer({ settings }: { settings: Settings }) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-gold">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-cream">
               <T en="Contact Us" ta="தொடர்பு கொள்ள" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
@@ -85,7 +85,7 @@ export function Footer({ settings }: { settings: Settings }) {
               )}
             </ul>
 
-            <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
+            <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-cream">
               <T en="Legal" ta="சட்டப்பூர்வ" />
             </h3>
             <ul className="mt-3 space-y-2 text-sm text-cream/80">
@@ -113,7 +113,7 @@ export function Footer({ settings }: { settings: Settings }) {
           </div>
 
           <div>
-            <h3 className="text-sm font-semibold uppercase tracking-wide text-gold">
+            <h3 className="text-sm font-semibold uppercase tracking-wide text-cream">
               <T en="Begin your monthly plan" ta="மாத திட்டத்தை தொடங்குங்கள்" />
             </h3>
             <p className="mt-2 text-sm text-cream/60">
@@ -124,14 +124,14 @@ export function Footer({ settings }: { settings: Settings }) {
             </p>
             <a
               href="#order"
-              className="mt-3 block w-full rounded-full bg-gold py-2.5 text-center text-sm font-semibold text-emerald-deep"
+              className="mt-3 block w-full rounded-full bg-gold py-2.5 text-center text-sm font-semibold text-ink"
             >
               <T en="Subscribe" ta="சந்தா செய்ய" />
             </a>
 
             {hasSocial && (
               <>
-                <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-gold">
+                <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-cream">
                   <T en="Join Us" ta="எங்களுடன் இணையுங்கள்" />
                 </h3>
                 <div className="mt-3 flex gap-3">
@@ -166,7 +166,7 @@ export function Footer({ settings }: { settings: Settings }) {
           </div>
         </div>
 
-        <div className="mt-12 border-t border-cream/10 pt-6 text-center text-xs text-cream/50">
+        <div className="mt-12 border-t border-cream/10 pt-6 text-center text-xs text-cream/70">
           <p>
             © {new Date().getFullYear()} LiveWholesome.in — <T en="All Rights Reserved" ta="அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை" />{" "}
             &middot;{" "}

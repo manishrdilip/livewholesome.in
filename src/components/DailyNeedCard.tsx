@@ -12,7 +12,7 @@ export function DailyNeedCard({ nutrient }: { nutrient: DailyNeedNutrient }) {
       <HumanFillFigure percent={nutrient.percent} className="h-14 w-14 text-emerald" />
       <div className="mt-1 font-serif text-lg font-bold text-emerald">{nutrient.percent}%</div>
       <div className="text-xs font-medium">{lang === "ta" ? nutrient.labelTa : nutrient.label}</div>
-      <div className="text-[11px] text-ink/50">{nutrient.amount}</div>
+      <div className="text-[11px] text-ink/70">{nutrient.amount}</div>
     </div>
   );
 }

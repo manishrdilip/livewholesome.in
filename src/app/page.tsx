@@ -144,7 +144,7 @@ export default async function HomePage() {
       </section>
 
       <section id="ingredients" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
-        <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+        <p className="text-sm font-semibold uppercase tracking-widest text-emerald">
           <T en="The Formula" ta="சூத்திரம்" />
         </p>
         <h2 className="mt-2 font-serif text-3xl font-bold">
@@ -167,7 +167,7 @@ export default async function HomePage() {
         >
           <T en="Explore All 20 Ingredients →" ta="அனைத்து 20 பொருட்களையும் பார்க்க →" />
         </Link>
-        <p className="mt-6 text-sm text-ink/60">
+        <p className="mt-6 text-sm text-ink/70">
           <strong className="font-semibold text-ink/80">
             <T en="Allergen note:" ta="ஒவ்வாமை குறிப்பு:" />
           </strong>{" "}
@@ -181,7 +181,7 @@ export default async function HomePage() {
       <ReviewsSection />
 
       <section id="nutrition" className="mx-auto max-w-6xl scroll-mt-20 px-6 py-20">
-        <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+        <p className="text-sm font-semibold uppercase tracking-widest text-emerald">
           <T en="Nutrition" ta="ஊட்டச்சத்து" />
         </p>
         <h2 className="mt-2 font-serif text-3xl font-bold">
@@ -195,7 +195,7 @@ export default async function HomePage() {
               <div className="text-sm font-medium">
                 <T en={stat.label} ta={stat.labelTa} />
               </div>
-              <div className="text-xs text-ink/50">
+              <div className="text-xs text-ink/70">
                 <T en={stat.sub} ta={stat.subTa} />
               </div>
             </div>
@@ -203,13 +203,13 @@ export default async function HomePage() {
         </div>
 
         <div className="mt-14">
-          <p className="text-sm font-semibold uppercase tracking-widest text-gold">
+          <p className="text-sm font-semibold uppercase tracking-widest text-emerald">
             <T en="One Cup at Breakfast (30g + Milk)" ta="காலையில் ஒரு கப் (30g + பால்)" />
           </p>
           <h3 className="mt-1 font-serif text-xl font-bold">
             <T en="What One Cup Gives You" ta="ஒரு கப் தரும் ஊட்டச்சத்து" />
           </h3>
-          <p className="mt-1 text-sm text-ink/60">
+          <p className="mt-1 text-sm text-ink/70">
             <T
               en="Wholesome Purna mixed with milk — % of this meal's fair share of your day, not the whole day's food."
               ta="பாலுடன் கலந்த Wholesome Purna — இந்த வேளைக்கான தினசரி தேவையின் நியாயமான பங்கு, நாள் முழுவதும் உண்ணும் உணவு அல்ல."
@@ -220,7 +220,7 @@ export default async function HomePage() {
               <DailyNeedCard key={n.key} nutrient={n} />
             ))}
           </div>
-          <p className="mt-4 text-xs text-ink/50">
+          <p className="mt-4 text-xs text-ink/70">
             <T
               en="Estimated from standard food-composition data for 30g of the mix (equal parts of all 20 ingredients) prepared with 200ml milk, shown against one meal's share of daily need (daily value ÷ 3 meals) — lab-verified values coming soon."
               ta="30g கலவை (அனைத்து 20 பொருட்களின் சம பங்கு) 200ml பாலுடன் தயாரிக்கப்பட்டதற்கான நிலையான உணவு தரவில் இருந்து மதிப்பிடப்பட்டது, ஒரு வேளைக்கான தினசரி தேவையின் பங்கிற்கு எதிராக (தினசரி மதிப்பு ÷ 3 வேளைகள்) — ஆய்வக சரிபார்க்கப்பட்ட மதிப்புகள் விரைவில்."

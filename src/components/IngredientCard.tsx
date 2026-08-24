@@ -15,7 +15,7 @@ export function IngredientCard({ ingredient }: { ingredient: Ingredient }) {
         <IngredientIcon icon={ingredient.icon} className="h-7 w-7 text-emerald" />
       </span>
       <div className="mt-2 font-medium leading-snug">{ingredient.name}</div>
-      <div className="text-xs text-ink/50">{ingredient.tamilName}</div>
+      <div className="text-xs text-ink/70">{ingredient.tamilName}</div>
       {open && <p className="mt-3 text-sm text-ink/70">{ingredient.detail}</p>}
       <button
         type="button"

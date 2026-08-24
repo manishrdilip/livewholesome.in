@@ -41,13 +41,13 @@ export function OrderBox() {
       </span>
       <div className="mt-3">
         <div className="font-serif text-lg font-semibold">{PRODUCT.name}</div>
-        <div className="text-sm text-ink/60">500g</div>
+        <div className="text-sm text-ink/70">500g</div>
       </div>
 
       <div className="mt-4 flex items-baseline gap-2">
         <span className="text-2xl font-bold text-emerald">₹{unitPrice}</span>
         {(hasOffer || isSubscription) && (
-          <span className="text-sm text-ink/40 line-through">₹{config.basePrice}</span>
+          <span className="text-sm text-ink/70 line-through">₹{config.basePrice}</span>
         )}
       </div>
 
@@ -99,7 +99,7 @@ export function OrderBox() {
                   : `Subscribe monthly & save ${config.subscribeDiscountPercent}%`}
               </span>
               <br />
-              <span className="text-ink/60">
+              <span className="text-ink/70">
                 {lang === "ta"
                   ? "ஒவ்வொரு மாதமும் உறுதிப்படுத்த செய்தி அனுப்புவோம் — எப்போது வேண்டுமானாலும் ரத்து செய்யலாம்."
                   : "We'll message you every month to reconfirm — cancel anytime."}
@@ -109,11 +109,11 @@ export function OrderBox() {
 
           <dl className="mt-4 space-y-1 text-sm">
             <div className="flex justify-between">
-              <dt className="text-ink/60">{lang === "ta" ? "கூட்டுத்தொகை" : "Subtotal"}</dt>
+              <dt className="text-ink/70">{lang === "ta" ? "கூட்டுத்தொகை" : "Subtotal"}</dt>
               <dd>₹{subtotal}</dd>
             </div>
             <div className="flex justify-between">
-              <dt className="text-ink/60">{lang === "ta" ? "டெலிவரி" : "Shipping"}</dt>
+              <dt className="text-ink/70">{lang === "ta" ? "டெலிவரி" : "Shipping"}</dt>
               <dd>{shippingFee > 0 ? `₹${shippingFee}` : lang === "ta" ? "இலவசம்" : "FREE"}</dd>
             </div>
             <div className="flex justify-between border-t border-ink/10 pt-1 font-semibold">
@@ -125,11 +125,11 @@ export function OrderBox() {
           <button
             type="button"
             onClick={launchCheckout}
-            className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep"
+            className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-ink"
           >
             {lang === "ta" ? "முன்பதிவு செய்" : "Reserve My Pre-order"}
           </button>
-          <p className="mt-2 text-center text-xs text-ink/50">
+          <p className="mt-2 text-center text-xs text-ink/70">
             {lang === "ta"
               ? "இப்போது கட்டணம் இல்லை — நாங்கள் தொடர்பு கொள்வோம்."
               : "Nothing to pay now — we'll follow up before launch."}
@@ -137,7 +137,7 @@ export function OrderBox() {
         </>
       )}
 
-      <ul className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1.5 border-t border-ink/10 pt-3 text-xs text-ink/50">
+      <ul className="mt-4 flex flex-wrap justify-center gap-x-4 gap-y-1.5 border-t border-ink/10 pt-3 text-xs text-ink/70">
         {TRUST_BADGES.map((badge) => (
           <li key={badge.en} className="flex items-center gap-1.5">
             <badge.Icon className="h-3.5 w-3.5" />
@@ -147,7 +147,7 @@ export function OrderBox() {
       </ul>
 
       {config.supportEmail && (
-        <p className="mt-3 text-center text-xs text-ink/50">
+        <p className="mt-3 text-center text-xs text-ink/70">
           {lang === "ta" ? "முதலில் முயற்சிக்க விரும்புகிறீர்களா? " : "Want to try it first? "}
           <a href={`mailto:${config.supportEmail}`} className="font-medium text-emerald hover:underline">
             {lang === "ta" ? "இலவச 100g மாதிரிக்கு மின்னஞ்சல் செய்யவும்" : "Email us for a free 100g sample"}

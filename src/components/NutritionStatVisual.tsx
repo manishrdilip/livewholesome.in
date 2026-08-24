@@ -28,7 +28,7 @@ export function NutritionStatVisual({ visual }: { visual: Visual }) {
             style={{ height: `${visual.beforeFrac * 100}%` }}
           />
         </div>
-        <span className="text-[10px] text-ink/50">
+        <span className="text-[10px] text-ink/70">
           {lang === "ta" ? visual.beforeLabelTa : visual.beforeLabel}
         </span>
       </div>

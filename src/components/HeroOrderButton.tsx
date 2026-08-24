@@ -13,7 +13,7 @@ export function HeroOrderButton() {
       type="button"
       onClick={launchCheckout}
       disabled={soldOutForToday}
-      className="rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep disabled:cursor-not-allowed disabled:opacity-50"
+      className="rounded-full bg-gold px-6 py-3 font-semibold text-ink disabled:cursor-not-allowed disabled:opacity-50"
     >
       {soldOutForToday
         ? lang === "ta"
