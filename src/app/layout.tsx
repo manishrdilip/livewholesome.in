@@ -4,7 +4,7 @@ import { CartProvider } from "@/components/CartProvider";
 import { EarlyTesterRibbon } from "@/components/EarlyTesterRibbon";
 import { Header } from "@/components/Header";
 import { LanguageProvider } from "@/components/LanguageProvider";
-import { SupportWidget } from "@/components/support/SupportWidget";
+import { SupportWidgetLazy } from "@/components/support/SupportWidgetLazy";
 import { getStorefrontConfig } from "@/lib/storefront-config";
 import "./globals.css";
 
@@ -53,7 +53,7 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
             <EarlyTesterRibbon />
             <Header />
             {children}
-            <SupportWidget />
+            <SupportWidgetLazy />
           </CartProvider>
         </LanguageProvider>
       </body>
