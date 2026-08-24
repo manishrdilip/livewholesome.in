@@ -23,6 +23,8 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
 // re-open, since that only concerns *inline* script content, not *source*
 // origin. It doesn't stop inline-script XSS the way a nonce policy would,
 // but it's real, verified-safe hardening over having no script-src at all.
+// https://checkout.razorpay.com is the Razorpay Standard Checkout SDK
+// (loadRazorpaySdk.ts), added the same way as the Cashfree entry above.
 function securityHeaders(response: NextResponse) {
   response.headers.set("X-Frame-Options", "DENY");
   response.headers.set("X-Content-Type-Options", "nosniff");
@@ -37,7 +39,7 @@ function securityHeaders(response: NextResponse) {
   );
   response.headers.set(
     "Content-Security-Policy",
-    "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com https://checkout.razorpay.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
   );
   return response;
 }
