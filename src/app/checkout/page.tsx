@@ -425,7 +425,7 @@ export default function CheckoutPage() {
         <button
           type="submit"
           disabled={submitting}
-          className="w-full rounded-full bg-gold py-3 font-semibold text-emerald-deep disabled:opacity-50"
+          className="w-full rounded-full bg-gold py-3 font-semibold text-ink disabled:opacity-50"
         >
           {submitting ? "Reserving…" : "Reserve My Pre-order"}
         </button>

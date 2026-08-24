@@ -40,7 +40,7 @@ export function PaymentRetryButton({
         type="button"
         onClick={retry}
         disabled={loading}
-        className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-emerald-deep disabled:opacity-50"
+        className="rounded-full bg-gold px-5 py-2 text-sm font-semibold text-ink disabled:opacity-50"
       >
         {loading ? "Redirecting…" : "Complete payment"}
       </button>

@@ -13,7 +13,7 @@ export function EarlyTesterRibbon() {
   if (pathname?.startsWith("/admin") || pathname === "/early-tester") return null;
 
   return (
-    <div className="bg-gold px-4 py-2 text-center text-xs font-semibold text-emerald-deep sm:text-sm">
+    <div className="bg-gold px-4 py-2 text-center text-xs font-semibold text-ink sm:text-sm">
       <Link href="/early-tester" className="hover:underline">
         <T
           en="Tried Wholesome Purna? Share your review — takes 2 minutes →"

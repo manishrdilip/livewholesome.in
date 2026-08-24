@@ -99,7 +99,7 @@ onClick={pay}
 disabled={loading}
 className={
 className ??
-"rounded-full bg-gold px-5 py-2 text-sm font-semibold text-emerald-deep disabled:opacity-50"
+"rounded-full bg-gold px-5 py-2 text-sm font-semibold text-ink disabled:opacity-50"
 }
 >
 {loading ? "Processing…" : label}

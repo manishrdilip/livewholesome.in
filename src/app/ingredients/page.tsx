@@ -66,7 +66,7 @@ export default function IngredientsPage() {
         </h2>
         <Link
           href="/#order"
-          className="mt-4 inline-block rounded-full bg-gold px-6 py-3 font-semibold text-emerald-deep"
+          className="mt-4 inline-block rounded-full bg-gold px-6 py-3 font-semibold text-ink"
         >
           <T en="Pre-order Now" ta="முன்பதிவு செய்ய" />
         </Link>

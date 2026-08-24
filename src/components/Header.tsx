@@ -77,14 +77,14 @@ export function Header() {
             <button
               type="button"
               onClick={() => setLang("en")}
-              className={`px-2 py-1 ${lang === "en" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+              className={`px-2 py-1 ${lang === "en" ? "bg-gold text-ink" : "text-cream/70"}`}
             >
               EN
             </button>
             <button
               type="button"
               onClick={() => setLang("ta")}
-              className={`px-2 py-1 ${lang === "ta" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+              className={`px-2 py-1 ${lang === "ta" ? "bg-gold text-ink" : "text-cream/70"}`}
             >
               தமிழ்
             </button>
@@ -93,7 +93,7 @@ export function Header() {
             type="button"
             onClick={launchCheckout}
             disabled={quantity === 0 && remainingUnits <= 0}
-            className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-emerald-deep disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
+            className="shrink-0 rounded-lg bg-gold px-3 py-1.5 text-xs font-semibold text-ink disabled:cursor-not-allowed disabled:opacity-50 sm:px-4 sm:py-2 sm:text-sm"
           >
             {quantity > 0
               ? `${lang === "ta" ? "கார்ட்" : "Cart"} (${quantity}) — ₹${quantity * unitPrice}`
@@ -131,14 +131,14 @@ export function Header() {
             <button
               type="button"
               onClick={() => setLang("en")}
-              className={`px-3 py-1.5 ${lang === "en" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+              className={`px-3 py-1.5 ${lang === "en" ? "bg-gold text-ink" : "text-cream/70"}`}
             >
               EN
             </button>
             <button
               type="button"
               onClick={() => setLang("ta")}
-              className={`px-3 py-1.5 ${lang === "ta" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+              className={`px-3 py-1.5 ${lang === "ta" ? "bg-gold text-ink" : "text-cream/70"}`}
             >
               தமிழ்
             </button>

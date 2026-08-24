@@ -181,14 +181,14 @@ export function SupportWidget() {
                 <button
                   type="button"
                   onClick={() => switchLang("en")}
-                  className={`px-2 py-1 ${lang === "en" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+                  className={`px-2 py-1 ${lang === "en" ? "bg-gold text-ink" : "text-cream/70"}`}
                 >
                   EN
                 </button>
                 <button
                   type="button"
                   onClick={() => switchLang("ta")}
-                  className={`px-2 py-1 ${lang === "ta" ? "bg-gold text-emerald-deep" : "text-cream/70"}`}
+                  className={`px-2 py-1 ${lang === "ta" ? "bg-gold text-ink" : "text-cream/70"}`}
                 >
                   தமிழ்
                 </button>
@@ -332,7 +332,7 @@ export function SupportWidget() {
         type="button"
         onClick={() => setOpen((o) => !o)}
         aria-label={open ? t.closeLabel : t.openLabel}
-        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold text-xl text-emerald-deep shadow-lg"
+        className="flex h-14 w-14 shrink-0 items-center justify-center rounded-full bg-gold text-xl text-ink shadow-lg"
       >
         {open ? "✕" : <LeafIcon className="h-6 w-6" />}
       </button>
