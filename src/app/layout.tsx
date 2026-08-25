@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Inter, Playfair_Display } from "next/font/google";
 import { CartProvider } from "@/components/CartProvider";
 import { EarlyTesterRibbon } from "@/components/EarlyTesterRibbon";
+import { GoogleAnalytics } from "@/components/GoogleAnalytics";
 import { Header } from "@/components/Header";
 import { LanguageProvider } from "@/components/LanguageProvider";
 import { SupportWidgetLazy } from "@/components/support/SupportWidgetLazy";
@@ -41,6 +42,7 @@ export const metadata: Metadata = {
 
 export default async function RootLayout({ children }: LayoutProps<"/">) {
   const config = await getStorefrontConfig();
+  const gaMeasurementId = process.env.NEXT_PUBLIC_GA_MEASUREMENT_ID;
 
   return (
     <html
@@ -48,6 +50,9 @@ export default async function RootLayout({ children }: LayoutProps<"/">) {
       className={`${inter.variable} ${playfair.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col bg-cream text-ink">
+        {gaMeasurementId ? (
+          <GoogleAnalytics measurementId={gaMeasurementId} />
+        ) : null}
         <LanguageProvider>
           <CartProvider initialConfig={config}>
             <EarlyTesterRibbon />
