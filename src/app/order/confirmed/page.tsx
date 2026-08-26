@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getCashfreeOrderStatus } from "@/lib/payment/cashfree";
 import { PaymentRetryButton } from "@/components/PaymentRetryButton";
+import { RazorpayRetryButton } from "@/components/RazorpayRetryButton";
 import { CheckCircleIcon, ClockIcon } from "@/components/Icon";
 
 export default async function OrderConfirmedPage({
@@ -26,14 +27,23 @@ export default async function OrderConfirmedPage({
 
   let paymentStatus = order.payment_status as string;
 
-  // The customer can land here before the async webhook fires (e.g.
-  // Cashfree's return_url redirect races it). Cashfree itself is the
-  // authoritative source, so double-check directly rather than showing a
-  // stale "unpaid" the webhook was about to fix seconds later.
-  const gatewayConfigured = Boolean(
+  // Razorpay is preferred whenever both happen to be configured — see the
+  // same comment in checkout/page.tsx.
+  const razorpayConfigured = Boolean(
+    process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+  );
+  const cashfreeConfigured = Boolean(
     process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY
   );
-  if (paymentStatus === "UNPAID" && gatewayConfigured) {
+  const gatewayConfigured = razorpayConfigured || cashfreeConfigured;
+
+  // The customer can land here before Cashfree's async webhook fires (its
+  // return_url redirect races it) — Cashfree itself is the authoritative
+  // source, so double-check directly rather than showing a stale "unpaid"
+  // the webhook was about to fix seconds later. Razorpay has no such race:
+  // its Standard Checkout verifies (and updates payment_status) synchronously
+  // before ever navigating here.
+  if (paymentStatus === "UNPAID" && cashfreeConfigured) {
     try {
       const live = await getCashfreeOrderStatus(order.order_number);
       if (live?.order_status === "PAID") {
@@ -91,7 +101,14 @@ export default async function OrderConfirmedPage({
             Your order is saved, but we haven&apos;t received payment. Complete it now to avoid
             delays in packing your order.
           </p>
-          <PaymentRetryButton orderNumber={order.order_number} cashfreeMode={cashfreeMode} />
+          {razorpayConfigured ? (
+            <RazorpayRetryButton
+              orderNumber={order.order_number}
+              keyId={process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!}
+            />
+          ) : (
+            <PaymentRetryButton orderNumber={order.order_number} cashfreeMode={cashfreeMode} />
+          )}
         </div>
       )}
 

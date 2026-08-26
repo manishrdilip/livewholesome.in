@@ -1,6 +1,6 @@
 import { NextResponse, type NextRequest } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
-import { verifyRazorpaySignature } from "@/lib/payment/razorpay";
+import { getRazorpayOrder, verifyRazorpaySignature } from "@/lib/payment/razorpay";
 
 export async function POST(request: NextRequest) {
 const ip =
@@ -29,10 +29,11 @@ body = await request.json();
 return NextResponse.json({ success: false, error: "Invalid request body" }, { status: 400 });
 }
 
-const { razorpay_order_id, razorpay_payment_id, razorpay_signature } = body as {
+const { razorpay_order_id, razorpay_payment_id, razorpay_signature, orderNumber } = body as {
 razorpay_order_id?: unknown;
 razorpay_payment_id?: unknown;
 razorpay_signature?: unknown;
+orderNumber?: unknown;
 };
 
 if (
@@ -63,12 +64,53 @@ console.error(`Razorpay signature mismatch for order ${razorpay_order_id}`);
 return NextResponse.json({ success: false, error: "Payment verification failed" }, { status: 400 });
 }
 
-// NOTE: decoupled from the `orders` table by design (see
-// create-order/route.ts). A checkout flow wired into real orders should
-// look the order up here by razorpay_order_id/receipt and update
-// payment_status = 'PAID', payment_method = 'RAZORPAY', plus an
-// order_events row — exactly like the Cashfree webhook does — instead of
-// just returning success.
+// Real checkout: the signature only proves this (order_id, payment_id)
+// pair genuinely came from Razorpay, not which of our orders the caller
+// says it's for — cross-check the receipt we set at creation time (see
+// create-order/route.ts) before touching the DB.
+if (typeof orderNumber === "string" && orderNumber) {
+const { data: order } = await supabase
+.from("orders")
+.select("id, payment_status")
+.eq("order_number", orderNumber)
+.single();
+
+if (!order) {
+return NextResponse.json({ success: false, error: "Order not found" }, { status: 404 });
+}
+
+let razorpayOrder;
+try {
+razorpayOrder = await getRazorpayOrder(razorpay_order_id);
+} catch (err) {
+console.error(`Could not re-fetch Razorpay order ${razorpay_order_id}`, err);
+return NextResponse.json(
+{ success: false, error: "Could not confirm payment with Razorpay" },
+{ status: 502 }
+);
+}
+
+if (razorpayOrder.receipt !== orderNumber) {
+console.error(
+`Razorpay order ${razorpay_order_id} receipt (${razorpayOrder.receipt}) doesn't match claimed order ${orderNumber}`
+);
+return NextResponse.json({ success: false, error: "Order mismatch" }, { status: 400 });
+}
+
+if (order.payment_status !== "PAID") {
+await supabase
+.from("orders")
+.update({ payment_status: "PAID", payment_method: "RAZORPAY" })
+.eq("id", order.id);
+
+await supabase.from("order_events").insert({
+order_id: order.id,
+status: "PAYMENT_RECEIVED",
+label: "Payment confirmed via Razorpay",
+});
+}
+}
+
 return NextResponse.json({
 success: true,
 paymentId: razorpay_payment_id,

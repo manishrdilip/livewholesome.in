@@ -10,7 +10,9 @@ import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
 import { getCurrentPosition, reverseGeocode, searchAddress, type AddressSuggestion } from "@/lib/geolocation";
 import { getEffectiveShippingFee } from "@/lib/pricing";
+import { normalizePhone } from "@/lib/phone";
 import { loadCashfreeSdk } from "@/lib/payment/loadCashfreeSdk";
+import { loadRazorpaySdk, type RazorpaySuccessResponse } from "@/lib/payment/loadRazorpaySdk";
 
 type FormState = {
   name: string;
@@ -168,6 +170,14 @@ export default function CheckoutPage() {
         return;
       }
 
+      // Razorpay is preferred whenever both happen to be configured — it's
+      // the gateway with working credentials today, Cashfree stays wired in
+      // dormant for whenever production keys for it exist.
+      if (config.razorpayEnabled) {
+        await tryLaunchRazorpay(data.orderNumber, config.razorpayKeyId!);
+        return; // tryLaunchRazorpay always navigates on to confirmation itself
+      }
+
       if (config.paymentGatewayEnabled) {
         const launched = await tryLaunchCashfree(data.orderNumber, config.cashfreeMode);
         if (launched) return; // browser is navigating to Cashfree's checkout
@@ -205,6 +215,81 @@ export default function CheckoutPage() {
     } catch (err) {
       console.error(`Could not launch Cashfree checkout for ${orderNumber}`, err);
       return false;
+    }
+  }
+
+  /** Razorpay Standard Checkout is a modal, not a redirect, so — unlike
+   * tryLaunchCashfree — this function always drives navigation itself
+   * (success, failure, or the customer dismissing the modal all land on the
+   * same confirmation page, which shows a retry option if payment didn't
+   * go through) rather than returning a boolean for the caller to act on. */
+  async function tryLaunchRazorpay(orderNumber: string, keyId: string) {
+    const goToConfirmation = () => router.push(`/order/confirmed?ref=${orderNumber}`);
+
+    try {
+      const res = await fetch("/api/payment/razorpay/create-order", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumber }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Payment setup failed");
+
+      await loadRazorpaySdk();
+
+      await new Promise<void>((resolve) => {
+        const rzp = new window.Razorpay!({
+          key: keyId,
+          amount: data.amount,
+          currency: data.currency,
+          order_id: data.orderId,
+          name: "Wholesome Purna",
+          description: `Order ${orderNumber}`,
+          prefill: {
+            name: form.name,
+            email: form.email,
+            contact: normalizePhone(form.phone),
+          },
+          theme: { color: "#2d5a2d" }, // --emerald
+          modal: {
+            // Customer backed out — the order still exists (unpaid), so
+            // send them to the same "payment not completed, retry" state
+            // the confirmation page already shows.
+            ondismiss: () => {
+              goToConfirmation();
+              resolve();
+            },
+          },
+          handler: async (response: RazorpaySuccessResponse) => {
+            try {
+              const verifyRes = await fetch("/api/payment/razorpay/verify", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ ...response, orderNumber }),
+              });
+              const verifyData = await verifyRes.json();
+              if (!verifyRes.ok || !verifyData.success) {
+                console.error(`Razorpay verification failed for ${orderNumber}`, verifyData.error);
+              }
+            } catch (err) {
+              console.error(`Razorpay verification request failed for ${orderNumber}`, err);
+            } finally {
+              goToConfirmation();
+              resolve();
+            }
+          },
+        });
+        // Razorpay shows the failure and lets the customer retry inside the
+        // same modal — don't navigate away here, only log it. ondismiss
+        // fires once they eventually close the modal either way.
+        rzp.on("payment.failed", (resp) => {
+          console.error(`Razorpay payment failed for ${orderNumber}`, resp.error);
+        });
+        rzp.open();
+      });
+    } catch (err) {
+      console.error(`Could not launch Razorpay checkout for ${orderNumber}`, err);
+      goToConfirmation();
     }
   }
 
@@ -478,7 +563,12 @@ export default function CheckoutPage() {
         </Field>
 
         <div className="rounded-xl border border-ink/10 bg-cream p-4 text-sm">
-          {config.paymentGatewayEnabled ? (
+          {config.razorpayEnabled ? (
+            <>
+              <strong>Payment:</strong> You&apos;ll be taken to a secure Razorpay checkout to pay
+              by UPI, card, or netbanking.
+            </>
+          ) : config.paymentGatewayEnabled ? (
             <>
               <strong>Payment:</strong> You&apos;ll be taken to a secure Cashfree checkout to pay
               by UPI, card, or netbanking.
@@ -516,7 +606,7 @@ export default function CheckoutPage() {
         >
           {submitting
             ? "Placing order…"
-            : config.paymentGatewayEnabled
+            : config.razorpayEnabled || config.paymentGatewayEnabled
               ? `Pay ₹${effectiveQuantity * unitPrice}`
               : "Place Order"}
         </button>

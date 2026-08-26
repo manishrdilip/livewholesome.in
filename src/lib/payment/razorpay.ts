@@ -71,6 +71,33 @@ export async function createRazorpayOrder(input: CreateOrderInput): Promise<Crea
   return data as CreateOrderResult;
 }
 
+export type RazorpayOrder = {
+  id: string;
+  amount: number;
+  currency: string;
+  receipt: string | null;
+  status: string;
+};
+
+/** Fetches a Razorpay order back by id — used to cross-check that a
+ * client-claimed orderNumber actually matches the receipt we set at
+ * creation time, before trusting a verified payment as belonging to it.
+ * The HMAC signature alone only proves a given (order_id, payment_id) pair
+ * is genuinely from Razorpay, not which of our orders the caller says it's
+ * for. */
+export async function getRazorpayOrder(orderId: string): Promise<RazorpayOrder> {
+  const res = await fetch(`${BASE_URL}/orders/${encodeURIComponent(orderId)}`, {
+    headers: { Authorization: authHeader() },
+  });
+  const data = await res.json();
+  if (!res.ok) {
+    const message =
+      (data?.error?.description as string | undefined) ?? `Could not fetch Razorpay order (${res.status})`;
+    throw new RazorpayApiError(message, res.status);
+  }
+  return data as RazorpayOrder;
+}
+
 /** Razorpay signs each successful Standard Checkout payment as
  * hex(HMAC-SHA256(order_id + "|" + payment_id, key_secret)) and hands it
  * back to the client as razorpay_signature — re-verify it server-side

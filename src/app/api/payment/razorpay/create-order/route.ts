@@ -37,17 +37,52 @@ body = await request.json();
 return NextResponse.json({ error: "Invalid request body" }, { status: 400 });
 }
 
-const { amount, receipt, notes } = body as {
+const { orderNumber, amount, receipt, notes } = body as {
+orderNumber?: unknown;
 amount?: unknown;
 receipt?: unknown;
 notes?: unknown;
 };
 
-// This endpoint is intentionally decoupled from the `orders` table (see
-// the NOTE in lib/payment/razorpay.ts), so there's no server-side order
-// row to compute the amount from — the caller supplies it directly. A
-// checkout flow wired into real orders should instead look the amount up
-// server-side and drop this validation in favour of trusting the DB row.
+// Real checkout: amount is computed here from the order's own DB row,
+// never trusted from the client. orderNumber doubles as Razorpay's
+// `receipt` so verify/route.ts can cross-check a payment claims the order
+// it actually belongs to.
+if (typeof orderNumber === "string" && orderNumber) {
+const { data: order } = await supabase
+.from("orders")
+.select("order_number, grand_total, payment_status")
+.eq("order_number", orderNumber)
+.single();
+
+if (!order) {
+return NextResponse.json({ error: "Order not found" }, { status: 404 });
+}
+if (order.payment_status === "PAID") {
+return NextResponse.json({ error: "This order is already paid" }, { status: 409 });
+}
+
+try {
+const razorpayOrder = await createRazorpayOrder({
+amount: Math.round(order.grand_total * 100),
+receipt: order.order_number,
+notes: { orderNumber: order.order_number },
+});
+return NextResponse.json({
+orderId: razorpayOrder.id,
+amount: razorpayOrder.amount,
+currency: razorpayOrder.currency,
+});
+} catch (err) {
+console.error(`Razorpay order creation failed for ${orderNumber}`, err);
+const message = err instanceof Error ? err.message : "Payment setup failed";
+return NextResponse.json({ error: message }, { status: 500 });
+}
+}
+
+// Decoupled/demo path — used only by the standalone /razorpay-test page,
+// which has no order row to compute an amount from (see the NOTE in
+// lib/payment/razorpay.ts).
 if (typeof amount !== "number" || !Number.isInteger(amount) || amount < MIN_AMOUNT_PAISE) {
 return NextResponse.json(
 { error: `amount must be an integer number of paise, at least ${MIN_AMOUNT_PAISE}` },

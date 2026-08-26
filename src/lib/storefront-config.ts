@@ -18,6 +18,10 @@ export type StorefrontConfig = {
   youtubeUrl: string | null;
   paymentGatewayEnabled: boolean;
   cashfreeMode: "sandbox" | "production";
+  /** Preferred over Cashfree when both happen to be configured — see the
+   * gateway-selection comment in checkout/page.tsx. */
+  razorpayEnabled: boolean;
+  razorpayKeyId: string | null;
   /** Kitchen's daily production cap, in units (500g pouches). Admin-configurable. */
   dailyOrderLimitUnits: number;
   /** Units already ordered today (India time), across all non-cancelled orders. */
@@ -47,6 +51,10 @@ export async function getStorefrontConfig(): Promise<StorefrontConfig> {
       process.env.CASHFREE_APP_ID && process.env.CASHFREE_SECRET_KEY
     ),
     cashfreeMode: process.env.CASHFREE_ENVIRONMENT === "PRODUCTION" ? "production" : "sandbox",
+    razorpayEnabled: Boolean(
+      process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID && process.env.RAZORPAY_KEY_SECRET
+    ),
+    razorpayKeyId: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID ?? null,
     dailyOrderLimitUnits: settings.daily_order_limit_units,
     unitsOrderedToday: unitsUsed ?? 0,
   };

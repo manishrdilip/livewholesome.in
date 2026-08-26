@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
   // a burst.
   const { data: withinLimit, error: rateLimitError } = await supabase.rpc(
     "check_rate_limit",
-    { p_key: `orders:${ip}`, p_max: 5, p_window_seconds: 60 * 60 }
+    { p_key: `orders:${ip}`, p_max: 20, p_window_seconds: 60 * 60 }
   );
   if (rateLimitError) {
     console.error("check_rate_limit failed", rateLimitError.message);
