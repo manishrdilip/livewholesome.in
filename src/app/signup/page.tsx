@@ -9,7 +9,7 @@ import { signupSchema } from "@/lib/validation";
 export default function SignupPage() {
   const router = useRouter();
   const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+91 ");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [status, setStatus] = useState<"idle" | "sending" | "error">("idle");

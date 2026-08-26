@@ -73,6 +73,7 @@ export default async function AccountPage() {
             required
             type="tel"
             name="phone"
+            defaultValue="+91 "
             placeholder="Mobile number, e.g. +91 98765 43210"
             className="input"
           />

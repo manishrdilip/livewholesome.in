@@ -36,3 +36,28 @@ export async function reverseGeocode(lat: number, lng: number): Promise<ReverseG
 export function mapsLinkFor(lat: number, lng: number): string {
   return `https://www.google.com/maps?q=${lat},${lng}`;
 }
+
+export type AddressSuggestion = {
+  label: string;
+  line1Guess: string;
+  pincode: string | null;
+};
+
+// Forward search on the same free Nominatim service as reverseGeocode above —
+// lets customers type an address and pick a match instead of only relying on
+// GPS. Restricted to India since that's the only country we ship to today.
+export async function searchAddress(query: string): Promise<AddressSuggestion[]> {
+  const res = await fetch(
+    `https://nominatim.openstreetmap.org/search?format=jsonv2&addressdetails=1&countrycodes=in&limit=5&q=${encodeURIComponent(query)}`,
+    { headers: { Accept: "application/json" } }
+  );
+  if (!res.ok) throw new Error("Could not search for this address");
+  const results = await res.json();
+  return (results as Array<{ display_name: string; address?: Record<string, string> }>).map((r) => {
+    const addr = r.address ?? {};
+    const line1Guess = [addr.house_number, addr.road ?? addr.pedestrian, addr.suburb ?? addr.neighbourhood]
+      .filter(Boolean)
+      .join(", ");
+    return { label: r.display_name, line1Guess: line1Guess || r.display_name, pincode: addr.postcode ?? null };
+  });
+}

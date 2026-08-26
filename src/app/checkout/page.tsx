@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, type FormEvent, type ReactNode } from "react";
+import { useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
@@ -8,7 +8,7 @@ import { PinIcon } from "@/components/Icon";
 import { PRODUCT } from "@/lib/product";
 import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
-import { getCurrentPosition, reverseGeocode } from "@/lib/geolocation";
+import { getCurrentPosition, reverseGeocode, searchAddress, type AddressSuggestion } from "@/lib/geolocation";
 import { getEffectiveShippingFee } from "@/lib/pricing";
 import { loadCashfreeSdk } from "@/lib/payment/loadCashfreeSdk";
 
@@ -31,9 +31,9 @@ type FormState = {
 
 const initialState: FormState = {
   name: "",
-  phone: "",
+  phone: "+91 ",
   whatsappSameAsPhone: true,
-  whatsappNumber: "",
+  whatsappNumber: "+91 ",
   email: "",
   pincode: "",
   line1: "",
@@ -66,9 +66,35 @@ export default function CheckoutPage() {
   const [submitting, setSubmitting] = useState(false);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [serverError, setServerError] = useState<string | null>(null);
+  const [addressSuggestions, setAddressSuggestions] = useState<AddressSuggestion[]>([]);
+  const [showSuggestions, setShowSuggestions] = useState(false);
+  const addressSearchTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   function update<K extends keyof FormState>(key: K, value: FormState[K]) {
     setForm((f) => ({ ...f, [key]: value }));
+  }
+
+  function handleLine1Change(value: string) {
+    update("line1", value);
+    if (addressSearchTimeout.current) clearTimeout(addressSearchTimeout.current);
+    if (value.trim().length < 4) {
+      setAddressSuggestions([]);
+      return;
+    }
+    addressSearchTimeout.current = setTimeout(async () => {
+      const results = await searchAddress(value).catch(() => []);
+      setAddressSuggestions(results);
+    }, 400);
+  }
+
+  function selectAddressSuggestion(suggestion: AddressSuggestion) {
+    update("line1", suggestion.line1Guess);
+    setAddressSuggestions([]);
+    setShowSuggestions(false);
+    if (suggestion.pincode) {
+      update("pincode", suggestion.pincode);
+      lookupAndFillPincode(suggestion.pincode);
+    }
   }
 
   async function lookupAndFillPincode(pin: string) {
@@ -365,12 +391,36 @@ export default function CheckoutPage() {
           </Field>
 
           <Field label="Flat / House no., Building, Street" error={errors.line1}>
-            <input
-              required
-              value={form.line1}
-              onChange={(e) => update("line1", e.target.value)}
-              className="input"
-            />
+            <div className="relative">
+              <input
+                required
+                value={form.line1}
+                onChange={(e) => handleLine1Change(e.target.value)}
+                onFocus={() => setShowSuggestions(true)}
+                onBlur={() => setTimeout(() => setShowSuggestions(false), 150)}
+                autoComplete="off"
+                className="input"
+              />
+              {showSuggestions && addressSuggestions.length > 0 && (
+                <ul className="absolute z-10 mt-1 w-full rounded-lg border border-ink/10 bg-white shadow-lg">
+                  {addressSuggestions.map((suggestion, i) => (
+                    <li key={i}>
+                      <button
+                        type="button"
+                        onMouseDown={(e) => e.preventDefault()}
+                        onClick={() => selectAddressSuggestion(suggestion)}
+                        className="block w-full px-3 py-2 text-left text-sm text-ink/80 hover:bg-emerald/5"
+                      >
+                        {suggestion.label}
+                      </button>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+            <p className="mt-1 text-xs text-ink/50">
+              Start typing to search for your address, or use your current location above.
+            </p>
           </Field>
 
           <Field label="Area / Locality (optional)">

@@ -106,7 +106,7 @@ export function SupportWidget() {
   const [screen, setScreen] = useState<Screen>("menu");
   const [messages, setMessages] = useState<Message[]>([]);
   const [orderNumber, setOrderNumber] = useState("");
-  const [phone, setPhone] = useState("");
+  const [phone, setPhone] = useState("+91 ");
   const [trackLoading, setTrackLoading] = useState(false);
 
   if (pathname?.startsWith("/admin")) return null;
