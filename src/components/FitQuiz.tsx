@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { createPortal } from "react-dom";
 import Link from "next/link";
 import { useLanguage } from "@/components/LanguageProvider";
 
@@ -170,14 +171,15 @@ export function FitQuiz() {
         {t.trigger}
       </button>
 
-      {open && (
-        <div
-          role="dialog"
-          aria-modal="true"
-          aria-label={t.title}
-          className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4"
-          onClick={close}
-        >
+      {open &&
+        createPortal(
+          <div
+            role="dialog"
+            aria-modal="true"
+            aria-label={t.title}
+            className="fixed inset-0 z-50 flex items-center justify-center bg-ink/40 px-4"
+            onClick={close}
+          >
           <div
             className="max-h-[85vh] w-full max-w-md overflow-y-auto rounded-2xl bg-white p-6 text-ink shadow-xl"
             onClick={(e) => e.stopPropagation()}
@@ -330,8 +332,9 @@ export function FitQuiz() {
               </div>
             )}
           </div>
-        </div>
-      )}
+          </div>,
+          document.body
+        )}
     </>
   );
 }
