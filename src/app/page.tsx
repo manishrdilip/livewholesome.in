@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { Footer } from "@/components/Footer";
+import { FitQuiz } from "@/components/FitQuiz";
 import { HeroOrderButton } from "@/components/HeroOrderButton";
 import { DailyNeedCard } from "@/components/DailyNeedCard";
 import { IngredientCard } from "@/components/IngredientCard";
@@ -132,6 +133,7 @@ export default async function HomePage() {
                 <T en="Explore Ingredients" ta="பொருட்களை பார்க்க" />
               </Link>
             </div>
+            <FitQuiz />
           </div>
 
           <div id="order" className="scroll-mt-24">
