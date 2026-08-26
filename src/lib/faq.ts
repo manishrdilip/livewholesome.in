@@ -35,17 +35,9 @@ export const FAQ_ITEMS: FaqItem[] = [
   },
   {
     question: "Do you ship all over India, and how much does it cost?",
-    answer: "Yes — free shipping on pre-orders over ₹798 anywhere in India.",
+    answer: "Yes — free shipping over ₹798 anywhere in India.",
     questionTa: "இந்தியா முழுவதும் அனுப்புவீர்களா, கட்டணம் எவ்வளவு?",
-    answerTa: "ஆம் — ₹798க்கு மேல் முன்பதிவுகளுக்கு இந்தியா முழுவதும் இலவச டெலிவரி.",
-  },
-  {
-    question: "You're launching soon — what does a pre-order mean?",
-    answer:
-      "We're finishing up before our first batch ships. A pre-order reserves your spot at today's price — nothing is charged now. We'll email and WhatsApp you when we launch, with next steps to confirm and pay. Want to try it first? Email us for a free 100g sample.",
-    questionTa: "நீங்கள் விரைவில் தொடங்குகிறீர்கள் — முன்பதிவு என்றால் என்ன?",
-    answerTa:
-      "எங்கள் முதல் தொகுதி அனுப்பப்படுவதற்கு முன் இறுதி வேலைகள் நடந்து கொண்டிருக்கின்றன. முன்பதிவு இன்றைய விலையில் உங்கள் இடத்தை பதிவு செய்கிறது — இப்போது எதுவும் கட்டணம் வசூலிக்கப்படாது. நாங்கள் தொடங்கும்போது மின்னஞ்சல் மற்றும் WhatsApp-இல் தொடர்பு கொள்வோம். முதலில் முயற்சிக்க விரும்புகிறீர்களா? இலவச 100g மாதிரிக்கு மின்னஞ்சல் செய்யவும்.",
+    answerTa: "ஆம் — ₹798க்கு மேல் இந்தியா முழுவதும் இலவச டெலிவரி.",
   },
   {
     question: "How does the Subscribe & Save option work?",

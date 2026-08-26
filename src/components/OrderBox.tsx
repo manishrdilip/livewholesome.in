@@ -7,7 +7,7 @@ import { PRODUCT } from "@/lib/product";
 import { getEffectiveShippingFee, FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
 
 const TRUST_BADGES = [
-  { Icon: LockIcon, en: "No payment now", ta: "இப்போது கட்டணம் இல்லை" },
+  { Icon: LockIcon, en: "Secure checkout", ta: "பாதுகாப்பான செக்அவுட்" },
   {
     Icon: TruckIcon,
     en: `Free shipping over ₹${FREE_SHIPPING_THRESHOLD}`,
@@ -36,10 +36,7 @@ export function OrderBox() {
 
   return (
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
-      <span className="inline-block rounded-full bg-emerald/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-emerald">
-        {lang === "ta" ? "விரைவில் வருகிறது" : "Launching Soon"}
-      </span>
-      <div className="mt-3">
+      <div>
         <div className="font-serif text-lg font-semibold">{PRODUCT.name}</div>
         <div className="text-sm text-ink/70">500g</div>
       </div>
@@ -53,10 +50,19 @@ export function OrderBox() {
 
       {soldOutForToday ? (
         <div className="mt-4 rounded-xl bg-red-50 p-4 text-center text-sm font-medium text-red-700">
-          {lang === "ta" ? "முன்பதிவுகள் தற்காலிகமாக நிறுத்தப்பட்டுள்ளன." : "Pre-orders paused for now."}
+          {lang === "ta"
+            ? "இன்றைய ஆர்டர் வரம்பு எட்டப்பட்டது. இரவு 12:00 மணிக்கு பிறகு வரவும்."
+            : "Day order limit reached. Please come back after 12:00 AM."}
         </div>
       ) : (
         <>
+          {remainingUnits < 5 && (
+            <p className="mt-4 text-xs font-medium text-red-600">
+              {lang === "ta"
+                ? `இன்றைய பேட்சில் ${remainingUnits} மட்டுமே மீதம்`
+                : `Only ${remainingUnits} left in today's batch`}
+            </p>
+          )}
           <div className="mt-4 flex items-center justify-between">
             <span className="text-sm font-medium">{lang === "ta" ? "அளவு" : "Quantity"}</span>
             <div className="flex items-center gap-3 rounded-full border border-ink/20 px-2 py-1">
@@ -127,12 +133,16 @@ export function OrderBox() {
             onClick={launchCheckout}
             className="mt-5 w-full rounded-full bg-gold py-3 font-semibold text-ink"
           >
-            {lang === "ta" ? "முன்பதிவு செய்" : "Reserve My Pre-order"}
+            {lang === "ta" ? "இப்போது ஆர்டர் செய் — செக்அவுட்" : "Order Now — Checkout"}
           </button>
           <p className="mt-2 text-center text-xs text-ink/70">
-            {lang === "ta"
-              ? "இப்போது கட்டணம் இல்லை — நாங்கள் தொடர்பு கொள்வோம்."
-              : "Nothing to pay now — we'll follow up before launch."}
+            {config.paymentGatewayEnabled
+              ? lang === "ta"
+                ? "Cashfree வழியாக பாதுகாப்பான செக்அவுட் — UPI, கார்டு & நெட்பேங்கிங்."
+                : "Secure checkout via Cashfree — UPI, card & netbanking accepted."
+              : lang === "ta"
+                ? "உறுதிப்படுத்தலின் பேரில் கட்டணம் — UPI/கார்டு மூலம் செலுத்தலாம், நாங்கள் தொடர்பு கொள்வோம். ஆன்லைன் கட்டணம் விரைவில்."
+                : "Payment on confirmation — pay by UPI/card, we'll follow up. Online payment coming soon."}
           </p>
         </>
       )}
@@ -145,15 +155,6 @@ export function OrderBox() {
           </li>
         ))}
       </ul>
-
-      {config.supportEmail && (
-        <p className="mt-3 text-center text-xs text-ink/70">
-          {lang === "ta" ? "முதலில் முயற்சிக்க விரும்புகிறீர்களா? " : "Want to try it first? "}
-          <a href={`mailto:${config.supportEmail}`} className="font-medium text-emerald hover:underline">
-            {lang === "ta" ? "இலவச 100g மாதிரிக்கு மின்னஞ்சல் செய்யவும்" : "Email us for a free 100g sample"}
-          </a>
-        </p>
-      )}
     </div>
   );
 }

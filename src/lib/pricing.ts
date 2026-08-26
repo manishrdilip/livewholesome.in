@@ -16,7 +16,7 @@ export type EffectivePricing = {
  * storefront-config endpoint (what the UI displays) and order creation
  * (what actually gets charged), so a tampered client-side price can never
  * be trusted over this. */
-/** Pre-orders ship free above this subtotal; below it, the admin-set flat
+/** Orders ship free above this subtotal; below it, the admin-set flat
  * shipping_fee applies. */
 export const FREE_SHIPPING_THRESHOLD = 798;
 

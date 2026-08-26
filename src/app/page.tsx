@@ -95,10 +95,7 @@ export default async function HomePage() {
         />
         <div className="relative mx-auto grid max-w-6xl gap-10 px-6 py-24 md:grid-cols-2 md:items-center">
           <div className="hero-enter">
-            <span className="inline-block rounded-full bg-gold/20 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-gold">
-              <T en="Launching Soon — Pre-orders Open" ta="விரைவில் வருகிறது — முன்பதிவுகள் தொடங்கிவிட்டன" />
-            </span>
-            <h1 className="mt-3 font-serif text-6xl font-bold tracking-tight">
+            <h1 className="font-serif text-6xl font-bold tracking-tight">
               Wholesome
               <span className="block font-normal italic text-gold">Purna</span>
             </h1>

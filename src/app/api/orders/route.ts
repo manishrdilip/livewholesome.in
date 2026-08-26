@@ -114,9 +114,6 @@ export async function POST(request: NextRequest) {
     p_customer_note: data.isSubscription
       ? `[Monthly Subscribe & Save] ${data.customerNote || ""}`.trim()
       : data.customerNote || null,
-    // Pre-launch: every order placed through this endpoint is a pre-order
-    // (no payment collected) rather than a confirmed, in-production order.
-    p_status: "PREORDER",
   });
 
   if (error) {

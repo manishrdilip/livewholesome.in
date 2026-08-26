@@ -10,6 +10,7 @@ import { INDIAN_STATES } from "@/lib/indian-states";
 import { lookupPincode } from "@/lib/pincode";
 import { getCurrentPosition, reverseGeocode } from "@/lib/geolocation";
 import { getEffectiveShippingFee } from "@/lib/pricing";
+import { loadCashfreeSdk } from "@/lib/payment/loadCashfreeSdk";
 
 type FormState = {
   name: string;
@@ -141,13 +142,43 @@ export default function CheckoutPage() {
         return;
       }
 
-      // Pre-launch: no payment is collected at order time, so there's
-      // nothing to redirect to — straight to the confirmation page.
+      if (config.paymentGatewayEnabled) {
+        const launched = await tryLaunchCashfree(data.orderNumber, config.cashfreeMode);
+        if (launched) return; // browser is navigating to Cashfree's checkout
+      }
+
+      // Either payment isn't configured yet, or launching it failed — the
+      // order already exists either way, so fall back to the same
+      // "we'll follow up" confirmation instead of stranding the customer.
       router.push(`/order/confirmed?ref=${data.orderNumber}`);
     } catch {
       setServerError("Network error. Please check your connection and try again.");
     } finally {
       setSubmitting(false);
+    }
+  }
+
+  /** Returns true if the browser is now navigating to Cashfree's checkout
+   * (caller should not do anything further). Returns false on any failure
+   * so the caller can fall back — a payment-setup hiccup must never look
+   * like the order itself failed, since the order was already created. */
+  async function tryLaunchCashfree(orderNumber: string, mode: "sandbox" | "production") {
+    try {
+      const res = await fetch("/api/payment/create-session", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ orderNumber }),
+      });
+      const data = await res.json();
+      if (!res.ok) throw new Error(data.error ?? "Payment session creation failed");
+
+      await loadCashfreeSdk();
+      const cashfree = window.Cashfree!({ mode });
+      cashfree.checkout({ paymentSessionId: data.paymentSessionId, redirectTarget: "_self" });
+      return true;
+    } catch (err) {
+      console.error(`Could not launch Cashfree checkout for ${orderNumber}`, err);
+      return false;
     }
   }
 
@@ -158,8 +189,8 @@ export default function CheckoutPage() {
           ← Back to shop
         </Link>
         <div className="mt-8 rounded-xl bg-red-50 p-6 text-center text-red-700">
-          <h1 className="font-serif text-2xl font-bold">Pre-orders paused</h1>
-          <p className="mt-2 text-sm">Please check back soon.</p>
+          <h1 className="font-serif text-2xl font-bold">Day order limit reached</h1>
+          <p className="mt-2 text-sm">Please come back after 12:00 AM.</p>
         </div>
       </div>
     );
@@ -170,11 +201,7 @@ export default function CheckoutPage() {
       <Link href="/" className="text-sm text-emerald hover:underline">
         ← Back to shop
       </Link>
-      <h1 className="mt-4 font-serif text-3xl font-bold">Reserve Your Pre-order</h1>
-      <p className="mt-1 text-sm text-ink/60">
-        We&apos;re launching soon — no payment now. We&apos;ll reach out on WhatsApp/email when
-        Wholesome Purna ships.
-      </p>
+      <h1 className="mt-4 font-serif text-3xl font-bold">Checkout</h1>
 
       <div className="mt-4 rounded-xl bg-cream p-4 text-sm">
         <div className="flex items-center justify-between">
@@ -401,8 +428,17 @@ export default function CheckoutPage() {
         </Field>
 
         <div className="rounded-xl border border-ink/10 bg-cream p-4 text-sm">
-          <strong>Payment:</strong> Nothing to pay right now — this reserves your order. We&apos;ll
-          contact you on WhatsApp/email to confirm and collect payment once we launch.
+          {config.paymentGatewayEnabled ? (
+            <>
+              <strong>Payment:</strong> You&apos;ll be taken to a secure Cashfree checkout to pay
+              by UPI, card, or netbanking.
+            </>
+          ) : (
+            <>
+              <strong>Payment:</strong> We&apos;ll contact you to complete payment after
+              confirming your order. Online payment is coming soon.
+            </>
+          )}
         </div>
 
         <label className="flex items-start gap-2 text-xs text-ink/70">
@@ -413,7 +449,8 @@ export default function CheckoutPage() {
             onChange={(e) => update("consent", e.target.checked)}
             className="mt-0.5"
           />
-          By reserving this pre-order you agree to receive updates on WhatsApp and email.
+          By placing this order you agree to receive your invoice and delivery updates on
+          WhatsApp and email.
         </label>
 
         {serverError && (
@@ -427,7 +464,11 @@ export default function CheckoutPage() {
           disabled={submitting}
           className="w-full rounded-full bg-gold py-3 font-semibold text-ink disabled:opacity-50"
         >
-          {submitting ? "Reserving…" : "Reserve My Pre-order"}
+          {submitting
+            ? "Placing order…"
+            : config.paymentGatewayEnabled
+              ? `Pay ₹${effectiveQuantity * unitPrice}`
+              : "Place Order"}
         </button>
       </form>
     </div>
