@@ -3,6 +3,7 @@ import Link from "next/link";
 import { createServiceClient } from "@/lib/supabase/server";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
 import { EditPopup } from "@/components/admin/EditPopup";
+import { SubmitButton } from "@/components/admin/SubmitButton";
 import { PRODUCT } from "@/lib/product";
 import {
   COST_CATEGORIES,
@@ -152,6 +153,16 @@ async function updateCostItemAmount(formData: FormData) {
   revalidatePath("/admin/costing");
 }
 
+async function updateCostItemTax(formData: FormData) {
+  "use server";
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return;
+  const tax_percent = formNumber(formData.get("tax_percent"), 0, 0);
+  const supabase = createServiceClient();
+  await supabase.from("cost_items").update({ tax_percent }).eq("id", id);
+  revalidatePath("/admin/costing");
+}
+
 function TabNav({ active }: { active: TabValue }) {
   return (
     <nav className="mt-4 flex flex-wrap gap-2 border-b border-ink/10 pb-4 text-sm">
@@ -238,9 +249,7 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
             defaultValue={material.price}
             className="input w-20 py-1"
           />
-          <button type="submit" className="text-xs font-medium text-emerald hover:underline">
-            Save
-          </button>
+          <SubmitButton className="text-xs font-medium text-emerald hover:underline">Save</SubmitButton>
         </form>
         <span className="text-xs text-ink/40">({inr(perKg)}/kg)</span>
       </td>
@@ -301,9 +310,9 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
                 <input type="checkbox" name="is_active" defaultChecked={material.is_active} />
                 Active
               </label>
-              <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
+              <SubmitButton className="rounded-full bg-emerald px-4 py-1.5 text-cream">
                 Save
-              </button>
+              </SubmitButton>
             </form>
           </EditPopup>
           <DeleteRawMaterialForm id={material.id} />
@@ -334,12 +343,24 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
             defaultValue={item.amount}
             className="input w-20 py-1"
           />
-          <button type="submit" className="text-xs font-medium text-emerald hover:underline">
-            Save
-          </button>
+          <SubmitButton className="text-xs font-medium text-emerald hover:underline">Save</SubmitButton>
         </form>
       </td>
-      <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.tax_percent}%</td>
+      <td className="px-3 py-2 whitespace-nowrap">
+        <form action={updateCostItemTax} className="flex items-center gap-1.5">
+          <input type="hidden" name="id" value={item.id} />
+          <input
+            name="tax_percent"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={item.tax_percent}
+            className="input w-16 py-1"
+          />
+          <span className="text-ink/50">%</span>
+          <SubmitButton className="text-xs font-medium text-emerald hover:underline">Save</SubmitButton>
+        </form>
+      </td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.allocation_quantity}</td>
       <td className="px-3 py-2 font-semibold whitespace-nowrap">{inr(perPouch)}</td>
       <td className="px-3 py-2">
@@ -351,24 +372,14 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
             <form action={upsertCostItem} className="space-y-3 text-sm">
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="category" value={item.category} />
-              {/* Amount is edited inline in the table, not here — carry its current
-                  value through so this save doesn't reset it to 0. */}
+              {/* Amount and Tax % are edited inline in the table, not here — carry
+                  their current values through so this save doesn't reset them to 0. */}
               <input type="hidden" name="amount" value={item.amount} />
+              <input type="hidden" name="tax_percent" value={item.tax_percent} />
               <h3 className="font-semibold">{item.name}</h3>
               <label className="block">
                 <span className="font-medium">Name</span>
                 <input name="name" defaultValue={item.name} required className="input mt-1" />
-              </label>
-              <label className="block">
-                <span className="font-medium">Tax %</span>
-                <input
-                  name="tax_percent"
-                  type="number"
-                  step="0.01"
-                  min="0"
-                  defaultValue={item.tax_percent}
-                  className="input mt-1"
-                />
               </label>
               <label className="block">
                 <span className="font-medium">Allocation (pouches)</span>
@@ -386,9 +397,9 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
                 <input type="checkbox" name="is_active" defaultChecked={item.is_active} />
                 Active
               </label>
-              <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
+              <SubmitButton className="rounded-full bg-emerald px-4 py-1.5 text-cream">
                 Save
-              </button>
+              </SubmitButton>
             </form>
           </EditPopup>
           <DeleteCostItemForm id={item.id} />
@@ -492,9 +503,7 @@ async function RawMaterialTab() {
               className="input mt-1"
             />
           </label>
-          <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
-            Add
-          </button>
+          <SubmitButton className="rounded-full bg-emerald px-4 py-1.5 text-cream">Add</SubmitButton>
         </form>
       </EditPopup>
     </div>
@@ -592,9 +601,7 @@ async function CostCategoryTab({ category }: { category: CostCategory }) {
               className="input mt-1"
             />
           </label>
-          <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
-            Add
-          </button>
+          <SubmitButton className="rounded-full bg-emerald px-4 py-1.5 text-cream">Add</SubmitButton>
         </form>
       </EditPopup>
     </div>
