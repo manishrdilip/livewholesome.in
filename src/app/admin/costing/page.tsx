@@ -130,6 +130,28 @@ async function deleteCostItem(formData: FormData) {
   revalidatePath("/admin/costing");
 }
 
+// Price changes constantly and shouldn't need the full Edit popup — this
+// updates just that one column directly from the table row.
+async function updateRawMaterialPrice(formData: FormData) {
+  "use server";
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return;
+  const price = formNumber(formData.get("price"), 0, 0);
+  const supabase = createServiceClient();
+  await supabase.from("raw_materials").update({ price }).eq("id", id);
+  revalidatePath("/admin/costing");
+}
+
+async function updateCostItemAmount(formData: FormData) {
+  "use server";
+  const id = formData.get("id");
+  if (typeof id !== "string" || !id) return;
+  const amount = formNumber(formData.get("amount"), 0, 0);
+  const supabase = createServiceClient();
+  await supabase.from("cost_items").update({ amount }).eq("id", id);
+  revalidatePath("/admin/costing");
+}
+
 function TabNav({ active }: { active: TabValue }) {
   return (
     <nav className="mt-4 flex flex-wrap gap-2 border-b border-ink/10 pb-4 text-sm">
@@ -204,8 +226,23 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
         {material.default_weight_value}
         {material.default_weight_unit}
       </td>
-      <td className="px-3 py-2 whitespace-nowrap text-ink/70">
-        {inr(material.price)} <span className="text-xs text-ink/40">({inr(perKg)}/kg)</span>
+      <td className="px-3 py-2 whitespace-nowrap">
+        <form action={updateRawMaterialPrice} className="flex items-center gap-1.5">
+          <input type="hidden" name="id" value={material.id} />
+          <span className="text-ink/50">₹</span>
+          <input
+            name="price"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={material.price}
+            className="input w-20 py-1"
+          />
+          <button type="submit" className="text-xs font-medium text-emerald hover:underline">
+            Save
+          </button>
+        </form>
+        <span className="text-xs text-ink/40">({inr(perKg)}/kg)</span>
       </td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{material.usage_per_packet_grams}g</td>
       <td className="px-3 py-2 font-semibold whitespace-nowrap">{inr(perPouch)}</td>
@@ -217,45 +254,35 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
           <EditPopup triggerLabel="Edit" triggerClassName="text-xs font-medium text-emerald hover:underline">
             <form action={upsertRawMaterial} className="space-y-3 text-sm">
               <input type="hidden" name="id" value={material.id} />
+              {/* Price is edited inline in the table, not here — carry its current
+                  value through so this save doesn't reset it to 0. */}
+              <input type="hidden" name="price" value={material.price} />
               <h3 className="font-semibold">{material.name}</h3>
               <label className="block">
                 <span className="font-medium">Name</span>
                 <input name="name" defaultValue={material.name} required className="input mt-1" />
               </label>
-              <div className="flex gap-3">
-                <label className="block flex-1">
-                  <span className="font-medium">Price (₹)</span>
+              <label className="block">
+                <span className="font-medium">Weight</span>
+                <div className="mt-1 flex gap-1">
                   <input
-                    name="price"
+                    name="default_weight_value"
                     type="number"
                     step="0.01"
-                    min="0"
-                    defaultValue={material.price}
-                    className="input mt-1"
+                    min="0.01"
+                    defaultValue={material.default_weight_value}
+                    className="input w-16"
                   />
-                </label>
-                <label className="block">
-                  <span className="font-medium">Weight</span>
-                  <div className="mt-1 flex gap-1">
-                    <input
-                      name="default_weight_value"
-                      type="number"
-                      step="0.01"
-                      min="0.01"
-                      defaultValue={material.default_weight_value}
-                      className="input w-16"
-                    />
-                    <select
-                      name="default_weight_unit"
-                      defaultValue={material.default_weight_unit}
-                      className="input w-20"
-                    >
-                      <option value="kg">kg</option>
-                      <option value="g">g</option>
-                    </select>
-                  </div>
-                </label>
-              </div>
+                  <select
+                    name="default_weight_unit"
+                    defaultValue={material.default_weight_unit}
+                    className="input w-20"
+                  >
+                    <option value="kg">kg</option>
+                    <option value="g">g</option>
+                  </select>
+                </div>
+              </label>
               <label className="block">
                 <span className="font-medium">Usage per packet (g)</span>
                 <input
@@ -295,7 +322,23 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
         {item.name}
         <div className="text-[10px] font-normal text-ink/40">Updated {lastUpdated(item.updated_at)}</div>
       </td>
-      <td className="px-3 py-2 whitespace-nowrap text-ink/70">{inr(item.amount)}</td>
+      <td className="px-3 py-2 whitespace-nowrap">
+        <form action={updateCostItemAmount} className="flex items-center gap-1.5">
+          <input type="hidden" name="id" value={item.id} />
+          <span className="text-ink/50">₹</span>
+          <input
+            name="amount"
+            type="number"
+            step="0.01"
+            min="0"
+            defaultValue={item.amount}
+            className="input w-20 py-1"
+          />
+          <button type="submit" className="text-xs font-medium text-emerald hover:underline">
+            Save
+          </button>
+        </form>
+      </td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.tax_percent}%</td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.allocation_quantity}</td>
       <td className="px-3 py-2 font-semibold whitespace-nowrap">{inr(perPouch)}</td>
@@ -308,35 +351,25 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
             <form action={upsertCostItem} className="space-y-3 text-sm">
               <input type="hidden" name="id" value={item.id} />
               <input type="hidden" name="category" value={item.category} />
+              {/* Amount is edited inline in the table, not here — carry its current
+                  value through so this save doesn't reset it to 0. */}
+              <input type="hidden" name="amount" value={item.amount} />
               <h3 className="font-semibold">{item.name}</h3>
               <label className="block">
                 <span className="font-medium">Name</span>
                 <input name="name" defaultValue={item.name} required className="input mt-1" />
               </label>
-              <div className="flex gap-3">
-                <label className="block flex-1">
-                  <span className="font-medium">Amount (₹)</span>
-                  <input
-                    name="amount"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    defaultValue={item.amount}
-                    className="input mt-1"
-                  />
-                </label>
-                <label className="block flex-1">
-                  <span className="font-medium">Tax %</span>
-                  <input
-                    name="tax_percent"
-                    type="number"
-                    step="0.01"
-                    min="0"
-                    defaultValue={item.tax_percent}
-                    className="input mt-1"
-                  />
-                </label>
-              </div>
+              <label className="block">
+                <span className="font-medium">Tax %</span>
+                <input
+                  name="tax_percent"
+                  type="number"
+                  step="0.01"
+                  min="0"
+                  defaultValue={item.tax_percent}
+                  className="input mt-1"
+                />
+              </label>
               <label className="block">
                 <span className="font-medium">Allocation (pouches)</span>
                 <input
