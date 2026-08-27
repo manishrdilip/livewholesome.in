@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
 import { loadRazorpaySdk, type RazorpaySuccessResponse } from "@/lib/payment/loadRazorpaySdk";
 
@@ -15,19 +15,27 @@ export function RazorpayRetryButton({
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
+  // Preload checkout.js as soon as this button is on screen (typically the
+  // order-confirmed page after a dismissed/failed payment), so a retry
+  // click doesn't also have to wait on the script download.
+  useEffect(() => {
+    loadRazorpaySdk().catch(() => {});
+  }, []);
+
   async function retry() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch("/api/payment/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber }),
-      });
+      const [res] = await Promise.all([
+        fetch("/api/payment/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderNumber }),
+        }),
+        loadRazorpaySdk(),
+      ]);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Couldn't start payment");
-
-      await loadRazorpaySdk();
 
       const rzp = new window.Razorpay!({
         key: keyId,

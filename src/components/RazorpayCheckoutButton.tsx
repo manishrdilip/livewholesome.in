@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { loadRazorpaySdk, type RazorpaySuccessResponse } from "@/lib/payment/loadRazorpaySdk";
 
 export type RazorpayCheckoutButtonProps = {
@@ -28,22 +28,29 @@ className,
 const [loading, setLoading] = useState(false);
 const [error, setError] = useState<string | null>(null);
 
+// Preload checkout.js as soon as this button is on screen, so clicking Pay
+// doesn't also have to wait on the script download.
+useEffect(() => {
+loadRazorpaySdk().catch(() => {});
+}, []);
+
 async function pay() {
 setLoading(true);
 setError(null);
 try {
-const res = await fetch("/api/payment/razorpay/create-order", {
+const [res] = await Promise.all([
+fetch("/api/payment/razorpay/create-order", {
 method: "POST",
 headers: { "Content-Type": "application/json" },
 body: JSON.stringify({ amount: Math.round(amountRupees * 100), receipt }),
-});
+}),
+loadRazorpaySdk(),
+]);
 const data = await res.json();
 if (!res.ok) throw new Error(data.error ?? "Couldn't start payment");
 
 const keyId = process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID;
 if (!keyId) throw new Error("Razorpay is not configured (missing NEXT_PUBLIC_RAZORPAY_KEY_ID)");
-
-await loadRazorpaySdk();
 
 const rzp = new window.Razorpay!({
 key: keyId,

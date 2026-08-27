@@ -1,6 +1,6 @@
 "use client";
 
-import { useRef, useState, type FormEvent, type ReactNode } from "react";
+import { useEffect, useRef, useState, type FormEvent, type ReactNode } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { useCart } from "@/components/CartProvider";
@@ -55,6 +55,19 @@ export default function CheckoutPage() {
 
   const subtotal = effectiveQuantity * unitPrice;
   const shippingFee = getEffectiveShippingFee(subtotal, config.shippingFee);
+
+  // Start downloading Razorpay's checkout.js as soon as this page loads,
+  // not when the customer clicks Pay — filling in the address form takes
+  // far longer than the script takes to load, so by the time they submit
+  // it's already cached and the modal opens instantly instead of waiting
+  // on the script on top of the order-creation round trip.
+  useEffect(() => {
+    if (config.razorpayEnabled) {
+      loadRazorpaySdk().catch(() => {
+        // Best-effort preload — tryLaunchRazorpay retries this at click time.
+      });
+    }
+  }, [config.razorpayEnabled]);
 
   const [form, setForm] = useState<FormState>(initialState);
   const [pincodeStatus, setPincodeStatus] = useState<
@@ -227,15 +240,20 @@ export default function CheckoutPage() {
     const goToConfirmation = () => router.push(`/order/confirmed?ref=${orderNumber}`);
 
     try {
-      const res = await fetch("/api/payment/razorpay/create-order", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ orderNumber }),
-      });
+      // Run the order-creation call and the SDK load side by side — the SDK
+      // is almost always already cached from the mount-time preload above,
+      // but this also covers the fresh-page/fast-click case without paying
+      // for both waits back to back.
+      const [res] = await Promise.all([
+        fetch("/api/payment/razorpay/create-order", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ orderNumber }),
+        }),
+        loadRazorpaySdk(),
+      ]);
       const data = await res.json();
       if (!res.ok) throw new Error(data.error ?? "Payment setup failed");
-
-      await loadRazorpaySdk();
 
       await new Promise<void>((resolve) => {
         const rzp = new window.Razorpay!({
