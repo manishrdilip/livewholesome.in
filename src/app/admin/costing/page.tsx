@@ -34,6 +34,16 @@ function inr(n: number): string {
   return `₹${n.toLocaleString("en-IN", { maximumFractionDigits: 2 })}`;
 }
 
+function lastUpdated(iso: string): string {
+  return new Date(iso).toLocaleDateString("en-IN", { day: "numeric", month: "short", year: "numeric" });
+}
+
+/** Parses a form number field, clamped to a minimum, falling back on blank/invalid input. */
+function formNumber(value: FormDataEntryValue | null, min: number, fallback: number): number {
+  const n = Number(value);
+  return Number.isFinite(n) ? Math.max(min, n) : fallback;
+}
+
 async function upsertRawMaterial(formData: FormData) {
   "use server";
   const id = String(formData.get("id") ?? "").trim();
@@ -42,10 +52,10 @@ async function upsertRawMaterial(formData: FormData) {
 
   const row = {
     name,
-    default_weight_value: Number(formData.get("default_weight_value") ?? 1),
+    default_weight_value: formNumber(formData.get("default_weight_value"), 0.001, 1),
     default_weight_unit: String(formData.get("default_weight_unit") ?? "kg"),
-    price: Number(formData.get("price") ?? 0),
-    usage_per_packet_grams: Number(formData.get("usage_per_packet_grams") ?? 0),
+    price: formNumber(formData.get("price"), 0, 0),
+    usage_per_packet_grams: formNumber(formData.get("usage_per_packet_grams"), 0, 0),
     notes: String(formData.get("notes") ?? "").trim() || null,
     is_active: formData.get("is_active") === "on",
   };
@@ -86,9 +96,9 @@ async function upsertCostItem(formData: FormData) {
   const row = {
     category,
     name,
-    amount: Number(formData.get("amount") ?? 0),
-    tax_percent: Number(formData.get("tax_percent") ?? 0),
-    allocation_quantity: Number(formData.get("allocation_quantity") ?? 1) || 1,
+    amount: formNumber(formData.get("amount"), 0, 0),
+    tax_percent: formNumber(formData.get("tax_percent"), 0, 0),
+    allocation_quantity: formNumber(formData.get("allocation_quantity"), 1, 1),
     notes: String(formData.get("notes") ?? "").trim() || null,
     is_active: formData.get("is_active") === "on",
   };
@@ -184,7 +194,12 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
   return (
     <tr className="border-b border-ink/5 last:border-0">
       <td className="px-3 py-2 text-ink/40">{index}</td>
-      <td className="px-3 py-2 font-medium">{material.name}</td>
+      <td className="px-3 py-2 font-medium">
+        {material.name}
+        <div className="text-[10px] font-normal text-ink/40">
+          Updated {lastUpdated(material.updated_at)}
+        </div>
+      </td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">
         {material.default_weight_value}
         {material.default_weight_unit}
@@ -214,6 +229,7 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
                     name="price"
                     type="number"
                     step="0.01"
+                    min="0"
                     defaultValue={material.price}
                     className="input mt-1"
                   />
@@ -225,6 +241,7 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
                       name="default_weight_value"
                       type="number"
                       step="0.01"
+                      min="0.01"
                       defaultValue={material.default_weight_value}
                       className="input w-16"
                     />
@@ -245,6 +262,7 @@ function RawMaterialTableRow({ index, material }: { index: number; material: Raw
                   name="usage_per_packet_grams"
                   type="number"
                   step="0.01"
+                  min="0"
                   defaultValue={material.usage_per_packet_grams}
                   className="input mt-1"
                 />
@@ -273,7 +291,10 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
   return (
     <tr className="border-b border-ink/5 last:border-0">
       <td className="px-3 py-2 text-ink/40">{index}</td>
-      <td className="px-3 py-2 font-medium">{item.name}</td>
+      <td className="px-3 py-2 font-medium">
+        {item.name}
+        <div className="text-[10px] font-normal text-ink/40">Updated {lastUpdated(item.updated_at)}</div>
+      </td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{inr(item.amount)}</td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.tax_percent}%</td>
       <td className="px-3 py-2 whitespace-nowrap text-ink/70">{item.allocation_quantity}</td>
@@ -299,6 +320,7 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
                     name="amount"
                     type="number"
                     step="0.01"
+                    min="0"
                     defaultValue={item.amount}
                     className="input mt-1"
                   />
@@ -309,6 +331,7 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
                     name="tax_percent"
                     type="number"
                     step="0.01"
+                    min="0"
                     defaultValue={item.tax_percent}
                     className="input mt-1"
                   />
@@ -320,6 +343,7 @@ function CostItemTableRow({ index, item }: { index: number; item: CostItem }) {
                   name="allocation_quantity"
                   type="number"
                   step="1"
+                  min="1"
                   defaultValue={item.allocation_quantity}
                   className="input mt-1"
                 />
@@ -397,7 +421,14 @@ async function RawMaterialTab() {
           <div className="flex gap-3">
             <label className="block flex-1">
               <span className="font-medium">Price (₹)</span>
-              <input name="price" type="number" step="0.01" defaultValue={0} className="input mt-1" />
+              <input
+                name="price"
+                type="number"
+                step="0.01"
+                min="0"
+                defaultValue={0}
+                className="input mt-1"
+              />
             </label>
             <label className="block">
               <span className="font-medium">Weight</span>
@@ -406,6 +437,7 @@ async function RawMaterialTab() {
                   name="default_weight_value"
                   type="number"
                   step="0.01"
+                  min="0.01"
                   defaultValue={1}
                   className="input w-16"
                 />
@@ -422,6 +454,7 @@ async function RawMaterialTab() {
               name="usage_per_packet_grams"
               type="number"
               step="0.01"
+              min="0"
               defaultValue={0}
               className="input mt-1"
             />
@@ -494,7 +527,14 @@ async function CostCategoryTab({ category }: { category: CostCategory }) {
           <div className="flex gap-3">
             <label className="block flex-1">
               <span className="font-medium">Amount (₹)</span>
-              <input name="amount" type="number" step="0.01" defaultValue={0} className="input mt-1" />
+              <input
+                name="amount"
+                type="number"
+                step="0.01"
+                min="0"
+                defaultValue={0}
+                className="input mt-1"
+              />
             </label>
             <label className="block flex-1">
               <span className="font-medium">Tax %</span>
@@ -502,6 +542,7 @@ async function CostCategoryTab({ category }: { category: CostCategory }) {
                 name="tax_percent"
                 type="number"
                 step="0.01"
+                min="0"
                 defaultValue={0}
                 className="input mt-1"
               />
@@ -513,6 +554,7 @@ async function CostCategoryTab({ category }: { category: CostCategory }) {
               name="allocation_quantity"
               type="number"
               step="1"
+              min="1"
               defaultValue={1}
               className="input mt-1"
             />
@@ -593,6 +635,20 @@ async function SummaryTab() {
             </div>
           ))}
         </dl>
+      </div>
+
+      <div className="rounded-xl border border-ink/10 bg-white p-5">
+        <h2 className="font-semibold">Export</h2>
+        <p className="mt-1 text-xs text-ink/50">
+          Download every tab (raw materials, overhead costs, summary) as a spreadsheet. Open it directly
+          in Excel, or drag it into Google Drive / File → Import in Google Sheets.
+        </p>
+        <a
+          href="/api/admin/costing-export"
+          className="mt-3 inline-block rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
+        >
+          Download CSV
+        </a>
       </div>
     </div>
   );

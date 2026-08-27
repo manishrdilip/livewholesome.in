@@ -14,6 +14,7 @@ export type RawMaterial = {
   notes: string | null;
   sort_order: number;
   is_active: boolean;
+  updated_at: string;
 };
 
 export type CostCategory =
@@ -35,6 +36,7 @@ export type CostItem = {
   notes: string | null;
   sort_order: number;
   is_active: boolean;
+  updated_at: string;
 };
 
 export const COST_CATEGORIES: { value: CostCategory; label: string; help: string }[] = [
