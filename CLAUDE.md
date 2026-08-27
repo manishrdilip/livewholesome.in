@@ -37,7 +37,7 @@ Global middleware, not per-route guards:
 - `/api/admin/*` — requires a Supabase session whose email is in the `ADMIN_EMAILS` env var (comma-separated); otherwise 401 JSON.
 - `/admin/*` (except `/admin/login`, `/admin/reset-password`) — same admin-email check; redirects to `/admin/login` if unauthenticated, or back with `?error=not_admin` if logged in as the wrong account.
 - `/account/*` — requires any authenticated Supabase session.
-- Security headers (CSP, HSTS, X-Frame-Options, etc.) are applied to every response here. The CSP deliberately omits `script-src`/`style-src`/`default-src` — a nonce-based `script-src` was tried and reverted because it broke a production-only client chunk in a way that didn't reproduce in dev; see the comment in `proxy.ts` before re-attempting that.
+- Security headers (CSP, HSTS, X-Frame-Options, etc.) are applied to every response here. `script-src` is a host allowlist (`'self' 'unsafe-inline'` + the exact external origins the app loads scripts from — Cashfree, Razorpay's checkout.js *and* its `cdn.razorpay.com` risk-detection bundle, GA4), deliberately *not* nonce-based — a nonce-based `script-src` was tried twice and reverted both times because Next.js/Turbopack's own dynamically-created and RSC-streaming `<script>` chunks aren't reliably nonce-compliant, breaking hydration in production in a way that didn't reproduce in dev. `style-src`/`default-src` are still omitted. See the comment in `proxy.ts` before re-attempting a nonce policy, and when adding a new external script origin, check whether it also loads secondary scripts from a *different* origin at runtime (as Razorpay's checkout.js does) — a silently CSP-blocked secondary script won't throw where the customer can see it, only in devtools.
 
 ## Data layer
 

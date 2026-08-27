@@ -25,6 +25,11 @@ const ADMIN_EMAILS = (process.env.ADMIN_EMAILS ?? "")
 // but it's real, verified-safe hardening over having no script-src at all.
 // https://checkout.razorpay.com is the Razorpay Standard Checkout SDK
 // (loadRazorpaySdk.ts), added the same way as the Cashfree entry above.
+// https://cdn.razorpay.com is a second Razorpay-owned origin the checkout.js
+// SDK itself loads a risk-detection bundle from at runtime — without it,
+// that script load is silently blocked and the checkout modal can render
+// in a degraded state (e.g. missing payment methods) with no error visible
+// to the customer, only in devtools/CSP-report console output.
 // https://www.googletagmanager.com is the GA4 gtag.js loader
 // (GoogleAnalytics.tsx), added the same way.
 function securityHeaders(response: NextResponse) {
@@ -41,7 +46,7 @@ function securityHeaders(response: NextResponse) {
   );
   response.headers.set(
     "Content-Security-Policy",
-    "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com https://checkout.razorpay.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
+    "script-src 'self' 'unsafe-inline' https://sdk.cashfree.com https://checkout.razorpay.com https://cdn.razorpay.com https://www.googletagmanager.com; object-src 'none'; base-uri 'self'; frame-ancestors 'none'; form-action 'self'"
   );
   return response;
 }
