@@ -1,6 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest, after } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { getRazorpayOrder, verifyRazorpaySignature } from "@/lib/payment/razorpay";
+import { generateInvoice } from "@/lib/invoice/generate";
 
 export async function POST(request: NextRequest) {
 const ip =
@@ -107,6 +108,18 @@ await supabase.from("order_events").insert({
 order_id: order.id,
 status: "PAYMENT_RECEIVED",
 label: "Payment confirmed via Razorpay",
+});
+
+// The proforma invoice generated at order-creation time (before payment)
+// is permanently stamped UNPAID — regenerate it now so the customer's
+// invoice reflects reality. Non-blocking: a PDF/storage hiccup here must
+// never make an already-successful payment look like it failed.
+after(async () => {
+try {
+await generateInvoice(orderNumber, "PROFORMA");
+} catch (err) {
+console.error(`Post-payment invoice regeneration failed for ${orderNumber}`, err);
+}
 });
 }
 }

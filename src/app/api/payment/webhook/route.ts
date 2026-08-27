@@ -1,6 +1,7 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse, type NextRequest, after } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { verifyWebhookSignature } from "@/lib/payment/cashfree";
+import { generateInvoice } from "@/lib/invoice/generate";
 
 export async function POST(request: NextRequest) {
   // Signature is computed over the exact raw bytes Cashfree sent — reading
@@ -62,6 +63,17 @@ export async function POST(request: NextRequest) {
       order_id: order.id,
       status: "PAYMENT_RECEIVED",
       label: "Payment confirmed via Cashfree",
+    });
+
+    // Same reasoning as the Razorpay verify route: the proforma invoice
+    // generated at order-creation time is permanently stamped UNPAID —
+    // regenerate it now so the customer's invoice reflects reality.
+    after(async () => {
+      try {
+        await generateInvoice(orderNumber, "PROFORMA");
+      } catch (err) {
+        console.error(`Post-payment invoice regeneration failed for ${orderNumber}`, err);
+      }
     });
   } else if (event.type === "PAYMENT_FAILED_WEBHOOK") {
     await supabase.from("order_events").insert({
