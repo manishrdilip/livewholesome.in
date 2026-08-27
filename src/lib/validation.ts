@@ -38,6 +38,27 @@ export const checkoutSchema = z.object({
 
 export type CheckoutInput = z.infer<typeof checkoutSchema>;
 
+// Same shape as checkoutSchema, minus the consent checkbox and honeypot —
+// used by /admin/orders/new when an admin manually logs an order that a
+// customer placed by chatting on WhatsApp instead of using the site checkout.
+export const whatsappOrderSchema = z.object({
+  name: z.string().trim().min(1, "Full name is required").max(200),
+  phone: phoneSchema,
+  whatsappSameAsPhone: z.boolean(),
+  whatsappNumber: optionalPhoneSchema,
+  email: z.string().trim().email("Enter a valid email address"),
+  pincode: z.string().trim().regex(/^\d{6}$/, "Pincode must be 6 digits"),
+  line1: z.string().trim().min(1, "House/street is required").max(300),
+  line2: z.string().trim().max(300).optional().or(z.literal("")),
+  landmark: z.string().trim().max(200).optional().or(z.literal("")),
+  city: z.string().trim().min(1, "City is required").max(100),
+  state: z.enum(INDIAN_STATES),
+  customerNote: z.string().trim().max(1000).optional().or(z.literal("")),
+  quantity: z.coerce.number().int().min(1).max(20),
+  isSubscription: z.boolean().optional(),
+});
+export type WhatsAppOrderInput = z.infer<typeof whatsappOrderSchema>;
+
 export const trackOrderSchema = z.object({
   orderNumber: z.string().trim().min(1, "Order number is required").max(30),
   phone: phoneSchema,

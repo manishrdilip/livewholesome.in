@@ -52,6 +52,16 @@ body {
   outline-offset: 1px;
 }
 
+/* Shipping labels (src/components/admin/ShippingLabelCard.tsx) print at the
+   standard 4x6in courier label size — used by /admin/orders/[orderNumber]/label
+   and /admin/orders/labels-bulk, the only two pages that call window.print(). */
+@media print {
+  @page {
+    size: 4in 6in;
+    margin: 0.2in;
+  }
+}
+
 @keyframes fade-in-up {
   from {
     opacity: 0;

@@ -28,6 +28,9 @@ export default async function AdminLayout({ children }: { children: ReactNode })
             <Link href="/admin/reviews" className="hover:text-emerald">
               Reviews
             </Link>
+            <Link href="/admin/costing" className="hover:text-emerald">
+              Costing
+            </Link>
             <Link href="/admin/settings" className="hover:text-emerald">
               Settings
             </Link>

@@ -28,9 +28,27 @@ export type Settings = {
   daily_order_limit_units: number;
 };
 
+const FETCH_ATTEMPTS = 3;
+const RETRY_DELAY_MS = 300;
+
+function sleep(ms: number) {
+  return new Promise((resolve) => setTimeout(resolve, ms));
+}
+
+// Static generation runs ~19 pages in parallel, each calling this on build —
+// a transient Supabase blip under that concurrency shouldn't fail the whole build.
 export async function getSettings(): Promise<Settings> {
   const supabase = createServiceClient();
-  const { data, error } = await supabase.from("settings").select("*").single();
-  if (error || !data) throw new Error("Settings row is missing — run the Phase 1 migrations.");
-  return data;
+
+  let lastError: unknown = null;
+  for (let attempt = 1; attempt <= FETCH_ATTEMPTS; attempt++) {
+    const { data, error } = await supabase.from("settings").select("*").single();
+    if (!error && data) return data;
+    lastError = error;
+    if (attempt < FETCH_ATTEMPTS) await sleep(RETRY_DELAY_MS * attempt);
+  }
+
+  throw new Error("Settings row is missing — run the Phase 1 migrations.", {
+    cause: lastError,
+  });
 }

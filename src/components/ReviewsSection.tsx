@@ -57,9 +57,16 @@ export async function ReviewsSection() {
                       )}
                     </div>
                   ) : (
-                    <div className="text-gold">
-                      {"★".repeat(review.rating)}
-                      {"☆".repeat(5 - review.rating)}
+                    <div className="flex items-center gap-2">
+                      <div className="text-gold">
+                        {"★".repeat(review.rating)}
+                        {"☆".repeat(5 - review.rating)}
+                      </div>
+                      {review.source === "whatsapp" && (
+                        <span className="rounded-full bg-emerald/10 px-2 py-0.5 text-[10px] font-semibold uppercase tracking-wide text-emerald">
+                          <T en="via WhatsApp" ta="WhatsApp வழியாக" />
+                        </span>
+                      )}
                     </div>
                   )}
                   {review.body && <p className="mt-2 text-sm text-ink/70">{review.body}</p>}

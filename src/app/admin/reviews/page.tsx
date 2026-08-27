@@ -27,6 +27,26 @@ export default async function AdminReviewsPage() {
     revalidatePath("/admin/reviews");
   }
 
+  async function logWhatsAppReview(formData: FormData) {
+    "use server";
+    const reviewerName = String(formData.get("reviewerName") ?? "").trim();
+    const rating = Number(formData.get("rating"));
+    const body = String(formData.get("body") ?? "").trim();
+    const reviewerContact = String(formData.get("reviewerContact") ?? "").trim();
+    if (!reviewerName || !Number.isInteger(rating) || rating < 1 || rating > 5) return;
+
+    const supabase = createServiceClient();
+    await supabase.from("reviews").insert({
+      reviewer_name: reviewerName,
+      rating,
+      body: body || null,
+      reviewer_contact: reviewerContact || null,
+      source: "whatsapp",
+      status: "PENDING",
+    });
+    revalidatePath("/admin/reviews");
+  }
+
   async function deleteReview(formData: FormData) {
     "use server";
     const reviewId = formData.get("reviewId");
@@ -49,6 +69,38 @@ export default async function AdminReviewsPage() {
   return (
     <div>
       <h1 className="font-serif text-2xl font-bold">Reviews</h1>
+
+      <details className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+        <summary className="cursor-pointer font-semibold">Log a review received on WhatsApp</summary>
+        <form action={logWhatsAppReview} className="mt-4 max-w-md space-y-3 text-sm">
+          <label className="block">
+            <span className="font-medium">Reviewer name</span>
+            <input name="reviewerName" required className="input mt-1" />
+          </label>
+          <label className="block">
+            <span className="font-medium">Rating (1–5)</span>
+            <select name="rating" required defaultValue="5" className="input mt-1 w-auto">
+              {[5, 4, 3, 2, 1].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>
+          </label>
+          <label className="block">
+            <span className="font-medium">What they said</span>
+            <textarea name="body" rows={3} className="input mt-1" />
+          </label>
+          <label className="block">
+            <span className="font-medium">Their phone (optional)</span>
+            <input name="reviewerContact" className="input mt-1" />
+          </label>
+          <button type="submit" className="rounded-full bg-emerald px-4 py-1.5 text-cream">
+            Add for approval
+          </button>
+        </form>
+      </details>
+
       <div className="mt-6 space-y-4">
         {(reviews ?? []).map((review) => {
           const media = (review.media ?? []) as ReviewMedia[];
@@ -65,6 +117,11 @@ export default async function AdminReviewsPage() {
                     <span className="text-gold">
                       {"★".repeat(review.rating)}
                       {"☆".repeat(5 - review.rating)}
+                    </span>
+                  )}
+                  {review.source === "whatsapp" && (
+                    <span className="ml-2 rounded-full bg-emerald/10 px-2 py-0.5 text-xs font-semibold text-emerald">
+                      via WhatsApp
                     </span>
                   )}
                   {review.reviewer_contact && (

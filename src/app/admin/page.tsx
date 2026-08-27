@@ -67,17 +67,25 @@ export default async function AdminOrdersPage() {
     <div>
       <div className="flex items-center justify-between">
         <h1 className="font-serif text-2xl font-bold">Orders</h1>
-        {todaysOpenOrderNumbers.length > 0 ? (
+        <div className="flex items-center gap-3">
           <Link
-            href={`/admin/orders/labels-bulk?ids=${encodeURIComponent(todaysOpenOrderNumbers.join(","))}`}
-            target="_blank"
-            className="rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
+            href="/admin/orders/new"
+            className="rounded-full border border-emerald px-4 py-1.5 text-sm font-semibold text-emerald hover:bg-emerald hover:text-cream"
           >
-            Print today&apos;s shipping labels ({todaysOpenOrderNumbers.length})
+            + Log WhatsApp order
           </Link>
-        ) : (
-          <span className="text-sm text-ink/40">No open orders today</span>
-        )}
+          {todaysOpenOrderNumbers.length > 0 ? (
+            <Link
+              href={`/admin/orders/labels-bulk?ids=${encodeURIComponent(todaysOpenOrderNumbers.join(","))}`}
+              target="_blank"
+              className="rounded-full bg-emerald px-4 py-1.5 text-sm text-cream"
+            >
+              Print today&apos;s shipping labels ({todaysOpenOrderNumbers.length})
+            </Link>
+          ) : (
+            <span className="text-sm text-ink/40">No open orders today</span>
+          )}
+        </div>
       </div>
 
       <div className="mt-4 grid grid-cols-2 gap-4 md:grid-cols-4">

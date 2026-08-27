@@ -5,6 +5,7 @@ import { useLanguage } from "@/components/LanguageProvider";
 import { LockIcon, TruckIcon, MessageIcon } from "@/components/Icon";
 import { PRODUCT } from "@/lib/product";
 import { getEffectiveShippingFee, FREE_SHIPPING_THRESHOLD } from "@/lib/pricing";
+import { buildWhatsAppLink } from "@/lib/whatsapp";
 
 const TRUST_BADGES = [
   { Icon: LockIcon, en: "Secure checkout", ta: "பாதுகாப்பான செக்அவுட்" },
@@ -33,6 +34,11 @@ export function OrderBox() {
   const soldOutForToday = remainingUnits <= 0;
   const subtotal = effectiveQuantity * unitPrice;
   const shippingFee = getEffectiveShippingFee(subtotal, config.shippingFee);
+  const waMessage =
+    lang === "ta"
+      ? `வணக்கம், எனக்கு ${effectiveQuantity} × ${PRODUCT.name} (500g)${isSubscription ? " — மாத சந்தா" : ""} வேண்டும். மொத்தம்: ₹${subtotal + shippingFee}.`
+      : `Hi, I'd like to order ${effectiveQuantity} × ${PRODUCT.name} (500g)${isSubscription ? " — monthly subscription" : ""}. Total: ₹${subtotal + shippingFee}.`;
+  const waLink = buildWhatsAppLink(config.supportPhone, waMessage);
 
   return (
     <div className="rounded-3xl border border-gold/30 bg-white p-6 text-ink shadow-lg">
@@ -144,6 +150,18 @@ export function OrderBox() {
                 ? "உறுதிப்படுத்தலின் பேரில் கட்டணம் — UPI/கார்டு மூலம் செலுத்தலாம், நாங்கள் தொடர்பு கொள்வோம். ஆன்லைன் கட்டணம் விரைவில்."
                 : "Payment on confirmation — pay by UPI/card, we'll follow up. Online payment coming soon."}
           </p>
+
+          {waLink && (
+            <a
+              href={waLink}
+              target="_blank"
+              rel="noreferrer"
+              className="mt-3 flex w-full items-center justify-center gap-2 rounded-full border border-emerald px-4 py-2.5 text-sm font-semibold text-emerald"
+            >
+              <MessageIcon className="h-4 w-4" />
+              {lang === "ta" ? "WhatsApp வழியாக ஆர்டர் செய்ய" : "Order via WhatsApp instead"}
+            </a>
+          )}
         </>
       )}
 

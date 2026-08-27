@@ -24,7 +24,7 @@ export default async function ShippingLabelPage({
   const label = await buildShippingLabelData(order, settings);
 
   return (
-    <div className="mx-auto max-w-md px-6 py-8">
+    <div className="mx-auto max-w-md px-6 py-8 print:max-w-none print:p-0">
       <div className="print:hidden mb-4 flex items-center justify-between">
         <h1 className="font-serif text-xl font-bold">Shipping label — {order.order_number}</h1>
         <PrintButton />
