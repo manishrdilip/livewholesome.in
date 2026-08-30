@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
 import { generateInvoice, getInvoiceSignedUrl } from "@/lib/invoice/generate";
 import { sendOrderConfirmedEmail } from "@/lib/email/send";
+import { createRazorpayPaymentLink } from "@/lib/payment/razorpay";
 import { OrderProgressTracker } from "@/components/OrderProgressTracker";
 import { ORDER_STATUSES, ORDER_STATUS_LABELS, type OrderStatus } from "@/lib/order-status";
 
@@ -55,6 +56,41 @@ export default async function AdminOrderDetailPage({
   async function resendEmail() {
     "use server";
     await sendOrderConfirmedEmail(orderNumber);
+    revalidatePath(`/admin/orders/${orderNumber}`);
+  }
+
+  async function generatePaymentLink() {
+    "use server";
+    const service = createServiceClient();
+    const { data: current } = await service
+      .from("orders")
+      .select("id, grand_total, customer_snapshot")
+      .eq("order_number", orderNumber)
+      .single();
+    if (!current) return;
+
+    const customer = current.customer_snapshot as {
+      name: string;
+      email: string;
+      phone: string;
+      whatsapp_number?: string;
+    };
+
+    const link = await createRazorpayPaymentLink({
+      amount: Math.round(current.grand_total * 100),
+      orderNumber,
+      customerName: customer.name,
+      customerPhone: customer.whatsapp_number ?? customer.phone,
+      customerEmail: customer.email,
+    });
+
+    await service.from("order_events").insert({
+      order_id: current.id,
+      status: "PAYMENT_LINK_CREATED",
+      label: "Razorpay payment link generated",
+      note: link.short_url,
+    });
+
     revalidatePath(`/admin/orders/${orderNumber}`);
   }
 
@@ -149,6 +185,10 @@ export default async function AdminOrderDetailPage({
 
     revalidatePath(`/admin/orders/${orderNumber}`);
   }
+
+  const latestPaymentLink = [...(events ?? [])]
+    .reverse()
+    .find((e) => e.status === "PAYMENT_LINK_CREATED")?.note;
 
   const customer = order.customer_snapshot as {
     name: string;
@@ -345,6 +385,54 @@ export default async function AdminOrderDetailPage({
                 className="rounded-full bg-emerald px-4 py-1.5 text-cream"
               >
                 Generate proforma invoice
+              </button>
+            </form>
+          </div>
+        )}
+      </section>
+
+      <section className="mt-6 rounded-xl border border-ink/10 bg-white p-5">
+        <h2 className="font-semibold">Payment link</h2>
+        {latestPaymentLink ? (
+          <div className="mt-2 flex flex-wrap items-center justify-between gap-3 text-sm">
+            <a
+              href={latestPaymentLink}
+              target="_blank"
+              rel="noreferrer"
+              className="break-all text-emerald hover:underline"
+            >
+              {latestPaymentLink}
+            </a>
+            <div className="flex shrink-0 gap-3">
+              <a
+                href={`https://wa.me/${(customer.whatsapp_number ?? customer.phone).replace(/\D/g, "")}?text=${encodeURIComponent(
+                  `Hi ${customer.name}, here's your payment link for order ${order.order_number} (₹${order.grand_total}): ${latestPaymentLink}`
+                )}`}
+                target="_blank"
+                rel="noreferrer"
+                className="rounded-full bg-emerald px-4 py-1.5 text-cream"
+              >
+                Open on WhatsApp
+              </a>
+              <form action={generatePaymentLink}>
+                <button
+                  type="submit"
+                  className="rounded-full border border-ink/20 px-4 py-1.5 text-ink/70 hover:border-ink/40"
+                >
+                  Regenerate
+                </button>
+              </form>
+            </div>
+          </div>
+        ) : (
+          <div className="mt-2 flex items-center justify-between text-sm">
+            <p className="text-ink/50">No payment link generated yet.</p>
+            <form action={generatePaymentLink}>
+              <button
+                type="submit"
+                className="rounded-full bg-emerald px-4 py-1.5 text-cream"
+              >
+                Generate payment link
               </button>
             </form>
           </div>

@@ -1,13 +1,8 @@
 import { redirect } from "next/navigation";
 import Link from "next/link";
-import { createServiceClient } from "@/lib/supabase/server";
-import { getSettings } from "@/lib/settings";
-import { getEffectivePricing, getEffectiveShippingFee } from "@/lib/pricing";
-import { generateInvoice } from "@/lib/invoice/generate";
-import { sendOrderConfirmedEmail } from "@/lib/email/send";
-import { PRODUCT } from "@/lib/product";
 import { INDIAN_STATES } from "@/lib/indian-states";
 import { whatsappOrderSchema } from "@/lib/validation";
+import { createWhatsAppOrder, DailyLimitReachedError } from "@/lib/orders/createWhatsAppOrder";
 
 async function logWhatsAppOrder(formData: FormData) {
   "use server";
@@ -32,83 +27,17 @@ async function logWhatsAppOrder(formData: FormData) {
   if (!parsed.success) {
     throw new Error(parsed.error.issues[0]?.message ?? "Please check the highlighted fields");
   }
-  const data = parsed.data;
 
-  const supabase = createServiceClient();
-  const settings = await getSettings();
-  const pricing = getEffectivePricing(settings);
-  const unitPrice = data.isSubscription ? pricing.subscribePrice : pricing.offerPrice;
-  const subtotal = Math.round(unitPrice * data.quantity * 100) / 100;
-  const shippingFee = getEffectiveShippingFee(subtotal, settings.shipping_fee ?? 0);
-  const grandTotal = Math.round((subtotal + shippingFee) * 100) / 100;
-
-  const phone = data.phone;
-  const whatsappNumber = data.whatsappSameAsPhone || !data.whatsappNumber ? phone : data.whatsappNumber;
-
-  const { data: result, error } = await supabase.rpc("create_order", {
-    p_customer: {
-      name: data.name,
-      email: data.email,
-      phone,
-      whatsapp_number: whatsappNumber,
-      whatsapp_opt_in: true,
-      email_opt_in: true,
-    },
-    p_address: {
-      line1: data.line1,
-      line2: data.line2 || null,
-      landmark: data.landmark || null,
-      city: data.city,
-      state: data.state,
-      pincode: data.pincode,
-      country: "India",
-    },
-    p_items: [
-      {
-        sku: PRODUCT.sku,
-        product_name: PRODUCT.name,
-        hsn_code: PRODUCT.hsnCode,
-        quantity: data.quantity,
-        unit_price: unitPrice,
-        tax_rate: 0,
-        line_total: subtotal,
-      },
-    ],
-    p_totals: {
-      subtotal,
-      discount: 0,
-      shipping_fee: shippingFee,
-      tax_total: 0,
-      grand_total: grandTotal,
-    },
-    p_customer_note: data.isSubscription
-      ? `[Monthly Subscribe & Save] ${data.customerNote || ""}`.trim()
-      : data.customerNote || null,
-  });
-
-  if (error) {
-    if (error.message.includes("DAILY_LIMIT_REACHED")) {
-      throw new Error("Today's kitchen order cap has been reached — try again after midnight.");
-    }
-    throw new Error(error.message);
-  }
-
-  const orderNumber = (result as { order_number: string }).order_number;
-
-  await supabase
-    .from("orders")
-    .update({ internal_note: "Placed via WhatsApp chat — logged manually by admin." })
-    .eq("order_number", orderNumber);
-
+  let orderNumber: string;
   try {
-    await generateInvoice(orderNumber, "PROFORMA");
+    const created = await createWhatsAppOrder(
+      parsed.data,
+      "Placed via WhatsApp chat — logged manually by admin."
+    );
+    orderNumber = created.orderNumber;
   } catch (err) {
-    console.error(`Proforma invoice generation failed for ${orderNumber}`, err);
-  }
-  try {
-    await sendOrderConfirmedEmail(orderNumber);
-  } catch (err) {
-    console.error(`Order confirmation email failed for ${orderNumber}`, err);
+    if (err instanceof DailyLimitReachedError) throw err;
+    throw err instanceof Error ? err : new Error("Could not create order");
   }
 
   redirect(`/admin/orders/${orderNumber}`);

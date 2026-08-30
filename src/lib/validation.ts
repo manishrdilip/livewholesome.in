@@ -59,6 +59,18 @@ export const whatsappOrderSchema = z.object({
 });
 export type WhatsAppOrderInput = z.infer<typeof whatsappOrderSchema>;
 
+// A review relayed from a WhatsApp chat — same shape as the admin's "Log a
+// WhatsApp review" form (src/app/admin/reviews/page.tsx), reused by the
+// iZap webhook (src/app/api/webhooks/izap/route.ts) so both paths validate
+// identically.
+export const whatsappReviewSchema = z.object({
+  reviewerName: z.string().trim().min(1, "Reviewer name is required").max(200),
+  rating: z.coerce.number().int().min(1).max(5),
+  body: z.string().trim().max(2000).optional().or(z.literal("")),
+  reviewerContact: optionalPhoneSchema,
+});
+export type WhatsAppReviewInput = z.infer<typeof whatsappReviewSchema>;
+
 export const trackOrderSchema = z.object({
   orderNumber: z.string().trim().min(1, "Order number is required").max(30),
   phone: phoneSchema,

@@ -98,6 +98,63 @@ export async function getRazorpayOrder(orderId: string): Promise<RazorpayOrder> 
   return data as RazorpayOrder;
 }
 
+export type CreatePaymentLinkInput = {
+  /** Amount in paise (smallest currency unit). */
+  amount: number;
+  orderNumber: string;
+  customerName: string;
+  /** E.164-ish phone, digits with optional leading +. */
+  customerPhone: string;
+  customerEmail?: string;
+  description?: string;
+};
+
+export type PaymentLinkResult = {
+  id: string;
+  short_url: string;
+  status: string;
+};
+
+/** Creates a real, shareable Razorpay Payment Link (distinct from
+ * createRazorpayOrder's Orders API, which only feeds the in-page Standard
+ * Checkout modal) — used for orders logged from a WhatsApp chat, where
+ * there's no live checkout session to open, just a link to paste back to
+ * the customer. `notify` is off since we send the link ourselves over
+ * WhatsApp rather than have Razorpay SMS/email it. */
+export async function createRazorpayPaymentLink(
+  input: CreatePaymentLinkInput
+): Promise<PaymentLinkResult> {
+  const res = await fetch(`${BASE_URL}/payment_links`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      Authorization: authHeader(),
+    },
+    body: JSON.stringify({
+      amount: input.amount,
+      currency: "INR",
+      description: input.description ?? `Wholesome Purna order ${input.orderNumber}`,
+      reference_id: `${input.orderNumber}-${Date.now()}`,
+      customer: {
+        name: input.customerName,
+        contact: input.customerPhone,
+        email: input.customerEmail,
+      },
+      notify: { sms: false, email: false },
+      notes: { orderNumber: input.orderNumber },
+    }),
+  });
+
+  const data = await res.json();
+  if (!res.ok) {
+    const message =
+      (data?.error?.description as string | undefined) ??
+      `Razorpay payment link creation failed (${res.status})`;
+    throw new RazorpayApiError(message, res.status);
+  }
+  return data as PaymentLinkResult;
+}
+
 /** Razorpay signs each successful Standard Checkout payment as
  * hex(HMAC-SHA256(order_id + "|" + payment_id, key_secret)) and hands it
  * back to the client as razorpay_signature — re-verify it server-side

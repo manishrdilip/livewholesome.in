@@ -80,8 +80,9 @@ The shipping label (`src/components/admin/ShippingLabelCard.tsx`, printed from `
 
 - **Support number**: `settings.support_phone` (admin-editable at `/admin/settings`) is the single source of truth — it drives the floating support widget's WhatsApp button (`src/components/support/SupportWidget.tsx`), the FAQ page's "Chat on WhatsApp" button, the footer `tel:` link, and the "Order via WhatsApp instead" button in `OrderBox`. `src/lib/whatsapp.ts` (`buildWhatsAppLink`) builds the `wa.me` deep link from it.
 - **`/order`** (`src/app/order/page.tsx`) — a standalone, marketing-free order page meant to be handed out as one clean link (e.g. pasted into the WhatsApp Business app's profile "Website" field, or a social bio), as opposed to the full homepage.
-- **Admin-side manual relay, not automation**: orders or reviews a customer places by chatting on WhatsApp don't appear in the database on their own — the free WhatsApp Business app has no API. Admin manually re-enters them: "+ Log WhatsApp order" on `/admin` (`src/app/admin/orders/new/page.tsx`) runs the same `create_order()` RPC as the real checkout (same daily cap, invoice, confirmation email, shipping pipeline), tagged via `internal_note`; "Log a review received on WhatsApp" on `/admin/reviews` does the equivalent for reviews (see above).
-- **WhatsApp Cloud API is not wired up.** `.env.local` has placeholder vars (`WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_API_VERSION`) from earlier planning, but they're empty and no code reads them. True two-way sync (a WhatsApp message auto-creating a website order/review with no human relaying it) needs Meta Business verification + a webhook + these credentials — a separate, larger effort, not something the regular WhatsApp Business app supports.
+- **Admin-side manual relay**: "+ Log WhatsApp order" on `/admin` (`src/app/admin/orders/new/page.tsx`) and the `POST /api/webhooks/izap` webhook (next bullet) both call the same `src/lib/orders/createWhatsAppOrder()` — real `create_order()` RPC (same daily cap, invoice, confirmation email, shipping pipeline) plus a real Razorpay payment link (`createRazorpayPaymentLink()` in `src/lib/payment/razorpay.ts`, distinct from the Orders API used by live checkout — this one returns a shareable `short_url` since there's no live checkout session to open). The order's `internal_note` records which path created it. "Log a review received on WhatsApp" on `/admin/reviews` does the equivalent for reviews by hand.
+- **`POST /api/webhooks/izap`** (`src/app/api/webhooks/izap/route.ts`) — bearer-authenticated (`IZAP_WEBHOOK_SECRET`, must be set in Vercel's env too, and given to whatever calls this endpoint as the `Authorization: Bearer` value) webhook that lets an external system (the iZap WhatsApp AI assistant, if it supports calling a webhook when it finishes collecting an order/review in chat — not confirmed as of this writing, since iZap's own dashboard for that isn't visible from this codebase) create a **real** order (via `createWhatsAppOrder()` — real order number, invoice, payment link) or queue a **real** review (`reviews` table, `source: 'whatsapp'`, `status: 'PENDING'`, same moderation queue as every other review) from `{ type: "order" | "review", data: {...} }`. Deliberately never lets a caller supply a price, order number, or payment link directly — those only ever come from the real pipeline. This is the receiving half of automation; nothing in this codebase makes iZap (or anything else) call it yet.
+- **WhatsApp Cloud API is not wired up.** `.env.local` has placeholder vars (`WHATSAPP_PHONE_NUMBER_ID`, `WHATSAPP_BUSINESS_ACCOUNT_ID`, `WHATSAPP_ACCESS_TOKEN`, `WHATSAPP_API_VERSION`) from earlier planning, but they're empty and no code reads them. A phone number's Meta webhook subscription can only be owned by one system at a time — since iZap already owns the connected number's webhook (that's how its AI reads/replies to messages), wiring these vars up directly would mean disconnecting iZap for that number, not running alongside it.
 
 ## Brand constraints (non-negotiable — from explicit user instruction)
 
@@ -89,6 +90,25 @@ The shipping label (`src/components/admin/ShippingLabelCard.tsx`, printed from `
 - **Never change the logo** (`src/components/LogoMark.tsx`) or the core tagline "பூர்ணா — Complete. Whole. Full."
 - Preserve the Tamil-English bilingual identity across any new page/feature — new user-facing strings need both languages via `<T>` or `lang ===`.
 - Avoid decorative emoji in the storefront UI (a whole pass was done to remove these); the admin dashboard is the one place plain glyphs/pins are acceptable since it's an internal tool, not customer-facing.
+
+## Supplier email (Zoho Mail via Claude)
+
+`scripts/send-supplier-email.mjs` sends one-off emails to suppliers (raw materials, packing, couriers, etc.) through Zoho Mail SMTP. This is separate from the app's customer-facing transactional email (Resend, `RESEND_API_KEY`) — it's an ad-hoc channel for the business owner (or Claude, on the owner's behalf) to contact suppliers directly from the terminal, not code the Next.js app calls.
+
+**Setup (one-time, done by the owner, not Claude):**
+1. In Zoho Mail, go to Settings → Security → App Passwords and generate an app-specific password (not the account login password).
+2. Add to `.env.local` (never commit): `ZOHO_SMTP_USER` (full mailbox address) and `ZOHO_SMTP_PASS` (the app password).
+3. **SMTP host is account-specific — don't assume `smtp.zoho.com`/`.in`.** This business's mailbox (`info@livewholesome.in`) lives on Zoho's Canada data center: `ZOHO_SMTP_HOST=smtp.zohocloud.ca`, port 465. Zoho's public docs only list `.com`/`.eu`/`.in`/`.com.au`/`.com.cn` — Canada isn't documented there. The authoritative source for any Zoho account's real host is **Zoho Mail → Settings → Mail Accounts → [account] → SMTP tab** (shows exact host/port for that specific account). If SMTP auth ever starts failing with `535 Authentication Failed`, re-check that tab before assuming the app password is wrong — a wrong *host* produces the identical error to a wrong *password*, and repeated failed attempts risk a temporary account lockout, so verify the host from that settings tab rather than trial-and-erroring across data centers.
+
+**Usage:**
+```bash
+npm run email:supplier -- --to="supplier@example.com" --subject="Subject line" --body="Email body text"
+```
+`--cc`, `--bcc`, `--reply-to` are supported; use `--body-file=path.txt` instead of `--body` for longer emails; `--dry-run` prints the fully composed email (headers + signature) instead of sending — use this to show the user the exact email before they approve it.
+
+**Signature is the company, never a person.** Every email gets `-- \nTeam WHOLESOME\nlivewholesome.in` appended automatically (override via `SUPPLIER_EMAIL_SIGNATURE` in `.env.local`; suppress with `--no-signature`), and the `From` header displays as `"WHOLESOME" <info@livewholesome.in>`. Don't sign supplier emails with an individual's name.
+
+**Rule for Claude: sending email always requires the user's explicit go-ahead in chat, every time.** Draft the to/subject/body, show it to the user verbatim (a `--dry-run` is the easiest way), and only run the real send after they confirm — never chain straight from "email the supplier about X" to running the send command. This applies regardless of how routine the email seems.
 
 ## Verification workflow used throughout this repo's history
 
