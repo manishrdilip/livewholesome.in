@@ -1,6 +1,7 @@
 import { revalidatePath } from "next/cache";
 import { createServiceClient } from "@/lib/supabase/server";
 import { ConfirmSubmitButton } from "@/components/admin/ConfirmSubmitButton";
+import { detectReviewFlags, formatFlagNote } from "@/lib/reviewModeration";
 
 type ReviewMedia = { type: "image" | "video"; storage_path: string };
 
@@ -35,6 +36,8 @@ export default async function AdminReviewsPage() {
     const reviewerContact = String(formData.get("reviewerContact") ?? "").trim();
     if (!reviewerName || !Number.isInteger(rating) || rating < 1 || rating > 5) return;
 
+    const flags = [...detectReviewFlags(body), ...detectReviewFlags(reviewerName)];
+
     const supabase = createServiceClient();
     await supabase.from("reviews").insert({
       reviewer_name: reviewerName,
@@ -43,6 +46,7 @@ export default async function AdminReviewsPage() {
       reviewer_contact: reviewerContact || null,
       source: "whatsapp",
       status: "PENDING",
+      moderated_note: formatFlagNote(flags),
     });
     revalidatePath("/admin/reviews");
   }
@@ -149,6 +153,11 @@ export default async function AdminReviewsPage() {
                 </span>
               </div>
               {review.body && <p className="mt-2 text-sm text-ink/70">{review.body}</p>}
+              {review.status === "PENDING" && review.moderated_note && (
+                <p className="mt-2 rounded-lg bg-amber-50 px-3 py-2 text-xs font-medium text-amber-800">
+                  {review.moderated_note}
+                </p>
+              )}
               {!!media.length && (
                 <div className="mt-3 flex flex-wrap gap-2">
                   {media.map((m, i) => {

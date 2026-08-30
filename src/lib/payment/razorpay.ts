@@ -175,3 +175,22 @@ export function verifyRazorpaySignature(orderId: string, paymentId: string, sign
   if (expectedBuf.length !== actualBuf.length) return false;
   return crypto.timingSafeEqual(expectedBuf, actualBuf);
 }
+
+/** Verifies a Razorpay *webhook* call (distinct secret from the API key —
+ * set in Razorpay Dashboard → Settings → Webhooks, and as RAZORPAY_WEBHOOK_SECRET
+ * here). Needed for Payment Links specifically: unlike Standard Checkout,
+ * a Payment Link payment never round-trips through our own checkout page,
+ * so there's no client to call razorpay/verify — this webhook is the only
+ * server-side confirmation that a payment actually happened. Same HMAC
+ * pattern as verifyWebhookSignature() in cashfree.ts. */
+export function verifyRazorpayWebhookSignature(rawBody: string, signature: string) {
+  const secret = process.env.RAZORPAY_WEBHOOK_SECRET;
+  if (!secret) throw new Error("RAZORPAY_WEBHOOK_SECRET is not configured");
+
+  const expected = crypto.createHmac("sha256", secret).update(rawBody).digest("hex");
+
+  const expectedBuf = Buffer.from(expected);
+  const actualBuf = Buffer.from(signature);
+  if (expectedBuf.length !== actualBuf.length) return false;
+  return crypto.timingSafeEqual(expectedBuf, actualBuf);
+}

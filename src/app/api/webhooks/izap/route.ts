@@ -2,6 +2,7 @@ import { NextResponse, type NextRequest } from "next/server";
 import { createServiceClient } from "@/lib/supabase/server";
 import { whatsappOrderSchema, whatsappReviewSchema } from "@/lib/validation";
 import { createWhatsAppOrder, DailyLimitReachedError } from "@/lib/orders/createWhatsAppOrder";
+import { detectReviewFlags, formatFlagNote } from "@/lib/reviewModeration";
 
 // Called by the iZap WhatsApp AI assistant (via its own webhook/action
 // feature, if configured there — this endpoint doesn't register itself
@@ -80,6 +81,11 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
+    const flags = [
+      ...detectReviewFlags(parsed.data.body),
+      ...detectReviewFlags(parsed.data.reviewerName),
+    ];
+
     const { data: review, error } = await supabase
       .from("reviews")
       .insert({
@@ -89,6 +95,7 @@ export async function POST(request: NextRequest) {
         reviewer_contact: parsed.data.reviewerContact || null,
         source: "whatsapp",
         status: "PENDING",
+        moderated_note: formatFlagNote(flags),
       })
       .select("id")
       .single();
