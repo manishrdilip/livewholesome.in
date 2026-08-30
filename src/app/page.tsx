@@ -62,6 +62,13 @@ export default async function HomePage() {
         logo: "https://livewholesome.in/icon1.png",
         ...(settings.support_email && { email: settings.support_email.toLowerCase() }),
         ...(settings.support_phone && { telephone: settings.support_phone }),
+        ...(settings.registered_address && {
+          address: {
+            "@type": "PostalAddress",
+            streetAddress: settings.registered_address,
+            addressCountry: "IN",
+          },
+        }),
         ...([settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(Boolean)
           .length > 0 && {
           sameAs: [settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(

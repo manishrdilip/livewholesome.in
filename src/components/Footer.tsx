@@ -83,6 +83,9 @@ export function Footer({ settings }: { settings: Settings }) {
                   </a>
                 </li>
               )}
+              {settings.registered_address && (
+                <li className="text-cream/60">{settings.registered_address}</li>
+              )}
             </ul>
 
             <h3 className="mt-8 text-sm font-semibold uppercase tracking-wide text-cream">
