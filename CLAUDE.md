@@ -31,6 +31,12 @@ SQL files in `supabase/migrations/*.sql` are numbered sequentially (`0001_...` �
 
 `git push origin main` → Vercel auto-deploys (~60–75s). There's no staging environment — pushing to `main` ships to the live site directly. Standard sequence for a change: build clean locally → commit → push → wait for deploy → verify on the live URL.
 
+## Repository & hosting
+
+- **GitHub**: https://github.com/manishrdilip/livewholesome.in — `main` is the deploy branch (see Deploy flow above).
+- **Vercel**: auto-deploys `main` to the production domain `livewholesome.in` (see `CNAME`). Project settings, environment variables, and domain config live in the Vercel dashboard, not in this repo.
+- **Supabase**: one project provides Postgres + Auth + Storage for both local dev and production — there is no separate local/staging database (see Verification workflow at the bottom of this file). Connection details (`NEXT_PUBLIC_SUPABASE_URL`, anon key, service-role key) live in `.env.local` (gitignored) and in Vercel's env vars, not committed here since the service-role key is a secret.
+
 ## Access control (`src/proxy.ts`)
 
 Global middleware, not per-route guards:
@@ -71,6 +77,7 @@ Internal cost/profit tracking, unrelated to the customer-facing site. "1 unit" i
   - **Courier is the one category where rows are alternatives, not additive** — three couriers are seeded side by side for comparison (with researched market rates and delivery-speed notes) but only one (`Delhivery`) defaults `is_active = true`; the other two are `false` so the Summary doesn't triple-count shipping. If you change which courier you actually ship with, flip `is_active` accordingly rather than leaving more than one on.
 - The Summary tab (`getCostSummary()`) sums raw-material cost + all seven category totals into a total cost/pouch, compares it against the selling price (`settings.product_price ?? PRODUCT.unitPrice`) to show profit/margin per pouch, and shows `suggestedPriceForMargin()` — the price needed to hit 30/40/50% margin at the current cost.
 - Both tables are `id uuid default gen_random_uuid()` + RLS-enabled-zero-policies, matching every other table (see Data layer above) — `supabase/migrations/0018_cost_tracking.sql` + `0019_cost_tracking_expansion.sql`.
+- **Nothing keeps `raw_materials.name` and `src/lib/content.ts` `INGREDIENTS` in sync automatically** — they're two independent copies of the same 20-ingredient list. When a formula ingredient changes (e.g. the Palmyra Palm Candy → Date Sugar sweetener pivot, `0020_date_sugar_and_gst.sql`), update both in the same change: the `content.ts` entry (name, icon, Tamil name, nutrition copy) and a migration renaming the matching `raw_materials` row — a plain rename, not a delete+insert, so the admin's entered price/usage isn't lost (though a changed ingredient usually does need its price re-entered).
 
 ## Shipping label print size
 
@@ -92,6 +99,16 @@ The shipping label (`src/components/admin/ShippingLabelCard.tsx`, printed from `
 - **Never change the logo** (`src/components/LogoMark.tsx`) or the core tagline "பூர்ணா — Complete. Whole. Full."
 - Preserve the Tamil-English bilingual identity across any new page/feature — new user-facing strings need both languages via `<T>` or `lang ===`.
 - Avoid decorative emoji in the storefront UI (a whole pass was done to remove these); the admin dashboard is the one place plain glyphs/pins are acceptable since it's an internal tool, not customer-facing.
+
+## Business identity (for outbound correspondence and GST-facing documents)
+
+Pulled from the live `settings` table (`/admin/settings`) — these fields are admin-editable and can drift, so re-check `/admin/settings` or query `settings` rather than assuming this snapshot is current:
+- **Brand/company**: WHOLESOME — legal entity is a proprietorship registered under Vijaya Ravi, trade name "Wholesome".
+- **Sender email**: `info@livewholesome.in` (Zoho — see Supplier email below).
+- **Phone**: +91 94890 00614.
+- **Registered address**: 744B, 4th Cross Street, Radhakrishnan Nagar, Vellore 632006, Tamil Nadu. Note: the GST registration certificate lists the locality as "Kangeyanallur" for this same building/street/city/PIN — the two names likely refer to the same area, but reconcile which one to print before it matters for a GST-facing document (invoice, packaging).
+- **GST**: registered effective 12 Sep 2026 (certificate issued 13 Sep 2026, Regular scheme). GSTIN 33AWWPR3584Q1ZA. `settings.gst_registered` / `settings.gstin` gate Tax Invoice vs. Bill of Supply in `src/lib/invoice/InvoiceDocument.tsx` and are surfaced on the storefront footer and homepage structured data (`src/components/Footer.tsx`, `src/app/page.tsx`) — turned on for real orders by `supabase/migrations/0020_date_sugar_and_gst.sql`, which also corrects `hsn_code` to `2106 90 99` (Tamil Nadu AAR precedent, Krishna Bhavan Foods, is the basis for that code and the 5% rate — confirm both with a CA before relying on them for real orders, per the warning already on `/admin/settings`).
+- **No named individual contact.** Correspondence signs as the company (`Team WHOLESOME`), not a person — don't invent a contact-person name or designation for outbound emails.
 
 ## Supplier email (Zoho Mail via Claude)
 
