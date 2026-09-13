@@ -12,7 +12,7 @@ export type IngredientIconKey =
   | "pumpkin-seed"
   | "bajra"
   | "watermelon-seed"
-  | "palm-candy"
+  | "date-sugar"
   | "horse-gram"
   | "coconut"
   | "amla"
@@ -167,14 +167,14 @@ export const INGREDIENTS: Ingredient[] = [
       "An overlooked source of magnesium, zinc and clean plant protein — usually thrown away, we roast and grind it in instead of wasting it.",
   },
   {
-    icon: "palm-candy",
-    name: "Palmyra Palm Candy",
-    tamilName: "பனை வெல்லம்",
+    icon: "date-sugar",
+    name: "Date Sugar",
+    tamilName: "பேரீச்சம் சர்க்கரை",
     category: "Raw",
     filterGroup: "spices",
-    nutritionHighlight: "Natural iron",
+    nutritionHighlight: "Fibre, potassium",
     detail:
-      "An unrefined sweetener straight from palm sap — unlike white sugar, it keeps its natural iron and potassium, and releases into your bloodstream more slowly.",
+      "Ground from whole dried dates — unlike refined sugar, it keeps the fruit's natural fibre, potassium and polyphenols, so it digests more gradually.",
   },
   {
     icon: "horse-gram",
