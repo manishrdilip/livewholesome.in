@@ -194,6 +194,11 @@ export function Footer({ settings }: { settings: Settings }) {
               <T en="FSSAI Licensed" ta="FSSAI உரிமம் பெற்றது" /> &middot; {settings.fssai_license}
             </p>
           )}
+          {settings.gst_registered && settings.gstin && (
+            <p className="mt-1">
+              <T en="GSTIN" ta="ஜிஎஸ்டி எண்" /> &middot; {settings.gstin}
+            </p>
+          )}
         </div>
       </div>
     </footer>
