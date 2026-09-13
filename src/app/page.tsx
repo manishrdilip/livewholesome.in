@@ -69,6 +69,7 @@ export default async function HomePage() {
             addressCountry: "IN",
           },
         }),
+        ...(settings.gst_registered && settings.gstin && { taxID: settings.gstin }),
         ...([settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(Boolean)
           .length > 0 && {
           sameAs: [settings.instagram_url, settings.facebook_url, settings.youtube_url].filter(
