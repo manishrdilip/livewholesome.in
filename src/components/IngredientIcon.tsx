@@ -38,9 +38,9 @@ const PATHS: Record<IngredientIconKey, string> = {
     "M12 7c-1.8 0-3 1.2-3 2.7v5.6c0 1.5 1.2 2.7 3 2.7s3-1.2 3-2.7V9.7c0-1.5-1.2-2.7-3-2.7z M9.3 10h5.4 M9.3 12.5h5.4 M9.3 15h5.4",
   // Narrow pointed teardrop.
   "watermelon-seed": "M12 4.5c2.4 4.1 3.4 7.5 3.4 10a3.4 3.4 0 11-6.8 0c0-2.5 1-5.9 3.4-10z",
-  // Rounded jaggery lump with swirl texture lines.
-  "palm-candy":
-    "M7.5 12.5c0-3 2-5.5 4.5-5.5s4.5 2.5 4.5 5.5-2 5.7-4.5 5.7-4.5-2.7-4.5-5.7z M9 10.5c1.5 1 4.5 1 6 0 M8.7 14c1.8.8 4.7.8 6.5 0",
+  // Elongated dried date: tapered oval with a stem nub and wrinkle ridges.
+  "date-sugar":
+    "M12 4.4c-1.9 1.6-3.1 4.6-3.1 7.6s1.2 6 3.1 7.6c1.9-1.6 3.1-4.6 3.1-7.6s-1.2-6-3.1-7.6z M12 3.1v1.3 M9.4 8.6c1.7.6 3.5.6 5.2 0 M9.2 11.7c1.8.7 3.8.7 5.6 0 M9.4 14.8c1.7.6 3.5.6 5.2 0",
   // Elongated flat pod, two seeds.
   "horse-gram":
     "M6.3 12c0-2.4 3-4.3 6-4.3s6 1.9 6 4.3-2.7 4.3-6 4.3-6-1.9-6-4.3z M9.3 11.3a1 1 0 102 0 1 1 0 00-2 0z M12.7 11.3a1 1 0 102 0 1 1 0 00-2 0z",
