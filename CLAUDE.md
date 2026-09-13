@@ -31,6 +31,20 @@ SQL files in `supabase/migrations/*.sql` are numbered sequentially (`0001_...` �
 
 `git push origin main` → Vercel auto-deploys (~60–75s). There's no staging environment — pushing to `main` ships to the live site directly. Standard sequence for a change: build clean locally → commit → push → wait for deploy → verify on the live URL.
 
+## Claude: ship every site change all the way to production
+
+Dilip doesn't run terminal or git commands himself — when he asks for a change to the site, the job isn't done until the code is committed to `main`, any migration has actually been run against production Supabase, Vercel has deployed it, and the live site has been checked to confirm it. Don't stop at "here's a patch file" or "here's the SQL, please run it" — those are handoffs, not completions, and he has no way to act on them himself.
+
+If this session's `git push` to this repo is blocked (a Cowork git-proxy restriction that's independent of GitHub-side permissions and has recurred across sessions), commit directly through GitHub's web file editor instead, driven by browser automation (`https://github.com/manishrdilip/livewholesome.in/edit/main/<path>`):
+- Full-file replacement: click into the CodeMirror editor, `ctrl+a` → `Delete` → verify the editor actually went empty (a combined select-and-paste can silently no-op), then paste (OS-level clipboard paste beats simulated typing for anything more than a line or two) and check the *start, middle, and end* of the result — a single line can silently vanish from the middle of a large paste with no error shown.
+- Small, targeted edit: it's more reliable to click straight to the insertion point and type the new text directly than to paste the whole file.
+- Verify what actually landed via `https://raw.githubusercontent.com/manishrdilip/livewholesome.in/main/<path>` before moving on to the next file — GitHub's own blob/edit view can render stale cached content immediately after a commit.
+- Put the commit message in the "Commit message" field and the required attribution trailers in "Extended description".
+
+For a migration, run the SQL directly against the production project in the Supabase SQL Editor (one statement at a time if its autocomplete starts swallowing newlines), with a `SELECT` before and after to confirm the actual state — don't hand back a `.sql` file as the deliverable.
+
+After deploying, confirm on the live site itself — a plain fetch of the production URL works and needs no browser/device connection, which matters because Vercel's own dashboard needs the browser bridge and that connection can drop mid-task.
+
 ## Repository & hosting
 
 - **GitHub**: https://github.com/manishrdilip/livewholesome.in — `main` is the deploy branch (see Deploy flow above).
@@ -132,3 +146,7 @@ npm run email:supplier -- --to="supplier@example.com" --subject="Subject line" -
 ## Verification workflow used throughout this repo's history
 
 For any change: `npx tsc --noEmit -p tsconfig.json` → `npx eslint <changed files>` → `npm run build` → check the change in a real browser (local dev server; after deploy, the live site) — screenshots/DOM reads, not just "it compiles." Migrations get applied to Supabase (SQL Editor) *before* the corresponding code is tested locally, since local dev points at the same production Supabase project (there is no separate local/staging database).
+
+## A known, usually-harmless flaky build error
+
+Vercel builds have intermittently failed with `Error: Settings row is missing — run the Phase 1 migrations.` (thrown from `src/lib/settings.ts`, during static export of `/account`), with the underlying cause `PGRST303: "JWT issued at future"`. That's a transient clock-skew hiccup between Vercel's build environment and Supabase's PostgREST server validating the service-role JWT — not a missing settings row and not a code bug. Confirm it's transient rather than real by redeploying (or just pushing the next change) and checking whether an identical build succeeds; it's only worth investigating further if it fails on every attempt.
