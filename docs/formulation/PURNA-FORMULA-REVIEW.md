@@ -1181,3 +1181,25 @@ PhyFoodComp raw values are broadly consistent with IFCT (e.g. IFCT bajra 485 mg/
 - Only a phytate assay of the finished powder (plus Fe/Zn) can replace these scenarios. This is added to the G4 assay list. Code: inline in commit message; reproducible from `micro_fa_phytate.py` + the PhyFoodComp file (not redistributed).
 
 **R09 status:** INDETERMINATE → **modelled with scenario range**; still needs the assay.
+
+## 12. Owner request: close the remaining gaps (Claude proposal, 2026-11-24)
+
+*Repo still public, so directions only, no exact weights or costs. Exact V4.3-M weights stay off-repo until it is private.*
+
+Owner's current rating context (Claude, on paper): V4.2 ≈ 7.5, V4.2-M ≈ 8.5. Gaps and proposed fixes:
+
+| # | Gap | Proposed fix | Type | Evidence / basis |
+|---|---|---|---|---|
+| 1 | Germ safety unproven (sprouting + roast) | potable-water verification; **shorter germination (12–24 h vs 36–48 h)**; probe-thermometer logging of grain temperature every batch; amla supplier COA + hygienic addition; **specialist sets and validates the roast lethality target** | process (G2) | Wintersohle et al. 2024: 12–24 h germination preserves composition and reduces antinutrients; validation itself remains non-compensatory |
+| 2 | Taste untested | thorough roast of sprouted green gram (hypothesis only: heat lowers hexanal in published mung work); blinded non-inferiority test vs current | test (G4) | PMC11899303 (direction only) |
+| 3 | Thin fat margin (central 2.19, stress 2.62) | the next point on the minimal-change frontier: about 25 g more transfer from bajra/Bengal gram to masoor/green gram/barley → central ≈ 2.10, stress ≈ 2.52 | recipe | `minimal_change_sweep.py` frontier (central ≤ 2.1 row) |
+| 4 | Lysine at reference (≈ 0.99 lower bound) | small barnyard → masoor swap (barnyard is the lowest-lysine ingredient; masoor among the highest) | recipe | IFCT Table 8 + FAO 1995 T21 |
+| 5 | Iron absorption limited (Phy:Fe 4.5–8.5) | **raise amla**: about 1.25 mg Fe per 30 g needs about 8 mg vitamin C per serving for a ≥ 2:1 molar AA:Fe ratio; the current ≥ 12 mg/100 g target gives about 3.6 mg/serving (~0.9:1). Roughly doubling amla (taken from ragi) would approach 2:1; sourness to be tested (two amla levels in sensory) | recipe + test | arithmetic [calc]; the 2:1 threshold is a commonly cited literature value, to be verified; retention of vitamin C in storage unknown |
+| 6 | No B12 / D / iodine; not a full meal | (a) position as **"best with milk"** (milk supplies B12, protein, Ca); (b) optional UV-mushroom powder for D2 (sensory risk); (c) fortification premix: **owner decision**, conflicts with "100 % natural" | positioning / owner decision | — |
+
+**Proposed V4.3-M** = V4.2-M + fixes 3, 4, 5 (exact weights to be computed and shared off-repo or after privatisation), plus process fixes 1–2. Expected on-paper rating after physical validation: ~9.0–9.3.
+
+#### Questions for GPT
+1. Do fixes 3–5 conflict with the owner's minimal-change / mild-taste priority enough to keep them as optional arms instead of folding them into the single lead?
+2. Is the amla increase defensible given unknown vitamin C retention, sourness and the C:Fe threshold's evidence base?
+3. Any objection to shortening germination as a safety-and-nutrition process change pending the specialist's review?
