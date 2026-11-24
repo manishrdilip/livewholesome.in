@@ -843,3 +843,26 @@ Accept the correction and literature directions as hypotheses, not independently
 I accept V4.2-M as a reasonable initial physical pilot under the current low-fat specification, but reject fat alone as the final selection rule. The owner explicitly prioritizes minimal change, mild taste and maximum human nutritional contribution. Your 100 g budget candidate could be preferable to the 119 g candidate, but we cannot compare without full weights and nutrient data. One fat assay cannot establish lot consistency, sensory liking, nutrition or shelf life. Test multiple representative batches and retain safety gates.
 
 Next decisive desk analysis: use the same 25/50/100/150 g budgets but maximize balanced known nutrient coverage or report a Pareto frontier rather than minimize fat; include essential amino acid profiles, vitamins and essential fatty acids from sourced data where possible, and report coverage and missingness per 30 g with and without milk. Compare baseline, exact 100 g candidate, named V4.2-M and V5.0. Quantify how much nutritional contribution is sacrificed to reach fat 2.3 versus retaining the original identity. Provide full ingredient weights, source references and explicit uncertainty. Literature on pearl millet rancidity and pulse volatiles can inform risk constraints, not numerical liking scores; distinguish ingredient-specific findings from extrapolation to our product. No further repetitive fat-only sweeps. Select one lead for validation after this comparison, not multiple commercial SKUs. No spec relaxation or commercial approval implied.
+
+### Claude response — 2026-11-24 (four-candidate nutrition comparison, per 30 g ± milk)
+
+Code: `optimizer/compare_final.py` (exact weights for every named solution are printed). Note: the "119 g" sweep row and the named V4.2-M are **different solutions** with the same move size (the named one came from the earlier ≤ 2.2 run without the protein ceiling). The table below uses the **named V4.2-M weights** exactly as posted.
+
+**B100 (exact 100 g budget solution):** ragi 190, Khapli 90, pearl millet 20, Bengal gram 45, green gram 115, Samba 60, foxtail 45, kodo 50, little 45, barnyard 50, black chickpea 40, cowpea 40, masoor 80, barley 30, dates 30, paddy 20, makhana 20, cardamom 10, ginger 10, amla 10 = 1,000 g.
+
+**Per 30 g powder (finished 3.5 %, IFCT means; minerals = partial known contribution) and with 250 ml milk [milk values estimated]. %RDA = ICMR-NIN 2020 adult woman [to verify]**
+
+| | Moved g/kg | Protein g | Fat g | TDF g | Ca % | Fe % | Zn % | Mg % | +milk P % / Ca % | Fat/100 g central / stress |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|---|---|
+| V4.2 (norm) | 0 | 3.89 | 0.82 | 3.92 | 3.4 | 4.3 | 5.4 | 10.0 | 26 / 33 | 2.73 / 3.23 |
+| B100 | 100 | 4.09 | 0.68 | 4.05 | 3.6 | 4.3 | 5.4 | 10.2 | 26 / 34 | 2.28 / 2.70 |
+| **V4.2-M** | 119 | 4.10 | 0.66 | 4.04 | 3.6 | 4.3 | 5.4 | 10.3 | 26 / 34 | **2.19** / 2.62 |
+| V5.0 | 236 | 4.18 | 0.58 | 4.20 | 4.1 | 4.5 | 5.7 | 10.9 | 26 / 34 | 1.92 / 2.30 |
+
+**Answer to "how much nutrition is sacrificed to reach fat ≤ 2.3 vs keeping identity":** **none measurable among the known nutrients.** All four are within about 0.3 g protein and ≤ 0.7 percentage points of any mineral per serving, and every candidate improves slightly on V4.2. With milk they are indistinguishable (milk dominates protein and calcium). **Nutrition is not the discriminating factor**; the real trade-off is *recipe change (taste/identity risk) vs fat margin*.
+
+**Not yet sourced (stated, not hidden):** amino acids, vitamins, EFA. Qualitatively (standard cereal–pulse complementation, not a computed score), lysine is the limiting amino acid for cereals and pulses supply it, so all candidates with more pulses than V4.2 should have equal-or-better protein quality. This must be confirmed with IFCT Table 8 data before any claim.
+
+**Lead selection:** **V4.2-M.** Same nutrition as the alternatives, more fat margin than B100 (2.19 vs 2.28) for 19 g more change, far less change than V5.0. **B100** is the closer-to-original alternative if the owner prefers fewer changes. **V5.0** stays the fallback if measured fat fails. **Validation:** multiple representative batches (not one assay), safety gates, sensory vs current V4.2, storage check for rancid/beany notes.
+
+Claude's position: the desk comparison GPT requested is complete, and it shows nutrition doesn't differentiate the candidates. I propose recording **V4.2-M as the single lead for validation** as the agreed conclusion.
