@@ -332,3 +332,46 @@ We agree on the arithmetic, core ingredient constraints and trial design directi
 #### Open questions
 - Claude: do you accept the amended safety gates, retention of the fat specification pending measurement/owner approval, and B as primary pilot with C and normalized V4.2 as comparators?
 - Please provide the complete reproducible ingredient nutrient input table (including sources and basis), or explicitly acknowledge it is unavailable. If accepted, conclude the desk-review phase and identify the physical tests and owner decisions required rather than inventing a final commercial winner.
+
+### Claude response — 2026-11-24 (closing the desk review)
+
+1. **Safety gates: accepted in full.** I withdraw the interim "≥ 100 °C roast + negative batch tests" idea. Testing is not validation, and safe pilot preparation comes before any human tasting.
+2. **Fat ceiling: accepted.** ≤ 2.3 g/100 g stays a pass/fail requirement until lab data comes in and Dilip decides. GPT's arithmetic is correct: halving pearl millet only removes about 0.14 g, so cutting pearl millet is not a real fix [calc].
+3. **B primary, C comparator, normalised V4.2 control: accepted.**
+4. **Nutrient table: acknowledged as unverified.** The inputs I used (below) are approximate values recalled in the style of IFCT 2017, **not checked against a cited source**, mixed basis (mostly raw/dry), with no yield or moisture correction. They show direction only and must not be used for labels. A sourced table (IFCT 2017 book values or supplier COAs) is an owner/lab task.
+
+| Ingredient | P | F | TDF (g/100 g) [estimate, unsourced] |
+|---|---|---|---|
+| Ragi 7.2 / 1.9 / 11.2 · Khapli wheat 11.8 / 1.5 / 11.0 · Pearl millet 10.9 / 5.4 / 11.5 · Roasted Bengal gram 22.5 / 5.2 / 16.0 · Green gram 23.0 / 1.2 / 17.0 · Red rice 7.5 / 2.0 / 3.5 · Foxtail 12.3 / 4.3 / 8.0 · Kodo 8.9 / 2.6 / 6.4 · Little millet 10.1 / 3.9 / 7.7 · Barnyard 6.2 / 2.2 / 9.8 · Black chickpea 18.8 / 5.1 / 25.0 · Cowpea 21.0 / 1.2 / 11.0 · Masoor 22.5 / 0.7 / 10.6 · Barley 10.9 / 1.3 / 15.6 · Dry dates 2.5 / 0.4 / 8.0 · Puffed paddy 7.5 / 0.5 / 1.0 · Makhana 9.7 / 0.1 / 7.6 · Cardamom 10.8 / 6.7 / 28.0 · Dry ginger 9.0 / 4.2 / 14.0 · Amla (dried) 3.0 / 0.5 / 15.0 | | | |
+
+I agree the desk-review phase is complete. No more speculative ratings.
+
+---
+
+## 4. Agreed conclusion (Claude + GPT, 2026-11-24)
+
+Both reviewers agree that no winning recipe can be chosen by argument. What is left is decided by physical tests and by the owner.
+
+**Agreed facts [calc]**
+- The V4.2 master spec rows total **1,020 g / ₹117.34**, not the printed 1,000 g / ₹97.34. Normalised: ₹115.04/kg.
+- Pilot candidates (each exactly 1,000 g): **B (GPT) ₹103.64/kg, primary** · **C (Claude) ₹96.91/kg, cost/protein comparator** · **V4.2 normalised ₹115.04/kg, control**.
+- Estimated fat across all formulas is about 2.6 g/100 g, against a 2.3 g limit. This is a hypothesis to measure, not a fact.
+
+**Owner decisions needed (Dilip / family)**
+1. Which V4.2 row is 20 g over (or confirm that real batches are 1,020 g). Reissue the spec.
+2. After lab results: keep the ≤ 2.3 g fat claim (then reformulate using measured inputs) or change the label target.
+3. Hire or consult a qualified food-safety specialist for kill-step validation (surrogate organism, actual roaster, time and load).
+4. What current label/website claims (protein, fat, 18-month life) need to be held back until they are measured.
+
+**Physical tests, in order**
+1. **Lab baseline**: NABL test of current V4.2 (protein, fat, TDF, energy, moisture, aw, vitamin C, *Salmonella*, *E. coli*, yeast & mold). Get ingredient COAs or sourced composition values.
+2. **Process safety**: validate the roast kill step. Set a microbial spec and handling controls for post-roast amla and spices.
+3. **Pilot batches**: repeat batches of B, C and the control, recording actual processed yield.
+4. **Exploratory panel** (about 8 people, blinded, standardised preparation) on safely made samples. Sub-trials: cardamom 0.3/0.5/0.7/1.0 % and the makhana/paddy 2×2 (wetting time, lumps, sediment, texture).
+5. **Process development (optional)**: steam-cook route for instant mixing, with heat penetration, gelatinisation/viscosity and wet-handling microbial control validated.
+6. **Lab-test the chosen formula**, then a **consumer test** (about 30–50 people, blinded, randomised order, criteria set in advance).
+7. **Shelf-life study** (real-time plus accelerated). Expiry is set only from the data.
+
+**Not allowed until proven:** high-protein / ultra-low-fat numbers, "instant / no boiling", GI or diabetic claims, 18-month expiry, groundnut in the core product.
+
+*Desk review closed. Re-open this file when lab or pilot data arrives.*
