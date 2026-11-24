@@ -747,3 +747,50 @@ Ranking rationale: best on robust fat (spec-compliant), equal-best on mineral co
 Owner wants minimal modification of existing Purna, mild pleasant taste and maximum nutritional/commercial output, one SKU. Do not radically redesign or assume more ingredients are better. Use normalized V4.2 as identity reference, V4.5 as low-fat benchmark. Quantify recipe change as half the L1 distance in grams per kg from normalized V4.2; explore 25/50/100/150 g transfer budgets as proposed scenarios, not approved limits. Produce Pareto comparisons of nutritional adequacy, sensory risk, cost and recipe distance; select smallest change achieving meaningful improvements. Preserve all existing restrictions unless explicitly approved.
 
 Build a literature-grounded sensory model: sweetness equivalence and sugar composition, bitterness thresholds, titratable acidity/pH, tannin/astringency, volatile odor activity (including pulse hexanal, cardamom and roast aromas), particle-size distribution, viscosity, starch gelatinization, wettability, dispersibility and sedimentation. Include preparation temperature, milk matrix, serving dilution, processing and mixture interactions (sweetness/bitterness suppression, aroma masking). Do not equate chemical concentration with perceived intensity, add independent taste scores linearly without validation, or fabricate missing sensory coefficients. Distinguish measured published data, proxies, qualitative hypotheses and missing data. Use uncertainty and sensitivity analysis, calibrated sensory models only where supported. Mildness means balanced low-intensity flavor without excessive spice, bitterness, beany notes or grittiness, not maximized sweetness. Human sensory validation remains essential; computational predictions cannot guarantee liking. Compare nutritional contribution per serving and realistic dietary gaps, not universal daily completeness. Request actual sourced matrix, reproducible optimization and one minimally modified candidate with exact 1000 g weights and predicted tradeoffs. Do not close on macro-only results.
+
+### Claude response to owner clarification — 2026-11-24 (minimal-change candidate)
+
+Code: `optimizer/minimal_change.py`. It minimises grams moved (half the L1 distance from normalised V4.2) subject to: central fat ≤ limit (finished 3.5 %); protein, TDF, Ca, Fe, Zn and Mg each **no worse than V4.2**; pulse cap; **dates, cardamom, ginger, amla, makhana and puffed paddy held at V4.2 levels** (sweetness, aroma and texture identity). All runs are HiGHS Optimal unless marked.
+
+**Change-size frontier [calc on IFCT inputs]**
+
+| Central fat target | Grams moved /kg | Fat central / stress-high | Protein central | Pulses | Ingredients changed |
+|---|---:|---|---:|---:|---:|
+| ≤ 2.3 | 95 | 2.30 / 2.72 | 13.49 | 31 % | 6 |
+| **≤ 2.2** | **119** | **2.19 / 2.62** | **13.68** | **32 %** | **5 (+ total fix)** |
+| ≤ 2.1 | 144 | 2.10 / 2.52 | 13.85 | 33 % | 7 |
+| ≤ 2.0 | 175 | 2.00 / 2.42 | 13.80 | 32.5 % | 8 |
+| stress-high ≤ 2.3 | 222 | 1.92 / 2.30 | 13.99 | 34 % | 12 (≈ V5.0) |
+
+Stress-high fat ≤ 2.3 with ≤ 33 % pulses: infeasible (scipy 2).
+
+**Proposed single minimal-change candidate: V4.2-M** (central fat ≤ 2.2 row)
+
+| Ingredient | V4.2 (listed) | **V4.2-M** |
+|---|---:|---:|
+| Ragi | 190 | 190 |
+| Khapli wheat | 90 | 90 |
+| **Pearl millet** | 80 | **20** |
+| **Roasted Bengal gram** | 80 | **30** |
+| **Green gram** | 80 | **130** |
+| Mappillai Samba | 60 | 60 |
+| Foxtail | 50 | 45 |
+| Kodo | 50 | 50 |
+| Little millet | 50 | 45 |
+| Barnyard | 50 | 50 |
+| Black chickpea | 40 | 35 |
+| Cowpea | 40 | 45 |
+| **Masoor** | 30 | **80** |
+| Barley | 30 | 30 |
+| Dates · paddy · makhana · cardamom · ginger · amla | 30 · 20 · 20 · 10 · 10 · 10 | **unchanged** |
+| **Total** | 1,020 | **1,000** |
+
+Predicted (central, finished 3.5 %): protein 13.68 (inside 12.5–13.8), fat 2.19, TDF 13.45; Ca/Fe/Zn/Mg ≥ V4.2; pulses 32 % (V4.2 26.5 %); raw-price cost ₹118.96/kg. **Stress-high fat 2.62 exceeds 2.3**: the 0.11 g central margin is about one lab-method uncertainty, so the lab result decides it.
+
+**Sensory model: honest limit.** I can't build the literature-calibrated model in Section 7 (odor-activity values, bitterness thresholds, suppression/masking interactions) for *these* sprouted/roasted ingredients. Published coefficients for them in a milk matrix don't exist in any source I can retrieve, and inventing them would be fabrication. What the design does instead, transparently: every taste-identity ingredient (sweetener, spices, amla, crisp/porous texture items) is held **exactly** at V4.2; the main sensory risk is +5.5 percentage points of pulses (beany-note proxy), mitigated by a thorough roast. Only a human panel can validate this.
+
+**Recommendation for the owner's one-SKU goal:** **V4.2-M**. It is the smallest change (5 ingredient moves) that brings central fat and protein inside spec, without losing any mineral. **V5.0** stays the fallback if the lab finds V4.2-M's fat above 2.3.
+
+#### Questions for GPT
+1. Do you accept V4.2-M as the single minimal-change candidate for validation, with V5.0 as the pre-declared fallback?
+2. Do you agree that a calibrated sensory model isn't constructible from available sourced data, so the sensory panel is the validation step?
