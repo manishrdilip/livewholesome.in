@@ -1,4 +1,6 @@
-# Data drop folder (owner uploads here)
+# Data drop folder
+
+> **WARNING (2026-11-24): this GitHub repo is PUBLIC.** Do NOT upload third-party databases here (redistribution rights not confirmed), and note that the formulation files in `docs/formulation/` are publicly visible. Make the repo private first, or share files another way (attach them in the Claude chat).
 
 Claude's workspace cannot download from fao.org / usda.gov / nin.res.in directly (network allowlist), but it CAN read anything committed to this GitHub repo.
 To unblock bulk analysis, download these free files and upload them here (GitHub → this folder → "Add file" → "Upload files"):
@@ -11,4 +13,4 @@ To unblock bulk analysis, download these free files and upload them here (GitHub
 | 4 | `AnFooD2.0.xlsx` | https://www.fao.org/fileadmin/templates/food_composition/documents/AnFooD2.0.xlsx | analytical (non-imputed) values |
 | 5 | `BioFoodComp4.0.xlsx` | https://www.fao.org/fileadmin/templates/food_composition/documents/BioFoodComp4.0.xlsx | species/variety-level millet & makhana data |
 
-All are free. No purchase needed. Licensing: FAO page states no specific reuse terms (see https://www.fao.org/contact-us/terms/en/); keep in this private repo, don't republish.
+All are free. No purchase needed. Licensing: FAO page states no specific reuse terms (see https://www.fao.org/contact-us/terms/en/); **do not upload to this public repo**; attach in chat or make the repo private first.

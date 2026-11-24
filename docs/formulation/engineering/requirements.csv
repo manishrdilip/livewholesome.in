@@ -3,13 +3,13 @@ R01,Formula,Batch sums to exactly 1000 g,engineering,sum of weights,verify_recip
 R02,Nutrition,Protein per 100 g finished powder,OWNER SPEC,protein g/100g,NABL Kjeldahl (N x 6.25),12.5-13.8 (design spec; owner to decide label),MODELLED 13.68,robust 12.4-15.1; spec window narrower than natural variation,G4 verification
 R03,Nutrition,Total fat per 100 g,OWNER SPEC,fat g/100g,NABL Soxhlet/acid hydrolysis,<=2.3,MODELLED 2.19 central / 2.62 stress,margin 0.11 g; moisture-dependent,G4 verification
 R04,Nutrition,Total dietary fibre,OWNER SPEC,TDF g/100g,AOAC 991.43,>=11.0,MODELLED 13.45,crude vs TDF must not be mixed,G4 verification
-R05,Nutrition,Vitamin C (amla bypass),OWNER SPEC,ascorbic acid mg/100g,HPLC/titration,>=12.0,NOT MODELLED,retention after storage unknown,G4 + G5 shelf life
+R05,Nutrition,Vitamin C (amla bypass) - owner range to be confirmed (spec table >=12.0; GPT cites original 11.5-14.5),OWNER SPEC (unconfirmed),ascorbic acid mg/100g,HPLC/titration,owner to confirm range,NOT MODELLED,retention after storage unknown,G4 + G5 shelf life
 R06,Nutrition,Lysine composition ratio vs FAO 2013 (>3 y),PROPOSED,mg lys/g protein / 48,amino_acids_v2.py then AA assay,>=1.0 composition,MODELLED ~0.99 lower bound,not DIAAS; processing lysine loss,G1 digital / G4 assay
-R07,Nutrition,Per-serving declaration (30 g and +250 ml milk),PROPOSED,nutrients per serving,compare_final.py then lab,matches label within FSSAI tolerance,MODELLED,milk values estimated,G5 regulatory
+R07,Nutrition,Per-serving declaration: 30 g powder; nutritional scenario with 250 ml milk (preparation instruction volume to be set separately),PROPOSED,nutrients per serving,compare_final.py then lab,matches label within FSSAI tolerance,MODELLED,milk values estimated,G5 regulatory
 R08,Nutrition,Vitamins B1/B2/B3/folate/E and LA/ALA characterised,PROPOSED,per-serving values,IFCT Tables 2/3/7 + assay,documented (no target),MISSING DATA,owner upload needed,G1 digital
 R09,Nutrition,Fe/Zn bioavailability (phytate:mineral molar ratio),PROPOSED,phytate:Fe and phytate:Zn,PhyFoodComp + phytate assay,report only (no claim),MISSING DATA,sprouting reduces phytate - unquantified,G1 / G4
-R10,Safety,Salmonella,OWNER SPEC (non-compensatory),presence/25 g,ISO 6579,Absent in 25 g (every lot),NOT TESTED,sampling cannot prove safety,G2 + every lot
-R11,Safety,E. coli,OWNER SPEC (non-compensatory),cfu/g,ISO 16649,absent/limit per FSSAI,NOT TESTED,,G2 + every lot
+R10,Safety,Salmonella,OWNER SPEC (non-compensatory),presence/25 g,ISO 6579,absent in 25 g per FSSAI category sampling plan (plan to be confirmed),NOT TESTED,sampling cannot prove safety,G2 + every lot
+R11,Safety,E. coli,OWNER SPEC (non-compensatory),cfu/g,ISO 16649,per FSSAI category limit & sampling plan (to be confirmed),NOT TESTED,,G2 + every lot
 R12,Safety,Yeast & mould,OWNER SPEC,cfu/g,ISO 21527,<100,NOT TESTED,,G2 + every lot
 R13,Safety,Validated kill step (roast CCP-1),PROPOSED (non-compensatory),log reduction of surrogate,surrogate challenge study by food-safety lab,>=5-log (target set by specialist),NOT VALIDATED,current 85-95 C x 6-8 min unproven,G2 process safety
 R14,Safety,Post-lethality hygiene (amla/spice addition),PROPOSED (non-compensatory),supplier COA + env. swabs,COA per lot; swab plan,COA pass every lot,NOT IN PLACE,,G2
@@ -23,9 +23,15 @@ R21,Packaging,O2 absorber capacity adequate,PROPOSED,headspace O2 %,headspace an
 R22,Process,Particle size,OWNER SPEC 80-mesh,% passing 180 um,sieve analysis,>=95% passing (proposed),NOT TESTED,,G3
 R23,Process,Stage yields (raw->sprouted->dried->roasted->milled),PROPOSED,% yield per ingredient,weigh every stage,documented for 3+ batches,NOT MEASURED,needed for real cost/kg,G3
 R24,Process,Batch repeatability,PROPOSED,between-batch CV of protein/fat/moisture,assays on >=3 pilot then routine lots,CV limits set after data; SPC only after >=20-25 lots,NOT MEASURED,no capability claim from 3 batches,G3 / G6
-R25,Sensory,Taste acceptance vs current Purna,OWNER (mild taste),blinded preference/difference,triangle test then 9-point hedonic,not significantly worse than current (alpha 0.05),NOT TESTED,no validated predictive model,G4 consumer
+R25,Sensory,Taste acceptance vs current Purna,OWNER (mild taste),blinded preference/difference,blinded randomised 9-point hedonic; prespecified non-inferiority margin (e.g. -0.5 points) with sample size from power calc; triangle test as screen only,lower 95% CI of (new - current) mean > -margin; 'no significant difference' is NOT non-inferiority,NOT TESTED,no validated predictive model,G4 consumer
 R26,Sensory,Beany / bitter off-notes,PROPOSED,panel attribute intensity,trained/semi-trained panel,not higher than current,NOT TESTED,mung hexanal rises in storage,G4 + G5
 R27,Usability,Dispersion in warm milk,PROPOSED,lumps / wetting time / sediment,standard prep 30 g in 200 ml 60 C 10 s stir,no visible lumps; sediment < lab-defined,NOT TESTED,no instant claim,G3
-R28,Cost,Raw-material cost per finished kg,OWNER,INR/kg finished,cost sheet x measured yields,<= current V4.2,MODELLED 118.96 raw-price,yield unknown,G3
-R29,Supply,Supplier variability,PROPOSED,incoming COA (moisture/aflatoxin for millets & pulses),COA per lot + spot tests,within supplier spec,NOT IN PLACE,,G6 scale-up
+R28,Cost,Raw-material cost per finished kg (no owner cost ceiling stated),ENGINEERING (proposed),INR/kg finished,cost sheet x measured yields,report; V4.2-M raw-price 118.96 vs 115.04 baseline = +3.4 % trade-off flagged to owner,MODELLED (raw price; yields unknown),yield unknown,G3
+R29,Supply,"Incoming material controls: aflatoxin/mycotoxins, pesticide residues, foreign matter",PROPOSED,incoming COA (moisture/aflatoxin for millets & pulses),COA per lot + spot tests,within supplier spec,NOT IN PLACE,,G3 pilot (BEFORE pilot: incoming mycotoxin/pesticide controls)
 R30,Regulatory,FSSAI label & claim compliance,REGULATORY,claims vs data,FSSAI labelling & claims regs + CA/consultant review,every claim backed by lab data,NOT REVIEWED,,G5
+R31,Nutrition,Energy per 100 g and per serving,REGULATORY,kcal,calculated from assays (Atwater),declared value within FSSAI tolerance,NOT MODELLED,,G4
+R32,Nutrition,Total and added sugars (dates; malting),REGULATORY,g/100g,HPLC sugars,declared; 'no added sugar' claim only if lawful,NOT MODELLED,dates are an ingredient - claim wording needs review,G4/G5
+R33,Sensory,Digestive tolerance with higher pulses,PROPOSED,self-reported GI symptoms,"1-2 week home-use panel, prespecified questionnaire",not worse than current (prespecified),NOT TESTED,,G4
+R34,Packaging,Barrier: WVTR and OTR of laminate,PROPOSED,"g/m2/day, cc/m2/day",supplier spec + lab verification,meets shelf-life model requirement,NOT TESTED,,G3
+R35,Safety,"Preparation safety (hot liquid, time held after mixing)",PROPOSED,instruction validation,label instruction review; B. cereus risk if held warm,clear instruction; consume promptly,NOT REVIEWED,,G5
+R36,Safety,"Hazard analysis incl. B. cereus spores, foreign matter, allergen cross-contact, water quality, post-process contamination",REGULATORY (non-compensatory),documented hazard analysis,qualified food-safety specialist,approved HACCP plan; CCPs designated ONLY after this,NOT STARTED,,G2

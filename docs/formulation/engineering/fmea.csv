@@ -1,13 +1,16 @@
-id,type,item_or_step,failure_mode,effect,cause,current_control,S,O,D,RPN,action,owner_gate
-F01,DFMEA,Formula fat,fat > 2.3 g/100g,label non-compliance,bajra/Bengal gram fat; low moisture concentrates fat,model only,7,5,6,210,NABL fat on 3 pilot lots; fallback V5.0 study,G4
-F02,DFMEA,Formula protein,protein outside 12.5-13.8,label non-compliance,natural variation > window,model only,6,6,6,216,owner decision: label from measurement,G4/G5
-F03,DFMEA,Pulse increase,beany off-note / gas,customer rejection,hexanal; oligosaccharides,none,6,5,7,210,triangle test + 1-week tolerance panel; storage sensory,G4/G5
-F04,DFMEA,Lysine margin,composition ratio < 1.0,weaker protein-quality story,low-lys millets,model,3,4,6,72,AA assay on final product (optional),G4
-F05,PFMEA,Germination,pathogen growth during sprouting,illness,warm wet 36-48 h,none validated,10,4,8,320,food-safety specialist HACCP; water/hygiene controls; consider shorter germination,G2
-F06,PFMEA,Roast CCP-1,insufficient lethality,illness,85-95 C x 6-8 min unvalidated,temperature by feel,10,4,8,320,probe logging + surrogate validation study,G2
-F07,PFMEA,Amla cold-bypass CCP-2,post-lethality contamination,illness,raw amla added after kill,none,10,3,8,240,supplier COA + lot testing + hygienic addition,G2
-F08,PFMEA,Drying,moisture > 3.5 / aw > 0.32,mould / clumping / shorter life,under-drying humid weather,none,7,4,5,140,moisture + aw every lot,G3
-F09,PFMEA,Milling,particles > 80 mesh / heat damage,grittiness / rancidity,worn stones; high RPM,80-mesh sieve,5,3,4,60,sieve analysis per lot; RPM log,G3
-F10,PFMEA,Packing,seal failure / O2 ingress,rancidity / moisture pickup,seal temp; contamination of seal area,visual,7,4,6,168,seal strength + leak test sampling,G3
-F11,PFMEA,Storage,rancidity before expiry,off-flavour complaints,bajra lipase; pulse LOX,low fat formula,6,4,6,144,real-time shelf-life study; conservative expiry,G5
-F12,PFMEA,Incoming grain,aflatoxin / pesticide,illness / recall,supplier quality,none,9,3,7,189,supplier COA + periodic aflatoxin test,G6
+id,type,item_or_step,failure_mode,effect,cause,current_control,S,O,D,RPN,action,owner_gate,action_required_regardless_of_RPN
+F01,DFMEA,Formula fat,fat > 2.3 g/100g,label non-compliance,bajra/Bengal gram fat; low moisture concentrates fat,model only,7,5,6,210,NABL fat on 3 pilot lots; fallback V5.0 study,G4,no
+F02,DFMEA,Formula protein,protein outside 12.5-13.8,label non-compliance,natural variation > window,model only,6,6,6,216,owner decision: label from measurement,G4/G5,no
+F03,DFMEA,Pulse increase,beany off-note / gas,customer rejection,hexanal; oligosaccharides,none,6,5,7,210,triangle test + 1-week tolerance panel; storage sensory,G4/G5,no
+F04,DFMEA,Lysine margin,composition ratio < 1.0,weaker protein-quality story,low-lys millets,model,3,4,6,72,AA assay on final product (optional),G4,no
+F05,PFMEA,Germination,pathogen growth during sprouting,illness,warm wet 36-48 h,none validated,10,4,8,320,food-safety specialist HACCP; water/hygiene controls; consider shorter germination,G2,YES
+F06,PFMEA,Roast CCP-1,insufficient lethality,illness,85-95 C x 6-8 min unvalidated,temperature by feel,10,4,8,320,probe logging + surrogate validation study,G2,YES
+F07,PFMEA,Amla cold-bypass CCP-2,post-lethality contamination,illness,raw amla added after kill,none,10,3,8,240,supplier COA + lot testing + hygienic addition,G2,YES
+F08,PFMEA,Drying,moisture > 3.5 / aw > 0.32,mould / clumping / shorter life,under-drying humid weather,none,7,4,5,140,moisture + aw every lot,G3,no
+F09,PFMEA,Milling,particles > 80 mesh / heat damage,grittiness / rancidity,worn stones; high RPM,80-mesh sieve,5,3,4,60,sieve analysis per lot; RPM log,G3,no
+F10,PFMEA,Packing,seal failure / O2 ingress,rancidity / moisture pickup,seal temp; contamination of seal area,visual,7,4,6,168,seal strength + leak test sampling,G3,no
+F11,PFMEA,Storage,rancidity before expiry,off-flavour complaints,bajra lipase; pulse LOX,low fat formula,6,4,6,144,real-time shelf-life study; conservative expiry,G5,no
+F12,PFMEA,Incoming grain,aflatoxin / pesticide,illness / recall,supplier quality,none,9,3,7,189,supplier COA + periodic aflatoxin test,before G3 pilot,YES
+F13,PFMEA,Whole process,B. cereus spore survival + growth if prepared product held warm,illness,spore-former survives roasting,none,8,3,7,168,hazard analysis; preparation instruction,G2,no
+F14,PFMEA,Cleaning/sieving,"foreign matter (stones, metal)",injury,field grain; worn equipment,sieve,8,3,5,120,destoning + magnet/metal check,G3,no
+F15,PFMEA,Water for soaking/sprouting,contaminated water,illness,non-potable water,none,9,3,7,189,potable water verification,G2,YES
