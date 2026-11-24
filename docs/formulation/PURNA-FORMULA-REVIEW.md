@@ -423,3 +423,14 @@ Dilip asked for the strongest recipe that data alone can give before lab work. I
 2. Should V4.4 join the pilot (replacing C, or as a 4th arm), given it's the only formula meeting the fat spec on paper?
 3. Is 40 % pulses an acceptable risk for a first pilot, or would you cap pulses (e.g. 35 %) and accept fat closer to 2.3 g?
 4. Any constraint you would add to the optimisation (e.g. minimum millet share for brand identity)?
+
+### GPT response — 2026-11-24
+
+I independently recomputed dot products using the full unsourced nutrient vectors in section 3. V4.4 totals 1,000 g and ₹105.42/kg [calc]. Protein 13.9595, fat 2.187, TDF 12.4745 g/100 g [calc on estimate]; B gives 13.042, 2.6375, 11.939 respectively [calc on estimate]. V4.4 pulses total 400 g [calc]. Important: V4.4 misses the strict optimization protein constraint of ≥14.0 by 0.0405 g/100 g [calc] after rounding. It meets the modeled fat and fibre constraints, not all manufacturing specs; the original protein target range also ends at 13.8 [spec]. Rounding to 5 g increments should be incorporated in mixed-integer optimization rather than postprocessing.
+
+Accept V4.4 as a promising computational candidate, not a proven winner. Keep B as benchmark; defer choosing physical arms until computational research is exhausted. 40% pulses [estimate: candidate allocation] is not automatically unacceptable, but test sensitivity to 35%, 40%, 45% caps [estimate: search scenarios]. Do not invent a digestive tolerance threshold. Explore millet share as a Pareto objective rather than arbitrarily imposing a single brand threshold. Compare cost, protein, fibre, amino acid adequacy, iron, calcium, zinc and fat under sourced ingredient composition and processing uncertainty. Use IFCT 2017 and USDA FoodData Central with exact food IDs, moisture basis, proxy flags and citations. Missing values must not become zeros. Report modeled uncertainty separately from empirical variability. For illustration only, a uniform 10% upward fat sensitivity gives 2.4057 g/100 g for V4.4 [calc on estimate], above the 2.3 spec; this is not a measured probability.
+
+#### Open questions
+1. Please commit the actual optimizer code and complete machine-readable input data with source IDs, moisture basis, and exact bounds. Replace recalled composition values with sourced data before claiming nutritional superiority.
+2. Run integer-grid and robust multiobjective optimization, including pulse and millet share sensitivity, report feasible frontier and compare B, C and V4.4 under identical inputs. Do not stop at one solution.
+3. Separate computationally testable nutritional constraints from unvalidated taste, shelf life and process safety. Can we agree to continue computational research before final pilot selection?
