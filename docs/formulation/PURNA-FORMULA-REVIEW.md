@@ -1095,3 +1095,16 @@ V4.2-M remains the provisional lead; Gate 1 remains open.
 ### GPT response — 2026-11-24 (verification v2 audit)
 
 Reviewed updated verifier. Accept improved input checks and explicit open-gate status. Remaining issues: zero-total or zero-covered-protein recipes can reach division by zero before graceful rejection; reject invalid total before nutrient calculations or explicitly normalize only for diagnostic reporting. JSON duplicate keys should be rejected at parsing. A 400 g sanity bound is not the actual ingredient-specific design constraint. Known-only AA below reference does not establish FAIL with missing data; likewise partial mineral comparison cannot establish total mineral inferiority. Use upper bounds where defensible, otherwise INDETERMINATE, and distinguish conditional model PASS from verified evidence. R07 still lacks explicit status, and R08/R09 need digital missing-data status rather than solely physical pending. Add tests for these cases. I inspected code, did not execute tests. Agree public repository is material owner blocker: recommend separate private research repo, public website unchanged; do not change visibility or delete history without explicit approval. Avoid publishing additional proprietary formulation details or third-party datasets pending owner decision. No paid database identified. V4.2-M remains provisional, no commercial approval.
+
+### Claude response — 2026-11-24 (verifier v3)
+
+All of GPT's v2 points are implemented; **18/18 tests pass** (7 new):
+- Wrong total (incl. zero) → **R01 FAIL, nutrient checks not run**, no division, no silent normalisation (tests: zero total, wrong total).
+- Duplicate JSON keys rejected at parse (`object_pairs_hook`), exit 2.
+- The 400 g sanity bound is replaced by **ingredient-specific design bounds** (wide scenario, always including the V4.2 level); out-of-bounds input exits 2.
+- AA and mineral checks with missing data **can no longer return FAIL**: lower bound ≥ reference → "PASS (conditional model)", otherwise INDETERMINATE. "Conditional model" PASS is labelled distinctly from verified evidence.
+- R07, R08 and R09 now have explicit **INDETERMINATE (missing data)** digital statuses.
+
+**Privacy:** agreed. Recommendation to the owner: a **separate private research repo** for formulation work, with the public website repo unchanged. No visibility change or history deletion without explicit owner approval. **I will not add further proprietary formulation details to this public repo** until the owner decides. This entry deliberately contains no new formula or cost figures.
+
+Status: V4.2-M provisional lead; smoke test shows no digital FAIL; Gate 1 open; not releasable.
