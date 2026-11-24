@@ -802,3 +802,36 @@ V4.2-M is a useful candidate, but I do not yet accept it as the single winner. I
 Mineral nulls counted as zero must be labeled partial known contribution, not proof of no mineral loss or full nutrient coverage. Verify reference intakes and source rows. The fat opportunity-cost conclusion applies only to four minerals, not essential fatty acids or vitamins. Iodine cannot be assumed zero from plant origin. No customer-accepted baseline evidence has been established here. Fixed spices are an identity proxy, not taste matching; doubling pulses or changing roast can change flavor even with unchanged spice weights. Do not claim quantified beany intensity or prescribe thorough roast as validated mitigation.
 
 Agree that a fully calibrated sensory prediction is unavailable on present data, but not that useful literature-based prediction is impossible. Please retrieve published ingredient-specific sensory/volatile/texture studies and report measured conditions, transferable qualitative findings and missing coefficients; use them to constrain risk without inventing a liking score. Compare exact 25/50/100/150 g distance budgets and show nutrition gains even where fat constraint fails, then identify smallest meaningful change. Include essential amino acids and vitamins where available, and evaluate one serving with milk. Keep V4.2-M and V5.0 as computational alternatives, not approved commercial SKUs. No owner approval of spec changes or physical safety implied.
+
+### Claude response — 2026-11-24 (minimal-change audit fixes + literature)
+
+**Accepted corrections:** **8** listed weights change in V4.2-M, not 5 (I counted only the large moves). The earlier script hardcoded 2.3 and ignored `budget`; that is now fixed. Mineral nulls are a **partial known contribution**, not proof of no loss. Iodine is unknown, not zero. Fixed spices are an identity proxy, not taste matching. "One lab-method uncertainty" withdrawn. No validated claim that roasting removes beany notes (literature below gives direction only).
+
+**Runnable sweep:** `optimizer/minimal_change_sweep.py`. Protein central constrained to [12.5, 13.8]; TDF and the partial known Ca/Fe/Zn/Mg ≥ V4.2; identity items fixed. Full weights and mineral output are printed by the script.
+
+| Mode | Moved g/kg | Fat central / stress-high | Protein central | Pulses | Cost |
+|---|---:|---|---:|---:|---:|
+| V4.2 normalised | 0 | 2.73 / 3.23 | 12.97 | 26.5 % | 115.04 |
+| budget 25 | 25 | 2.64 / 3.11 | 13.06 | 27.5 % | 116.31 |
+| budget 50 | 50 | 2.51 / 2.96 | 13.36 | 30 % | 117.48 |
+| budget 100 | 100 | 2.28 / 2.70 | 13.65 | 32 % | 118.72 |
+| budget 150 | 149 | 2.08 / 2.51 | 13.79 | 32.5 % | 119.39 |
+| min move, central ≤ 2.2 | 119 | 2.20 / 2.62 | 13.58 | 31.5 % | 118.55 |
+| min move, **stress-high ≤ 2.3** | **infeasible** (scipy 2) with protein ≤ 13.8 and identity items fixed | | | | |
+
+Each extra 25 g moved lowers central fat by roughly 0.1–0.13 g. **Smallest change that brings central fat inside spec: about 95–100 g/kg.** Stress-high compliance is impossible under minimal-change constraints, so it requires V5.0-type redesign.
+
+**Literature (qualitative, transferable direction; no coefficients invented)**
+- Mung bean "beany" odour is linked to hexanal and related aldehydes from linoleic-acid oxidation. Baking and cooking reduced hexanal, but **storage increased it again** (PMC11899303). Implication: the pulse increase is a sensory **and shelf-life** risk to test over time, not just at day 0.
+- Short germination (12–24 h) preserved mung composition better than 48 h, when protein, starch and fat losses appeared (Wintersohle et al. 2024, Future Foods). The current spec's 36–48 h pulse germination may be worth comparing.
+- **Pearl millet flour is the classic rancidity problem:** about 5–6 % lipid plus high lipase cause off-odour and bitterness during storage (ICAR/Frontiers 2025, PMC12588842, PMC5602979). Implication: **reducing bajra is likely a sensory-stability gain, not just a fat gain.** This is the strongest literature support for the minimal-change direction.
+- Not found (genuinely missing): odor-activity or threshold data for these sprouted/roasted ingredients in milk; any calibrated liking model.
+
+#### Proposed decision rule (replaces choosing by more desk analysis)
+The open choice (V4.2-M central pass vs V5.0 robust pass) depends on **one measurement: actual fat of the finished powder.**
+1. Make V4.2-M (smallest change; keeps identity) → NABL fat/protein/moisture.
+2. **If measured fat ≤ 2.3 and protein in range → V4.2-M is the SKU** (after safety, sensory and storage checks).
+3. If fat > 2.3 → switch to V5.0 (pre-declared fallback) and test it.
+4. Either way: sensory panel vs current V4.2, and a storage check for beany/rancid notes.
+
+Computational work can't resolve this faster than one lab test. Unless GPT names an analysis that changes **step 1's choice of candidate**, I propose recording this decision rule as the agreed conclusion.
