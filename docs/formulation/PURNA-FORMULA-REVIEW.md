@@ -1150,3 +1150,34 @@ The owner attached the IFCT 2017 PDF in chat (**not** committed to this public r
 - **None of these change the lead.** V4.2-M ≈ V4.2 on all four, with better LA:ALA.
 
 **Digital status after this pass:** Table 1 verified; vitamins B1/B2/B3/folate/E, LA/ALA, phytate and energy now computed. Remaining digital gaps: foxtail/barnyard/makhana full rows, sugars (Table 6), processing retention, digestibility. Everything else is physical (G2–G6).
+
+### Claude — 2026-11-24 (FAO/INFOODS/IZiNCG PhyFoodComp 1.0 received from owner)
+
+The workbook was attached in chat (**not** committed: FAO/IZiNCG © 2018). Sheets "01 Cereals" and "03 Legumes" were read; phytate (first available of PHYTCPPI/PHYTCPP/PHYTC-) converted to **dry-matter basis** using each row's WATER; rows grouped by species keyword and by processing (germinated/sprouted/malted vs roasted/puffed vs raw). **Unpaired, mixed-source medians**, so this is a direction, not a process-specific value.
+
+| Ingredient | Raw median (n), mg/100 g DM | Germinated median (n) | Roasted (n) |
+|---|---|---|---|
+| Pearl millet | 634 (80) | 45 (**1**) | — |
+| Cowpea | 738 (65) | 305 (4) → **−59 %** | — |
+| Green gram | 739 (24) | 403 (**1**) → −45 % | — |
+| Lentil | 860 (17) | 79 (4) → −91 % | — |
+| Chickpea | 754 (43) | — | 765 (6) → **no reduction** |
+| Ragi / foxtail / barnyard / little / barley | 343 (1) / 550 (7) / 415 (1) / 299 (1) / 518 (14) | none | — |
+
+PhyFoodComp raw values are broadly consistent with IFCT (e.g. IFCT bajra 485 mg/100 g as-is ≈ 533 DM vs PhyFoodComp median 634 DM).
+
+**Scenario: phytate reduction applied only to the sprouted ingredients** (roasted Bengal gram, rice, dates, paddy and spices are unchanged):
+
+| Reduction | V4.2 Phy:Fe / Phy:Zn | **V4.2-M Phy:Fe / Phy:Zn** |
+|---|---|---|
+| 0 % (raw-ingredient basis, previous post) | 8.5 / 17.3 | 8.5 / 17.3 |
+| 45 % (green gram level) | 5.6 / 11.4 | 5.4 / 11.1 |
+| 59 % (cowpea level) | 4.7 / 9.6 | **4.5 / 9.1** |
+
+**Interpretation**
+- **Sprouting very likely moves zinc out of the WHO "low absorption" category (> 15) into the moderate range (5–15)** for every candidate. This supports keeping the germination step (process value, not just tradition). Iron's phytate ratio stays well above 1, so **iron absorption remains limited**; amla's vitamin C is the main counter-measure, which reinforces the cold-bypass amla step.
+- Roasting does not reduce phytate (chickpea data), so roasted Bengal gram contributes phytate at full level.
+- V4.2-M is marginally better than V4.2 in every scenario. **Lead unchanged.**
+- Only a phytate assay of the finished powder (plus Fe/Zn) can replace these scenarios. This is added to the G4 assay list. Code: inline in commit message; reproducible from `micro_fa_phytate.py` + the PhyFoodComp file (not redistributed).
+
+**R09 status:** INDETERMINATE → **modelled with scenario range**; still needs the assay.

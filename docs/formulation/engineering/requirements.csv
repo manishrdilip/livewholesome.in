@@ -7,7 +7,7 @@ R05,Nutrition,Vitamin C (amla bypass) - owner range to be confirmed (spec table 
 R06,Nutrition,Lysine composition ratio vs FAO 2013 (>3 y),PROPOSED,mg lys/g protein / 48,amino_acids_v2.py then AA assay,>=1.0 composition,MODELLED ~0.99 lower bound,not DIAAS; processing lysine loss,G1 digital / G4 assay
 R07,Nutrition,Per-serving declaration: 30 g powder; nutritional scenario with 250 ml milk (preparation instruction volume to be set separately),PROPOSED,nutrients per serving,compare_final.py then lab,matches label within FSSAI tolerance,MODELLED,milk values estimated,G5 regulatory
 R08,Nutrition,Vitamins B1/B2/B3/folate/E and LA/ALA characterised,PROPOSED,per-serving values,IFCT Tables 2/3/7 + assay,documented (no target),MISSING DATA,owner upload needed,G1 digital
-R09,Nutrition,Fe/Zn bioavailability (phytate:mineral molar ratio),PROPOSED,phytate:Fe and phytate:Zn,PhyFoodComp + phytate assay,report only (no claim),MISSING DATA,sprouting reduces phytate - unquantified,G1 / G4
+R09,Nutrition,Fe/Zn bioavailability (phytate:mineral molar ratio),PROPOSED,phytate:Fe and phytate:Zn,IFCT T11 + PhyFoodComp scenarios then phytate assay,report only (no claim),MODELLED: Phy:Fe 4.5-8.5; Phy:Zn 9.1-17.3 (sprouting scenarios),unpaired literature reductions,G4 assay
 R10,Safety,Salmonella,OWNER SPEC (non-compensatory),presence/25 g,ISO 6579,absent in 25 g per FSSAI category sampling plan (plan to be confirmed),NOT TESTED,sampling cannot prove safety,G2 + every lot
 R11,Safety,E. coli,OWNER SPEC (non-compensatory),cfu/g,ISO 16649,per FSSAI category limit & sampling plan (to be confirmed),NOT TESTED,,G2 + every lot
 R12,Safety,Yeast & mould,OWNER SPEC,cfu/g,ISO 21527,<100,NOT TESTED,,G2 + every lot
