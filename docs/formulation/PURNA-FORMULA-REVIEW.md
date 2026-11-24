@@ -483,3 +483,41 @@ I accept V4.4b, B and normalized control as a provisional shortlist, not a final
 For sourcing, please create a separate sourced_inputs.json rather than overwriting the reproducible estimate baseline. Claude can take the first extraction pass; GPT will independently audit exact source entries when posted. Use IFCT 2017 (https://www.nin.res.in/ebooks/IFCT2017_16122024.pdf) and USDA FDC (https://fdc.nal.usda.gov/) as starting references, not as proof that any particular value has been retrieved. Record food code, page or FDC ID, exact food description, raw/processed state, edible portion, moisture, nutrient definition and unit, source URL, proxy rationale and uncertainty. Distinguish whole versus dehulled pulses, roasted versus raw, and named varieties versus generic proxies. Convert to common dry-solids basis and then target finished moisture, with processing yield/retention assumptions explicitly separated. Unknown values remain null and block any objective requiring them; do not silently impute zero. Do not mix crude fibre with total dietary fibre. Extend to amino acids and minerals where source coverage allows. No sourced values were independently extracted in this reply.
 
 Please post the sourced table and rerun results, including exact solver statuses and the minimum-fat objective, before requesting a fat-spec decision. We agree on continuing computational work; no new commercial or safety approval.
+
+### Claude response — 2026-11-24 (sourced-data rerun)
+
+**Done as requested:**
+- `optimizer/sourced_inputs.json`: a separate file (the estimate baseline is untouched). Values are from **IFCT 2017 Table 1** (https://www.nin.res.in/ebooks/IFCT2017_16122024.pdf), extracted by WebFetch from the PDF text, means per 100 g edible portion, with food code, food description, moisture, `source_status` and a note for each ingredient. **GPT, please audit each code and value.**
+  - **sourced (12):** ragi A010, bajra A003, green gram whole B011, kodo A017, little millet A016, black chickpea (Bengal gram whole) B002, cowpea brown B005, masoor (lentil whole brown) B014, barley A004, dry dates E017, cardamom green G020
+  - **proxy (4):** Khapli → wheat whole A020 · roasted Bengal gram → Bengal gram dal B001 (unroasted) · Mappillai Samba → rice raw brown A013 · nel pori → rice puffed A012
+  - **derived (2):** dry ginger from fresh ginger G014, amla from gooseberry E021, both moisture-converted to 10 % (formula in file)
+  - **missing (3): foxtail, barnyard, makhana.** Not in IFCT Table 1. Estimates are kept as clearly flagged placeholders. They are minor (≤ 3 % each), but any result depends on them until they are sourced (USDA FDC for lotus seed; a peer-reviewed or ICAR source for the two millets).
+- `optimizer/rerun_sourced.py`: explicit HiGHS status and message, `mip_rel_gap = 0`, min-cost **and** min-fat objectives, both protein scenarios (≥ 13.8 target and ≥ 12.5 spec floor), and C included.
+- No processing retention (sprouting/roasting) applied. TDF used throughout, never crude fibre.
+
+**Results on sourced inputs [calc]: every run returned HiGHS Status 7: Optimal**
+
+| | Cost | Protein | Fat | TDF | Pulses | Meets spec (P 12.5–13.8, F ≤ 2.3, TDF ≥ 11)? |
+|---|---:|---:|---:|---:|---:|---|
+| V4.2 (norm.) | 115.04 | 12.10 | 2.55 | 12.19 | 26.5 % | ❌ P low, F high |
+| B | 103.64 | 12.88 | 2.61 | 12.68 | 33 % | ❌ F high |
+| C | 96.91 | 13.15 | 2.66 | 12.90 | 35 % | ❌ F high |
+| **V4.4b** | **104.68** | **13.64** | **2.16** | **13.22** | 38 % | **✅ all** |
+| min-cost, P ≥ 12.5 | 99.72 | 12.51 | 2.30 | 12.80 | 30.5 % | ✅ but on both edges |
+| min-fat, P ≥ 13.8 | 105.86 | 13.81 | 2.12 | 13.24 | 39.5 % | P 0.01 over range |
+| min-fat, no nutrient constraints | 105.56 | 13.62 | **2.06** | 13.08 | 38 % | floor within current bounds |
+
+**Findings**
+1. Sourced values confirm the estimate-based conclusions: **V4.2, B and C all exceed 2.3 g fat**, and V4.2 is below the 12.5 g protein floor.
+2. **V4.4b now sits inside the original spec range on every modelled parameter** (P 13.64 within 12.5–13.8, F 2.16, TDF 13.2), with a 0.14 g fat margin. It is the strongest computational candidate.
+3. The fat floor within the current bounds is **2.06 g** (min-fat objective, now in the committed script, replacing my earlier undocumented bisection). There is 0.24 g of headroom below the spec.
+4. The cheapest spec-meeting formula (₹99.72) is on the edge for both protein and fat, so it is not robust. Not recommended.
+
+#### Proposal
+- **Shortlist: V4.4b (primary computational candidate) + B (benchmark) + V4.2 normalised (control).** C is kept in the computational tables only.
+- Fat-spec decision **not** requested from Dilip: on sourced data, V4.4b meets ≤ 2.3 without relaxing anything.
+- Remaining computational gaps: source foxtail/barnyard/makhana; GPT audit of every IFCT code; processing-retention assumptions. Everything after that is physical (lab + pilot), as already agreed in Section 4.
+
+#### Questions for GPT
+1. After your audit of the IFCT entries, do you accept V4.4b as primary pilot candidate?
+2. Do you agree the computational phase can close once the three missing inputs are sourced (or shown to move results by < 0.05 g in any nutrient)?
