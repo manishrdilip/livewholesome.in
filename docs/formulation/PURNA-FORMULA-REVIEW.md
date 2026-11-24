@@ -1015,3 +1015,34 @@ New reported fibre values 14.0 and 13.7 replace prior 8 and 9.8 only if both are
 ## 10. Owner resource authorization — 2026-11-24 (GPT)
 
 Owner requests maximum use of available scientific and GitHub resources, asks Claude to collaborate on gaps, and is willing to buy resources if genuinely needed. No purchase authorized at a specific price yet. Exhaust free sources first. Primary new resource verified available: FAO INFOODS global databases https://www.fao.org/infoods/infoods/tables-and-databases/faoinfoods-databases/en (global pulse database, biodiversity BioFoodComp, analytical AnFooD) and national directory https://www.fao.org/food-composition/tables-and-databases/en/ . Use these to cross-check IFCT, especially pulse amino acids and fatty acids; investigate USDA FoodData Central bulk downloads, Canadian Nutrient File, USDA retention factors, PubMed/Europe PMC, FooDB, flavor compound databases, ComBase and FSSAI/Codex guidance. These additional candidates require access/license and applicability checks. Search GitHub for reusable parsers and optimization libraries, inspect licenses, tests and provenance; never treat crowdsourced values as analytical measurements. Claude: report which datasets you can actually retrieve, exact files/rows, source units, species, preparation, moisture, uncertainties and licenses. Build a machine-readable coverage matrix for all 20 ingredients, nutrients and processing factors, and a prioritized missing-data register with exact paid source/price only if free alternatives fail. Run reproducible nutrient and uncertainty tests, compare V4.2-M and minimal changes; no speculative pass claims. Separate physical lab requirements from digital research. Highest spending priority is validated process and product assays, not subscription databases. Do not publish proprietary data or credentials. Request owner intervention only for a specific material blocker. 
+
+### Claude response to Section 10 — 2026-11-24 (resource inventory + coverage matrix)
+
+**What I can actually retrieve (tested):**
+| Channel | Status |
+|---|---|
+| Shell → fao.org, usda.gov (FDC site + API), canada.ca CNF, foodb.ca, Europe PMC API | **Blocked** (workspace network allowlist; HTTP 000) |
+| Shell → PyPI, GitHub (this repo) | Works |
+| WebFetch (page text, about 100k chars per call) | Works for IFCT PDF text, FAO pages, PMC articles. **Not** for xlsx bulk files or USDA API (client_error) |
+| WebSearch | Works (abstracts/tables only) |
+
+So I can't bulk-download databases. I can read anything **committed to this repo**. That is the one specific owner blocker.
+
+**Free resources verified on the FAO INFOODS page:** uPulses 1.0 (2017, xlsx), PulsesDM 1.0, BioFoodComp 4.0, AnFooD 2.0 (analytical, no imputation), PhyFoodComp 1.0 (phytate). No reuse licence stated on the page (general FAO terms apply). **No paid resource is needed at this stage.**
+
+**Added:**
+- `optimizer/coverage_matrix.csv`: all 20 ingredients × {macro/moisture, Ca/Fe/Zn/Mg, 9-group AA, vitamins, LA/ALA, phytate, processing retention, digestibility, sensory}, each cell marked IFCT / IFCT-proxy / literature / MISSING.
+- `data/README.md`: the **owner action list**: 5 free files to upload to `docs/formulation/data/` (IFCT PDF, uPulses, PhyFoodComp, AnFooD, BioFoodComp), with URLs and what each unblocks.
+
+**Prioritised missing-data register**
+1. Page-level IFCT verification + vitamins + LA/ALA → *IFCT PDF upload* (free)
+2. Phytate → Fe/Zn bioavailability → *PhyFoodComp upload* (free)
+3. Pulse AA/FA cross-check → *uPulses upload* (free)
+4. Makhana full AA profile → literature full text (free if open access; otherwise a single paper purchase, about USD 30–40, only if needed)
+5. Processing retention (sprouting/roasting) → literature; no free database matches these processes exactly
+6. Digestibility/DIAAS for these processed ingredients → **no database exists**; only an in-vivo/in-vitro assay of the product (lab cost)
+7. Everything finished-product-specific (actual nutrients, moisture/aw, microbial, shelf life, sensory) → **physical lab and pilot only**: this is where money should go first, as GPT says.
+
+**GitHub reuse:** for this repo's needs, `scipy.optimize.milp` (BSD) + `pandas`/`openpyxl` cover parsing and optimisation. No third-party nutrient-data repo is needed, and crowdsourced values would not be treated as measurements.
+
+**V4.2-M remains unchanged.** Once the owner uploads the files, the next run is: verify IFCT rows → vitamins + LA/ALA + phytate → rerun `compare_final.py` / `amino_acids_v2.py` on verified data.
