@@ -911,3 +911,29 @@ Modelled (finished 3.5 %, central): protein 13.68, fat 2.19 (stress-high 2.62), 
 ## 9. Continued research — owner instruction (GPT, 2026-11-24)
 
 Owner requests continued research after pilot agreement. Keep V4.2-M benchmark, no repetitive fat sweeps. Independently sourced methodology: FAO 2013 https://www.fao.org/4/i3124e/i3124e.pdf and Health Canada https://www.canada.ca/en/health-canada/services/food-nutrition/legislation-guidelines/acts-regulations/notices-proposal-notices-modification/table-chemical-physical-nutritional-characteristics-food-pcpn-2607/determination-protein-rating-diaas.html . For age >3 dietary assessment use FAO reference pattern mg/g protein: histidine 16, isoleucine 31, leucine 61, lysine 48, sulfur AA 23, aromatic AA 41, threonine 25, tryptophan 6.6, valine 40. Separate regulatory reference pattern (younger children) where relevant. For 30 g V4.2-M at modeled 13.6759 g protein/100g, protein is 4.10277 g; reference-pattern equivalent lysine 196.93 mg, sulfur AA 94.36 mg, leucine 250.27 mg [calc, NOT actual amounts or daily requirements]. Compute amino acid mass balance against these patterns and with milk; distinguish composition score from DIAAS, which needs relevant ileal digestibility and processing-sensitive lysine evidence. Obtain sourced IFCT/FDC ingredient rows, missing nulls and coverage. In parallel source vitamins and LA/ALA, evaluate processing retention and realistic sensory evidence. Test small deviations only if they materially improve nutritional contribution or sensory risk. Report actual data and code; if no meaningful improvement, retain exact V4.2-M. No universal completeness claim or commercial approval. 
+
+### Claude response to Section 9 — 2026-11-24 (amino acids)
+
+**Data:** IFCT 2017 **Table 8** (g/100 g protein), extracted via WebFetch (PDF chars 600k–700k). Rows found for all 12 cereals and pulses (A010, A020, A003, A013, A017, A016, A004, B001, B002, B011, B005, B014). **No Table 8 rows** for foxtail, barnyard, makhana, dates, puffed paddy, cardamom, ginger or amla; they are excluded, and their protein share is reported as missing coverage. Reference: the FAO 2013 > 3 y pattern GPT posted (Leu 61, Lys 48, SAA 23, Thr 25, Trp 6.6 mg/g protein). Code: `optimizer/amino_acids.py`.
+
+**This is an amino-acid composition score (AAS), not DIAAS**: no ileal digestibility or processing-damaged lysine is applied. Milk amino acids are estimates.
+
+| | AA data covers | Leu | Lys | SAA | Thr | Trp | AAS (limiting) | + 250 ml milk |
+|---|---:|---:|---:|---:|---:|---:|---|---|
+| V4.2 (norm) | 87 % of protein | 78 | **48** | 30 | 35 | 11 | **1.00 (Lys)** | 1.39 (SAA) |
+| B100 | 88 % | 77 | 52 | 29 | 34 | 10 | 1.07 (Lys) | 1.37 (SAA) |
+| **V4.2-M** | 88 % | 78 | **52** | 28 | 34 | 10 | **1.08 (Lys)** | 1.37 (SAA) |
+| V5.0 | 92 % | 77 | 52 | 28 | 34 | 10 | 1.09 (Lys) | 1.36 (SAA) |
+
+(mg/g protein, known-coverage basis [calc on IFCT means])
+
+**Findings**
+1. **Lysine is the limiting amino acid in all formulas** (as expected for cereal-dominant blends). V4.2 sits exactly at the reference (1.00), so it has no margin. **V4.2-M raises lysine to 52 mg/g (AAS 1.08)**, because masoor/green gram (6.6–6.8 g Lys/100 g protein) replace bajra (3.19) and Bengal gram dal. The lead *improves* protein quality on composition.
+2. V5.0 adds only +0.01 over V4.2-M, so there is no case to switch.
+3. Kodo millet has the lowest lysine of all (1.42 g/100 g protein). A small kodo → masoor swap would raise AAS slightly, but kodo is only about 3 % of total protein, so the gain is under 0.02. **Not material: no deviation proposed.**
+4. With milk, every candidate is above reference on all five amino acids (SAA becomes limiting at about 1.37).
+5. **DIAAS caveat:** published ileal digestibility for millets and pulses is typically well below 100 %, and roasting can damage lysine. True DIAAS for any candidate is likely **below** its AAS and could fall below 1.0 without milk. Ingredient- and process-specific digestibility data are needed; none was available, so nothing was assumed.
+
+**Conclusion of this step:** amino-acid evidence **supports** the lead and does not change it. **Retain V4.2-M exactly.**
+
+**Still open (parallel, as agreed):** vitamins, LA/ALA (IFCT Tables 2, 3 and 7 are in the PDF; next extraction pass), digestibility data, the 3 unsourced ingredients, RDA and milk reference verification.
