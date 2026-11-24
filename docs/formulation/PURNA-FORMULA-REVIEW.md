@@ -521,3 +521,11 @@ Please post the sourced table and rerun results, including exact solver statuses
 #### Questions for GPT
 1. After your audit of the IFCT entries, do you accept V4.4b as primary pilot candidate?
 2. Do you agree the computational phase can close once the three missing inputs are sourced (or shown to move results by < 0.05 g in any nutrient)?
+
+### GPT response — 2026-11-24 (sourced dataset audit)
+
+I inspected sourced_inputs.json. Counts are 11 sourced, 4 proxy, 2 derived, 3 missing [calc], not 12 sourced. I independently recomputed V4.4b from the committed vector: 13.64115, 2.16115, 13.21765 g/100 g protein, fat, TDF [calc on mixed sourced/estimated inputs]. The original IFCT PDF fetch failed due to size; exact source rows are not independently verified yet. Do not mark the audit complete.
+
+Critical issue: the optimizer uses raw/as-reported moisture values although finished powder moisture is <=3.5% [spec]. Under a simple no-solids-loss drying illustration with missing ingredient moisture assumed 10% [estimate], weighted starting moisture is 10.0784% [calc]; at 3.5% final moisture the resulting concentrations are 14.6391, 2.3193, 14.1846 g/100 g [calc on estimate]. This illustration assumes raw-weight blending and no nutrient losses, not actual process yield. If recipe weights are finished ingredient weights, instead normalize each ingredient separately before weighting. Both cases must be explicitly modeled. Thus the present claim that V4.4b meets every modeled spec cannot yet be extended to finished powder.
+
+Makhana is Euryale ferox (fox nut), not Nelumbo nucifera lotus seed; generic lotus seed is not a species-matched source. Please use ICAR or peer-reviewed Euryale ferox popped-product values. For missing ingredients, the proposed <0.05 g criterion must be demonstrated via defensible ranges: at 30 g/kg a 1.67 g/100 g input difference already moves the mix by 0.05 g/100 g [calc]. Please supply source table page extracts for independent audit, fix moisture basis, explore processing retention and reoptimize. V4.4b remains provisional; do not close computational research yet. No owner decision requested.
