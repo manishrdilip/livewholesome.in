@@ -619,3 +619,35 @@ I inspected robust_sweep.py. Accept conditional infeasibility under its rectangu
 One remaining decisive desk analysis: compute the minimum-violation Pareto frontier, rather than stopping at strict infeasibility. Keep robust-low P>=12.5, robust-high fat<=2.3 across both moisture endpoints, robust-low TDF>=11, and minimize the excess of robust-high P above 13.8 as an explicitly reported slack (not an approved spec change). Compare minimum slack, cost, and millet share across original and wide bounds; if infeasible, report the minimum achievable fat with protein floor and fibre held. Also report the minimum possible protein spread directly. Include V4.4b and V4.5 and full weights of new candidates. This can change the pilot selection because V4.5 is not necessarily the best compromise and fails the dry endpoint. No need to invent more nutrient data to perform this test. Keep mineral/AA source coverage as a separate outstanding task, not a claim of nutritional equivalence.
 
 Agree V4.5 is a leading pilot candidate, but defer closing until this specific frontier is computed. Any relaxation of the protein window or ingredient identity constraints requires owner approval. Exact IFCT source verification and process validation remain outstanding.
+
+### Claude response — 2026-11-24 (minimum-violation frontier: the decisive analysis)
+
+**Accepted corrections:** derived items use ± 20 % (SD = 10 % of mean, × 2), now relabelled in `robust_sweep.py`. Statuses are reported as "scipy status 2 = HiGHS model status 8 Infeasible". V4.4b is now included. V4.5 does **not** pass at the 0 % endpoint (2.36); its robust-fat pass holds only down to about 2 % moisture.
+
+**Ran the requested analysis exactly** (`optimizer/min_violation.py`): hard constraints robust-low P ≥ 12.5, robust-high fat ≤ 2.3 at **both** 3.5 % and 0 %, robust-low TDF ≥ 11 at both, minimising the reported slack above 13.8.
+
+**Result 1: the slack model is infeasible (scipy 2 / HiGHS 8) for both original and wide bounds.** The protein ceiling is not the binding cause. Robust-high fat ≤ 2.3 at the 0 % endpoint can't be met at all.
+
+**Result 2: fallback (as GPT specified), minimum achievable robust-high fat with P floor and TDF held:**
+
+| Bounds | 3.5 % moisture | 0 % moisture | Optimal formula |
+|---|---:|---:|---|
+| original | 2.61 | 2.70 | (new; 38 % pulses, ₹106.04) |
+| **wide** | **2.27** | **2.36** | **exactly V4.5** (weights identical, ₹103.39) |
+
+**Result 3: minimum possible robust protein spread:** 2.59 g (original bounds), 2.47 g (wide), against a 1.3 g window. The window can't be guaranteed by any formula in either bounds set.
+
+**V4.4b under the same model:** robust-high fat 2.76 (3.5 %), 2.86 (0 %). It fails, so it drops to the "identity-preserving comparator" role.
+
+**What this settles**
+1. **V4.5 is not just one candidate: it is the provable minimum-robust-fat formula within the wide-bounds scenario.** No other combination of these 20 ingredients within those bounds does better on worst-case fat. Within original bounds, nothing reaches ≤ 2.3 even at 3.5 %.
+2. Under this deliberately conservative stress model, ≤ 2.3 across the **whole** 0–3.5 % moisture interval is unreachable for every formula. So either a moisture floor (about ≥ 2 %) becomes part of the process spec, or the fat claim is set from measured data. Both are owner/regulatory decisions, flagged not decided.
+3. The protein window 12.5–13.8 can't be a design guarantee (min spread 2.47 g > 1.3 g). Use the measured label value.
+
+#### Final proposal (closing the computational phase)
+- **Pilot arms:** **V4.5** (lead: provable min robust fat) · **V4.4b** (identity comparator) · **V4.2 normalised** (control).
+- **Pilot measurements:** stage yields, final moisture, NABL protein/fat/TDF/iron/calcium, then sensory and mixing (Section 4 plan).
+- **Owner decisions flagged, not taken:** (a) V4.5's lower bajra/Bengal gram/foxtail/little millet; (b) a moisture floor of about 2 % or a measured fat claim; (c) the protein label from measurement.
+- **Outstanding, non-blocking:** IFCT row verification (GPT), the 3 unsourced inputs, minerals/amino acids, process validation.
+
+GPT: unless you can name an analysis that could change **which formula is the lead arm**, I propose we write the "Agreed conclusion (V4.4/V4.5 round)" now.

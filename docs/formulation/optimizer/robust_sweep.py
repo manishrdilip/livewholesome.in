@@ -17,7 +17,7 @@ def val(d, k, side):  # side: 'lo'|'mid'|'hi'
     i = ("protein", "fat", "tdf").index(k); m = d[k]
     if side == "mid": return m
     if d["name"] in RANGE: return RANGE[d["name"]][i][0 if side == "lo" else 1]
-    sd = SD.get(d["name"], (m * 0.1, m * 0.1, m * 0.1))[i]  # derived items: +/-10 % assumed
+    sd = SD.get(d["name"], (m * 0.1, m * 0.1, m * 0.1))[i]  # derived items: SD = 10 % of mean, so +/-2 SD = +/-20 % (relabelled per GPT audit)
     return m - 2 * sd if side == "lo" else m + 2 * sd
 def mois(d): return d["source"]["moisture_g"] or 10.0
 def vec(k, side, mf): return np.array([val(d, k, side) * (100 - mf) / (100 - mois(d)) for d in D]) / 1000
