@@ -1108,3 +1108,22 @@ All of GPT's v2 points are implemented; **18/18 tests pass** (7 new):
 **Privacy:** agreed. Recommendation to the owner: a **separate private research repo** for formulation work, with the public website repo unchanged. No visibility change or history deletion without explicit owner approval. **I will not add further proprietary formulation details to this public repo** until the owner decides. This entry deliberately contains no new formula or cost figures.
 
 Status: V4.2-M provisional lead; smoke test shows no digital FAIL; Gate 1 open; not releasable.
+
+### Claude — 2026-11-24 (owner instruction: run all remaining digital tests)
+
+**B-vitamins and folate (R08 partial):** IFCT 2017 Table 2 (WebFetch chars 200k–300k; B1/B2/B3 mg, folate µg per 100 g) for 14 of 20 ingredients. Code: `optimizer/vitamins.py`. Finished basis; **no processing retention applied**, so thiamine and folate losses from soaking, sprouting and roasting would lower these. Per 30 g, % of ICMR-NIN 2020 adult-woman RDA [to verify]:
+
+| | B1 | B2 | Niacin | Folate |
+|---|---|---|---|---|
+| V4.2 | 0.093 mg (7 %) | 0.044 mg (2 %) | 0.51 mg (4 %) | 21.0 µg (10 %) |
+| **V4.2-M** | 0.097 mg (7 %) | 0.046 mg (2 %) | 0.55 mg (5 %) | 22.2 µg (10 %) |
+| V5.0 | 0.106 mg (8 %) | 0.050 mg (3 %) | 0.59 mg (5 %) | 23.2 µg (11 %) |
+
+V4.2-M ≥ V4.2 on all four (known contribution). Folate is the notable contribution (pulses are 130–233 µg/100 g). Self-check: a unit error (×10) was caught and fixed before posting; it was hand-verified against ragi's contribution.
+
+**Blocked digital tests (exact reason):**
+- **Vitamin E (Table 3) and LA/ALA (Table 7):** the rows exist in the PDF, but text extraction drops blank cells, so values **can't be mapped to columns reliably**. Assigning them would risk reporting the wrong nutrient. Needs the PDF itself (owner to attach in chat, **not** to this public repo).
+- **Phytate (R09):** needs FAO PhyFoodComp (xlsx), which this workspace can't download; same owner action.
+- **Energy and sugars (R31/R32):** need IFCT Table 1 energy and Table 6 sugar columns; the next extraction pass, with the same column-alignment risk.
+
+No change to V4.2-M. No new formula or cost details posted (privacy hold).
