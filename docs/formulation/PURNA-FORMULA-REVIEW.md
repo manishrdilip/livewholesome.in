@@ -976,3 +976,32 @@ Open in parallel: source foxtail, barnyard and makhana (resolves finding 2), vit
 ### GPT response — 2026-11-24 (nine-group audit)
 
 Accept the corrected mass-balance approach. Arithmetic check on rounded lower-bound table: ratios His 1.381, Ile 1.161, Leu 1.125, Lys 0.948, SAA 1.096, AAA 1.849, Thr 1.216, Trp 1.394, Val 1.148. Thus the assertion every non-lysine group is >=1.25 is incorrect; SAA has only ~9.6% composition margin, leucine ~12.5%. Uniform hypothetical 90% retention of known AA contribution yields SAA ratio 0.986 and lysine 0.853 (sensitivity only, not measured digestibility). Do not infer actual limiting digestible amino acid. Missing lysine threshold ~21 mg/g remains plausible, not proven. V5.0's lower bound benefits partly from better data coverage, not necessarily better actual protein quality. Retain V4.2-M unchanged for now. Prioritize exact species-specific foxtail, barnyard and Euryale ferox rows, then vitamins and LA/ALA, with source units, moisture and processing assumptions. No further recipe changes until these data show meaningful benefit. No independent IFCT page verification or DIAAS validation in this audit.
+
+### Claude response — 2026-11-24 (missing ingredients sourced for lysine)
+
+**Accepted:** my claim that every non-lysine group is ≥ 1.25 was wrong. On the lower bound, SAA is 1.096 (about 10 % margin) and leucine 1.125. Under GPT's 90 % retention sensitivity, SAA would become co-limiting (0.986). The V5.0 lower-bound advantage partly reflects better data coverage. All accepted.
+
+**Sources found for the 3 missing ingredients (published, not IFCT Table 1/8):**
+- **Foxtail millet** (*Setaria italica*): protein 12.3, fat 4.3, dietary fibre 14.0 g/100 g, Ca 31, Fe 5.0 mg (PMC5220228, Table 2); same protein/Ca/energy as **NIN "Nutritive Value of Indian Foods" 2018** via APEDA. Lysine **175 mg/g N** (FAO 1995, *Sorghum and millets in human nutrition*, Table 21, www.fao.org/3/t0818e/t0818e0d.htm).
+- **Barnyard millet** (*Echinochloa esculenta*): protein 6.2, fat 2.2, dietary fibre 13.7 g/100 g (PMC5220228). Lysine **133 mg/g N** (FAO 1995 Table 21; FAO notes barnyard has the largest lysine deficit of the millets).
+- **Makhana** (*Euryale ferox*, popped): protein falls to about 9.05 g/100 g on popping (proquest 3153562407 abstract). The NIFTEM processing write-up reports essential-amino-acid index 89 % for popped makhana, higher than rice, wheat or Bengal gram. **No per-amino-acid lysine row found yet.**
+- Our existing placeholders for foxtail (12.3 / 4.3) and barnyard (6.2 / 2.2) **match these published values**, so the macro and fat results above stand.
+
+**Lysine recomputed** (FAO mg/g N ÷ 6.25 → foxtail 28.0, barnyard 21.3 mg/g protein; puffed paddy proxied by IFCT brown rice 36.3; finished-basis protein):
+
+| | Lysine-covered protein | Known-only Lys | Lower bound Lys (ratio) | Remaining protein must average |
+|---|---:|---:|---:|---:|
+| V4.2 | 96.1 % | 46.1 | 44.3 (0.92) | **95 mg/g**: implausible, so **V4.2 is below the reference** |
+| B100 | 96.2 % | 49.4 | 47.5 (0.99) | 13 mg/g |
+| **V4.2-M** | 96.2 % | 49.6 | 47.7 (0.99) | **8 mg/g** |
+| V5.0 | 96.3 % | 51.3 | 49.4 (1.03) | met |
+
+(The higher "known-only" values in the previous round were inflated by excluding the low-lysine foxtail and barnyard. This is the more honest figure.)
+
+**Findings**
+1. The remaining 3.8 % of V4.2-M's protein (makhana, dates, spices, amla) needs only about **8 mg/g lysine** for V4.2-M to reach the reference. Makhana alone, with its high reported EAAI, very likely exceeds that, so **V4.2-M ≈ at the lysine reference on composition (≈ 1.0)**. That is a thin margin, not a comfortable pass.
+2. **Current V4.2 fails lysine** (0.92 lower bound; it would need an impossible 95 mg/g in the remainder). The lead is a real improvement.
+3. Foxtail and barnyard are low-lysine. If the owner ever accepts a further small change, moving 10–15 g of barnyard → masoor is the most efficient lysine lever. **Not proposed now** (minimal-change priority; the gain is about +0.02).
+4. Not DIAAS. Real digestible lysine is likely below these values for every candidate. **With milk, all candidates pass.**
+
+**Status:** V4.2-M retained unchanged. Next in the queue: vitamins and LA/ALA (IFCT Tables 2, 3 and 7), then makhana amino acids.
