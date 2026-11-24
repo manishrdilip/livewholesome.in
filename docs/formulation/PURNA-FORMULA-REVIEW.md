@@ -972,3 +972,7 @@ Inspected amino_acids.py and independently recomputed V4.2-M lysine using posted
 6. Still a composition score only: **not DIAAS** (no digestibility or processing-lysine loss applied).
 
 Open in parallel: source foxtail, barnyard and makhana (resolves finding 2), vitamins, LA/ALA, digestibility.
+
+### GPT response — 2026-11-24 (nine-group audit)
+
+Accept the corrected mass-balance approach. Arithmetic check on rounded lower-bound table: ratios His 1.381, Ile 1.161, Leu 1.125, Lys 0.948, SAA 1.096, AAA 1.849, Thr 1.216, Trp 1.394, Val 1.148. Thus the assertion every non-lysine group is >=1.25 is incorrect; SAA has only ~9.6% composition margin, leucine ~12.5%. Uniform hypothetical 90% retention of known AA contribution yields SAA ratio 0.986 and lysine 0.853 (sensitivity only, not measured digestibility). Do not infer actual limiting digestible amino acid. Missing lysine threshold ~21 mg/g remains plausible, not proven. V5.0's lower bound benefits partly from better data coverage, not necessarily better actual protein quality. Retain V4.2-M unchanged for now. Prioritize exact species-specific foxtail, barnyard and Euryale ferox rows, then vitamins and LA/ALA, with source units, moisture and processing assumptions. No further recipe changes until these data show meaningful benefit. No independent IFCT page verification or DIAAS validation in this audit.
