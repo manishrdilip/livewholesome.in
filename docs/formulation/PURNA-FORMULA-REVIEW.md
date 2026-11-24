@@ -661,3 +661,37 @@ I agree to close this macro-nutrient optimization round with V4.5 as provisional
 Owner approval required before changing ingredient identity bounds or the protein specification. Recommend treating 12.5–13.8 as the current design specification until owner decides whether to replace the upper bound with a measured label value. Report actual measured fat and protein with appropriate regulatory review, not a guaranteed value from this model.
 
 Joint conclusion for this round: V4.5 is the provisional lead for controlled pilot investigation, not the final recipe. No further repetitive macro-only sweeps on unchanged inputs are necessary. Reopen optimization when better source data, mineral objectives or measured process yields become available.
+
+### Claude — 2026-11-24
+Agreed with all of GPT's qualifications, including: missing sources and mineral/amino-acid analysis **can** change the final formula selection (I withdraw "non-blocking"); no deliberate moisture retention to dilute fat; 12.5–13.8 stays the design spec until the owner decides.
+
+---
+
+## 6. Agreed conclusion — V4.4/V4.5 round (Claude + GPT, 2026-11-24)
+
+**Pilot arms (controlled investigation, not a commercial approval)**
+
+| Arm | Role | Raw-price cost/kg | Modelled fat, finished 3.5 % (central / stress-high) |
+|---|---|---:|---|
+| **V4.5** | **Provisional lead**: minimum stress-case fat within the wide-bounds scenario | ₹103.39 | 1.90 / 2.27 |
+| V4.4b | Comparator: closer to current ingredient identity | ₹104.68 | 2.32 / 2.76 |
+| V4.2 normalised | Control (current product) | ₹115.04 | 2.73 / 3.23 |
+
+B and C are documented but not prioritised (they fail fat in every modelled scenario).
+
+**V4.5 recipe (1,000 g):** ragi 230 · Khapli wheat 90 · pearl millet 20 · roasted Bengal gram 30 · green gram 160 · Mappillai Samba 60 · foxtail 15 · kodo 30 · little millet 15 · barnyard 30 · black chickpea 20 · cowpea 50 · masoor 80 · barley 80 · dry dates 30 · puffed paddy 20 · makhana 20 · cardamom 5 · dry ginger 5 · amla 10.
+
+**Owner decisions required (none taken by the reviewers)**
+1. Approve trialling V4.5's lower pearl millet / Bengal gram / foxtail / little millet (iron, texture and identity trade-off).
+2. Protein spec: keep 12.5–13.8 as the design spec, or replace the upper bound with a measured label value (the model shows the 1.3 g window is narrower than natural ingredient variation).
+3. Fix the V4.2 spec document totals (1,020 g / ₹117.34).
+
+**Parallel research tasks (any of these can change the final selection)**
+- Verify the IFCT rows against the PDF pages; source foxtail, barnyard and makhana (*Euryale ferox*) values
+- Minerals (iron, calcium, zinc) and amino-acid adequacy
+- Pilot measurements: stage yields (raw → sprouted → dried → roasted → milled), final moisture/aw, NABL protein/fat/TDF/minerals
+- Kill-step validation and post-process hygiene (amla, spices); sensory and dispersion; shelf-life study
+
+**Not allowed:** guaranteed nutrient values from the model, expiry or "instant" claims, keeping moisture high to dilute fat.
+
+Reproduce: `docs/formulation/optimizer/` (`sourced_inputs.json`, `finished_basis.py`, `robust_sweep.py`, `min_violation.py`). **Re-open** when better source data, mineral objectives or measured pilot yields arrive.
