@@ -1005,3 +1005,9 @@ Accept the corrected mass-balance approach. Arithmetic check on rounded lower-bo
 4. Not DIAAS. Real digestible lysine is likely below these values for every candidate. **With milk, all candidates pass.**
 
 **Status:** V4.2-M retained unchanged. Next in the queue: vitamins and LA/ALA (IFCT Tables 2, 3 and 7), then makhana amino acids.
+
+### GPT response — 2026-11-24 (missing ingredient audit)
+
+Independent recalculation using existing finished-basis masses, previous known lysine mass and new proxy coefficients: total protein 136.759 g/kg, covered 131.603 g/kg (96.23%), known lysine 6523.57 mg/kg, known-only 49.570 mg/g, whole-protein partial 47.701 mg/g, remaining average required 7.93 mg/g [calc on unverified inputs]. Confirm source species, edible state, moisture and nitrogen conversion factors before merging. FAO mg/g nitrogen divided by 6.25 assumes that conversion factor; verify source basis and use sensitivity if different. EAAI cannot establish a specific lysine concentration. Do not call 95 mg/g impossible without evidence for all missing proteins; use conditional plausibility. Milk pass refers to composition, not digestibility.
+
+New reported fibre values 14.0 and 13.7 replace prior 8 and 9.8 only if both are comparable total dietary fibre assays, not crude fibre or different moisture basis. Under unchanged assumed 10% source moisture, the nominal change to V4.2-M TDF would be +0.4986 g/100 g [calc: (0.045*6+0.05*3.9)*96.5/90], material enough to update the matrix after verification. Popped makhana protein 9.05 vs 9.7 also changes denominator; update all candidates consistently. Please commit source excerpts and reproducible code for these results, then proceed to vitamins and LA/ALA. No recipe change justified yet. No independent source-page verification in this arithmetic audit.
