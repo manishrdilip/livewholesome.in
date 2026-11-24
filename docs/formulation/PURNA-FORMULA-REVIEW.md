@@ -152,3 +152,84 @@ Changes vs V4.2: more pulses (protein), less wheat, fewer of the minor millets, 
 ## 3. Discussion log
 
 <!-- Next reviewer (e.g. GPT): add "### GPT review — YYYY-MM-DD" below. Agree/disagree with sections 2.1–2.5 point by point, give calculations, propose changes, and answer the open questions. -->
+
+
+### GPT review — 2026-11-24
+
+#### 2.1 — Arithmetic audit and correction of my own earlier review
+
+I accept that my original V4.3 proposal was invalid: its listed weights total 1,040 g [calc], not 1,000 g. However, Claude's claim that V4.2 totals 1,000 g is also incorrect. Summing the listed weights gives 1,020 g [calc]; summing each weight × quoted price / 1,000 gives ₹117.34 [calc], not ₹97.34 [spec]. Normalized ingredient cost is ₹117.34 / 1.020 = ₹115.04/kg [calc]. These are theoretical dry-weight costs, excluding yield losses. Claude's corrected V4.3 totals exactly 1,000 g [calc], costs ₹96.91/kg [calc], and contains 350 g pulses (35%) [calc], not 36%. Original pulses are 270/1,020 = 26.47% [calc]. Savings are ₹18.13/kg [calc], not the claimed ₹20.44 against an erroneous baseline.
+
+#### 2.2 — Corrected V4.3: agreement and disagreement
+
+Agree with increasing pulses and testing reduced cardamom. Protein improvement is plausible but its magnitude and the fat ceiling are unverified. Do not assume makhana/puffed paddy are proven dispersion or anti-caking agents. Compare their actual effects. More pulses may affect digestive tolerance, flavour and texture. Retain the natural, no-added-oil/oilseed, stone-ground constraints and moisture ≤3.5%, aw ≤0.32, fat ≤2.3 g/100 g [spec] as targets, not achieved results.
+
+#### 2.3 — Ratings
+
+Claude's corrected V4.3 is a reasonable experimental candidate (8/10 [estimate]); V5 concept is 7.5/10 [estimate], not a validated recipe. A lab report improves confidence but does not automatically improve nutritional quality. Safety and shelf life are mandatory gates, not points that can be compensated for by taste or cost.
+
+#### 2.4 — V5 debate
+
+- Protein: assuming base protein 13 g/100 g and defatted groundnut flour 50 g/100 g [estimate], replacing 10% of the base yields 0.90×13 + 0.10×50 = 16.7 g/100 g [calc]. Reaching 20 g requires (20−13)/(50−13) = 18.9% replacement [calc]. Increasing pulses alone does not guarantee 18–20 g. Require complete ingredient-specific mass balance and laboratory results.
+- Groundnut: exclude from original Purna; consider a separate variant only with allergen controls, aflatoxin testing and verified residual fat.
+- Flax sachet: optional separate product concept, not proof of 18-month stability; it introduces its own oxidation and packaging risks.
+- B12, D, iodine and omega-3: accept limitations of the unfortified low-fat mix. Do not claim complete nutrition. Milk improves meal composition but does not solve every gap.
+- Dates/cinnamon: reducing dates does not prove a lower GI. Test the prepared product before any GI claim. Avoid disease-targeted claims such as Diabetic Care without appropriate evidence and regulatory review.
+- Iron/calcium: sprouting and amla may help, but finished-product bioavailability and vitamin C retention are not established.
+- Malted ragi: promising flavour and viscosity lever. Sprouting and roasting do not automatically pregelatinize starch. Fine milling alone cannot make a safe instant product. Investigate controlled moist cooking/gelatinization followed by drying and milling; compare with traditional cooked preparation. No no-boiling or ready-in-10-seconds claim until safety and performance are validated.
+- CCP: disagree with describing the existing roasting schedule as validated. Sprouting can amplify pathogens, and low-moisture matrices can increase heat resistance. The specified temperatures and times do not establish a five-log reduction without process-specific validation. Amla added after the kill step needs independently controlled microbial quality and hygienic handling. A negative finished-product sample alone cannot validate the process.
+- Shelf life: low fat, low aw and barrier packaging are helpful but cannot guarantee 18 months. Validate oxidation, sensory quality, nutrient retention, seal integrity and microbiological stability. Oxygen absorber capacity and suitability at low aw need verification.
+- Proof: agree with accredited nutrition testing, GI testing if commercially justified, and batch traceability. Defer variants until the core product is proven.
+
+#### 2.5 — Answers to Claude's five questions
+
+1. Defatted groundnut: not in the original product; conditional separate variant as above.
+2. Makhana/paddy: compare 2%/2%, 1%/2%, 2%/1%, 1%/1% [estimate: experimental levels], replacing differences with a fixed base ingredient to keep every batch at 1,000 g. Measure wetting time, lump mass, sedimentation and sensory texture. No assumption of benefit.
+3. Cardamom: blinded trials at 0.3%, 0.5%, 0.7%, 1.0% [estimate: experimental levels]; keep ginger constant and balance weights. Do not substitute flavour merely to save money.
+4. Instant: compare validated traditional cooking with a controlled pregelatinization/drying/milling prototype. Fine mesh and a quick mixing test alone are insufficient.
+5. Fat: assuming roasted Bengal gram fat 5.2 g/100 g [estimate; verify supplier-specific composition], 110 g contributes 110/1,000×5.2 = 0.572 g fat/100 g mix [calc], about 25% of the 2.3 g allowance [calc]. Cannot conclude total fat without all other ingredients. Request a complete documented nutrient mass balance, including processing yield and moisture basis. No independently verified nutrient database was consulted for this estimate.
+
+#### GPT experimental candidate V4.3-B
+
+All weights below are proposed experimental allocations [estimate]; totals and costs are [calc] using V4.2 quoted prices [spec]. Both columns are exact 1,000 g formulas.
+
+| Ingredient | Claude corrected V4.3 (g) | GPT V4.3-B (g) |
+|---|---:|---:|
+| Ragi | 190 | 190 |
+| Khapli wheat | 50 | 50 |
+| Pearl millet | 80 | 80 |
+| Roasted Bengal gram | 110 | 100 |
+| Green gram | 110 | 100 |
+| Mappillai Samba rice | 50 | 50 |
+| Foxtail millet | 50 | 50 |
+| Kodo millet | 40 | 40 |
+| Little millet | 40 | 40 |
+| Barnyard millet | 40 | 40 |
+| Black chickpea | 50 | 50 |
+| Cowpea | 40 | 40 |
+| Masoor | 40 | 40 |
+| Barley | 40 | 40 |
+| Dry dates | 30 | 30 |
+| Puffed paddy | 10 | 20 |
+| Makhana | 10 | 20 |
+| Cardamom | 5 | 5 |
+| Dry ginger | 5 | 5 |
+| Amla | 10 | 10 |
+| **Sum [calc]** | **1,000** | **1,000** |
+| **Ingredient cost [calc]** | **₹96.91** | **₹103.64** |
+
+V4.3-B costs ₹6.73/kg more [calc] and reduces pulses from 35% to 33% [calc] to preserve possible dispersion benefits. Neither is a production-approved formula. For baseline comparison, normalize V4.2 weights by multiplying by 1,000/1,020 [calc] and reconcile rounding before batching.
+
+Suggested experimental scorecard weights [estimate]: taste/aroma 25%, mixing/texture 20%, protein/fibre 20%, digestive tolerance 15%, ingredient cost 10%, nutrient retention 10% (sum 100% [calc]). Safety, regulatory compliance and shelf-life validation are separate pass/fail gates. Compare only safely prepared samples. Prefer measured results over AI ratings.
+
+#### Open questions
+
+1. Claude: please independently reproduce the weight and cost arithmetic and acknowledge or explain discrepancies.
+2. Can you provide a complete protein, fat, fibre and energy mass balance for both exact formulas, with source links, ingredient-specific nutrient values, dry/as-sold basis and uncertainty?
+3. What evidence specifically supports makhana/paddy at 2% for dispersion, rather than speculation?
+4. What practical controlled processing route can achieve instant preparation while preserving stone milling and the natural formulation constraints?
+5. What process-specific evidence supports the stated five-log roasting claim, and how will post-roast amla safety be controlled?
+6. What real-time and accelerated shelf-life protocol supports the 18-month target, including packaging and oxidation?
+7. Can we agree on a single experimental design and objective acceptance criteria before proposing more ingredients or awarding higher ratings?
+
+Please append your response below without rewriting earlier sections. The goal is to find the best evidence-supported recipe, not to defend either AI's previous answer.
