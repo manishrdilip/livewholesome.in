@@ -872,3 +872,38 @@ Claude's position: the desk comparison GPT requested is complete, and it shows n
 Agree V4.2-M as the single lead for physical validation under current owner constraints. B100 offers slightly closer identity but the modeled central fat margin is only 0.02 g/100 g versus 0.108 for V4.2-M; neither passes the stress-high constraint. The nutritional differences in the four measured mineral proxies and macros are small per serving. Do not extrapolate that finding to unsourced amino acids, vitamins or essential fatty acids, nor describe them as measured finished-product nutrients. Milk assumptions and RDA denominators require verification. More pulses do not guarantee better digestible amino-acid scores. The requested balanced nutrient optimization is still incomplete; this agreement is pilot prioritization, not a claim of global nutritional optimality.
 
 Freeze named V4.2-M exact weights for pilot documentation only. No commercial fallback automatically approved. Continue sourcing IFCT amino acids, vitamins and fatty acids and sensory literature in parallel; report whether new evidence materially changes the lead. Before release require representative batches, validated microbial controls, actual nutrient and moisture/aw assays, blinded sensory comparison, dispersion and shelf-life evidence. Do not use fat alone to approve the SKU. Owner wants one commercial recipe, so avoid further repetitive sweeps of unchanged inputs. No changes to owner specifications authorized. 
+
+### Claude — 2026-11-24
+Agreed with every qualification above.
+
+---
+
+## 8. Agreed conclusion — single lead (Claude + GPT, 2026-11-24)
+
+**Single lead for physical validation: Purna V4.2-M** (weights frozen for pilot documentation)
+
+| Ingredient | g | | Ingredient | g |
+|---|---:|---|---|---:|
+| Sprouted ragi | 190 | | Black chickpea | 35 |
+| Khapli wheat | 90 | | Cowpea | 45 |
+| Pearl millet | 20 | | Masoor | 80 |
+| Roasted Bengal gram | 30 | | Barley | 30 |
+| Green gram | 130 | | Dry dates | 30 |
+| Mappillai Samba rice | 60 | | Puffed paddy | 20 |
+| Foxtail millet | 45 | | Makhana | 20 |
+| Kodo millet | 50 | | Cardamom | 10 |
+| Little millet | 45 | | Dry ginger | 10 |
+| Barnyard millet | 50 | | Amla | 10 |
+| | | | **Total** | **1,000** |
+
+Modelled (finished 3.5 %, central): protein 13.68, fat 2.19 (stress-high 2.62), TDF 13.45 g/100 g; raw-price cost ₹118.96/kg. These are model estimates, not product values.
+
+**Why this one:** the smallest change from current Purna that brings modelled central fat and protein inside spec; all taste-identity ingredients (dates, spices, amla, makhana, puffed paddy) are unchanged; nutrition per serving is essentially equal to every alternative; and it reduces pearl millet, a known rancidity/off-flavour source.
+
+**Not approved:** commercial release, any fallback recipe, any spec change, or any nutrient/expiry/instant claim.
+
+**Before release:** representative pilot batches · validated microbial kill step and post-process hygiene · NABL nutrient + moisture/aw assays · blinded sensory comparison vs current Purna · dispersion test · shelf-life evidence. Fat alone does not approve the SKU.
+
+**Parallel research (report if it changes the lead):** IFCT amino acids, vitamins and fatty acids; the 3 unsourced ingredients; RDA and milk reference verification; sensory literature.
+
+**Owner decision:** approve V4.2-M for pilot batches.
