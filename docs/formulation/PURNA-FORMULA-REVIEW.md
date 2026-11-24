@@ -1127,3 +1127,26 @@ V4.2-M ≥ V4.2 on all four (known contribution). Folate is the notable contribu
 - **Energy and sugars (R31/R32):** need IFCT Table 1 energy and Table 6 sugar columns; the next extraction pass, with the same column-alignment risk.
 
 No change to V4.2-M. No new formula or cost details posted (privacy hold).
+
+### Claude — 2026-11-24 (IFCT PDF received from owner: page-level verification + remaining digital tests)
+
+The owner attached the IFCT 2017 PDF in chat (**not** committed to this public repo). Values were extracted with `pdfplumber` **by column position** (header code → x-coordinate), which fixes the blank-cell misalignment that blocked text extraction. Spot checks against printed rows match (e.g. ragi VITE 0.16±0.01, ragi PHYTAC 306±6.9, bajra PHYTAC 485±12.1).
+
+**1. Page-level verification of Table 1 inputs used throughout:** 15 IFCT ingredients × protein/fat/TDF/moisture → **0 mismatches** with `sourced_inputs.json`. (Closes GPT's open "exact IFCT row verification" item for Table 1.)
+
+**2. New per-30 g results** (`optimizer/micro_fa_phytate.py`; Tables 3, 7, 11 and 1; finished basis; no processing retention; foxtail, barnyard and makhana have no IFCT rows):
+
+| | Vit E (α-TE) | LA (n-6) | ALA (n-3) | LA:ALA | Phytate | Phytate:Fe molar | Phytate:Zn molar | Energy |
+|---|---:|---:|---:|---:|---:|---:|---:|---:|
+| V4.2 | 0.116 mg | 241 mg | 25.0 mg | 9.7 | 124 mg | 8.5 | 17.3 | 90 kcal |
+| **V4.2-M** | 0.117 mg | 179 mg | 24.8 mg | **7.2** | 124 mg | 8.5 | 17.3 | 89 kcal |
+| V5.0 | 0.108 mg | 169 mg | 26.9 mg | 6.3 | 129 mg | 8.3 | 17.0 | 94 kcal |
+
+**Findings**
+- **Iron and zinc bioavailability is likely low for every candidate.** Phytate:Fe molar ratio ≈ 8.5 (commonly cited concern threshold > 1) and phytate:Zn ≈ 17 (WHO low-absorption category > 15), computed on raw-ingredient phytate. Sprouting is reported to reduce phytate and amla's vitamin C aids iron uptake, but neither is quantified for this process. **No iron/zinc nutrition claim should be made** without phytate and mineral assays of the finished product. This is the most material new finding and applies equally to the current product.
+- Vitamin E is negligible (~1–2 % of typical adult intake per serving). Vitamin E is not a differentiator.
+- LA:ALA improves from 9.7 to 7.2 in V4.2-M (less bajra/Bengal gram LA). This is within commonly cited 5–10:1 ranges, but absolute ALA is small (~25 mg), so **no omega-3 claim**.
+- Energy ≈ 89–94 kcal per 30 g powder (excluding the 3 missing ingredients; kJ ÷ 4.184).
+- **None of these change the lead.** V4.2-M ≈ V4.2 on all four, with better LA:ALA.
+
+**Digital status after this pass:** Table 1 verified; vitamins B1/B2/B3/folate/E, LA/ALA, phytate and energy now computed. Remaining digital gaps: foxtail/barnyard/makhana full rows, sugars (Table 6), processing retention, digestibility. Everything else is physical (G2–G6).
