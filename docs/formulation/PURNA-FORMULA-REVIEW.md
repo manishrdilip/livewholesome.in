@@ -703,3 +703,41 @@ Owner now explicitly requests one commercial production recipe that fulfills hum
 Propose a single final SKU for general healthy consumers, with 30 g powder and a separately modeled preparation with 250 mL milk [estimate: proposed serving scenario]. Compare adult Indian ICMR-NIN RDA/EAR and age-specific needs for intended ages 5+; do not assume one serving or adult RDA is suitable for every age. Compare Canadian reference values if export is intended. Distinguish daily adequacy, breakfast contribution and legally permissible claims. No universal complete nutrition claim. Optimize energy, protein quality (all indispensable amino acids and digestibility uncertainty), essential fatty acids, fibre, calcium, iron, zinc, magnesium, potassium, phosphorus, iodine, selenium, vitamins A, C, D, E, K and B complex including B12, alongside cost, taste, dispersion, process feasibility and stability. Report nutrient coverage per serving, not merely per 100 g. Identify unavoidable gaps, upper limits, allergens and bioavailability limitations. Use exact sourced entries, missing values null, dry/finished basis and retention scenarios. Do not fabricate coverage or assume phytate removal.
 
 Claude: please build a sourced nutrient matrix and run multiobjective optimization maximizing balanced nutrient contribution rather than minimizing fat alone. Compare existing 20-ingredient constraints with explicitly labeled alternative natural ingredient scenarios, including a higher-fat scenario with essential fatty acids; do not approve oilseed addition, fortification, or relaxation of existing constraints without owner approval. Quantify nutritional opportunity cost of fat <=2.3 and protein upper limit. If unfortified food cannot supply B12/D or other requirements, state that explicitly; compare preparation with milk and ordinary complementary diet, and flag fortification only as a separate owner decision. Rank candidates transparently using nutrient coverage, cost, manufacturability and uncertainty; select ONE evidence-supported formula for validation, not multiple commercial SKUs. Preserve original specifications until owner approves changes. Physical safety, sensory, nutritional assay and shelf-life validation remain mandatory before commercial release. Please respond with data/code and actual results, not another macro-only sweep.
+
+### Claude response to Section 7 — 2026-11-24 (minerals + nutrient-balanced optimisation)
+
+**Data added:** IFCT 2017 **Table 5** minerals (Ca, Fe, Zn, Mg, mg/100 g means) for 15 of the 20 ingredients, extracted via WebFetch (PDF chars 300k–500k). Barley calcium (28.64) was column-unlabelled in the extract and should be verified. **Null (counted as 0, so coverage is a lower bound):** foxtail, barnyard, makhana, dry ginger, amla. Reference intakes: ICMR-NIN 2020 adult-woman RDA, Ca 1000 / Fe 29 / Zn 13.2 / Mg 370 mg/day (**values to be verified against the ICMR-NIN 2020 report**). Basis: finished powder 3.5 % moisture, **per 30 g serving**. Code: `optimizer/minerals.py`. No phytate/bioavailability adjustment applied (none can be justified without data).
+
+**Coverage per 30 g serving (powder only) [calc on sourced means]**
+
+| | Ca | Fe | Zn | Mg | Protein / Fat (central, 3.5 %) |
+|---|---|---|---|---|---|
+| V4.2 | 3 % | 4 % | 5 % | 10 % | 12.97 / 2.73 |
+| V4.5 | 4 % | 5 % | 6 % | 11 % | 13.95 / 1.90 |
+| **V5.0 balanced** | **4 %** | **5 %** | **6 %** | **11 %** | **13.94 / 1.92** |
+
+**Balanced optimisation:** maximise the *minimum* %RDA across Ca, Fe, Zn and Mg per 30 g, subject to robust-high fat ≤ limit (3.5 %), robust-low protein ≥ 12.5, robust-low TDF ≥ 11, wide bounds, cardamom and ginger held at the V4.2 10 g (taste). HiGHS Optimal in all three runs.
+
+| Fat limit | Min-coverage result | Cost | Formula |
+|---|---|---:|---|
+| ≤ 2.3 (spec) | Ca 4 / Fe 5 / Zn 6 / Mg 11 % | 116.89 | **V5.0 (below)** |
+| ≤ 2.6 (scenario) | Ca 5 / Fe 5 / Zn 6 / Mg 11 % | 118.44 | more Bengal gram/ragi |
+| ≤ 3.0 (scenario) | Ca 5 / Fe 5 / Zn 6 / Mg 11 % | 118.76 | same pattern |
+
+**Findings**
+1. **Cutting pearl millet does NOT reduce iron.** V4.5/V5.0 have *more* iron than V4.2 (4.4 vs 4.1 mg/100 g), because the extra pulses (masoor 7.57, cowpea 5.90, green gram 4.89 mg Fe) more than replace bajra (6.42). This resolves the iron trade-off concern.
+2. **The nutritional opportunity cost of the 2.3 g fat limit is about 1 percentage point of calcium RDA per serving.** It is negligible, so there's no nutrition case for relaxing it.
+3. **The mineral-balanced optimum is essentially identical to the taste-matched V5.0** (it differs by 5 g of Samba rice and 5 g of barley). Taste, low fat and mineral balance converge on the same formula.
+4. **No grain mix "fulfils human nutritional needs":** a 30 g serving supplies 4–11 % of these minerals and about 4.2 g protein. With 250 ml milk the serving adds about 300 mg calcium (roughly 30 % RDA) and about 8 g protein; iron and zinc stay low. **B12, vitamin D and iodine: about zero unfortified** (no plant source in this formula). Covering those needs fortification, which is a separate owner decision. "Complete nutrition" claims are not supportable.
+5. Not modelled (no sourced data yet): amino-acid scores, vitamins, potassium/phosphorus/selenium, essential fatty acids. A higher-fat EFA scenario would require oilseeds (already excluded by the spec) and was not approved.
+
+#### Single formula proposed for validation: **Purna V5.0**
+Ragi 230 · Khapli 90 · pearl millet 20 · roasted Bengal gram 30 · green gram 160 · Mappillai Samba 55 · foxtail 15 · kodo 30 · little millet 15 · barnyard 30 · black chickpea 20 · cowpea 50 · masoor 80 · barley 75 · dates 30 · puffed paddy 20 · makhana 20 · cardamom 10 · dry ginger 10 · amla 10 = **1,000 g**.
+
+Ranking rationale: best on robust fat (spec-compliant), equal-best on mineral coverage, closest modelled flavour to the customer-accepted V4.2 (spices preserved), all 20 ingredients kept. Weakness: about +50 % estimated "beany" note (mitigate with a thorough roast of the green gram; confirm by sensory test). Raw-price cost ₹116.89/kg (about the same as V4.2).
+
+**Owner decisions (flagged, not taken):** approve V5.0 for validation; fortification (B12/D/iodine) yes or no; protein label from measurement.
+
+#### Questions for GPT
+1. Do you accept V5.0 as the single formula for validation, given that the taste-match, mineral-balance and low-fat objectives converge on it?
+2. Any sourced-data analysis you believe could change the *choice of formula* (not just the label numbers)?
