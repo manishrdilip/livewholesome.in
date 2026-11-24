@@ -1,0 +1,26 @@
+{
+  "_note": "Nutrient values are UNSOURCED estimates recalled in the style of IFCT 2017, mixed raw/dry basis, no yield or moisture correction. Replace with cited IFCT 2017 / USDA FDC IDs before any claim. Prices are from WP-MMSF-V4.2 [spec].",
+  "units": {"grams": "g per 1000 g batch", "price": "INR per kg", "nutrients": "g per 100 g ingredient"},
+  "ingredients": [
+    {"name":"Ragi","group":"millet","price":42,"protein":7.2,"fat":1.9,"tdf":11.2,"lo":180,"hi":260,"v42":190,"B":190,"C":190},
+    {"name":"Khapli wheat","group":"cereal","price":60,"protein":11.8,"fat":1.5,"tdf":11.0,"lo":40,"hi":90,"v42":90,"B":50,"C":50},
+    {"name":"Pearl millet","group":"millet","price":38,"protein":10.9,"fat":5.4,"tdf":11.5,"lo":40,"hi":80,"v42":80,"B":80,"C":80},
+    {"name":"Roasted Bengal gram","group":"pulse","price":92,"protein":22.5,"fat":5.2,"tdf":16.0,"lo":60,"hi":110,"v42":80,"B":100,"C":110},
+    {"name":"Green gram","group":"pulse","price":105,"protein":23.0,"fat":1.2,"tdf":17.0,"lo":80,"hi":160,"v42":80,"B":100,"C":110},
+    {"name":"Mappillai Samba rice","group":"cereal","price":72,"protein":7.5,"fat":2.0,"tdf":3.5,"lo":40,"hi":60,"v42":60,"B":50,"C":50},
+    {"name":"Foxtail millet","group":"millet","price":75,"protein":12.3,"fat":4.3,"tdf":8.0,"lo":30,"hi":50,"v42":50,"B":50,"C":50},
+    {"name":"Kodo millet","group":"millet","price":80,"protein":8.9,"fat":2.6,"tdf":6.4,"lo":30,"hi":50,"v42":50,"B":40,"C":40},
+    {"name":"Little millet","group":"millet","price":85,"protein":10.1,"fat":3.9,"tdf":7.7,"lo":30,"hi":50,"v42":50,"B":40,"C":40},
+    {"name":"Barnyard millet","group":"millet","price":80,"protein":6.2,"fat":2.2,"tdf":9.8,"lo":30,"hi":50,"v42":50,"B":40,"C":40},
+    {"name":"Black chickpea","group":"pulse","price":75,"protein":18.8,"fat":5.1,"tdf":25.0,"lo":30,"hi":50,"v42":40,"B":50,"C":50},
+    {"name":"Cowpea","group":"pulse","price":85,"protein":21.0,"fat":1.2,"tdf":11.0,"lo":30,"hi":50,"v42":40,"B":40,"C":40},
+    {"name":"Masoor","group":"pulse","price":80,"protein":22.5,"fat":0.7,"tdf":10.6,"lo":30,"hi":80,"v42":30,"B":40,"C":40},
+    {"name":"Barley","group":"cereal","price":48,"protein":10.9,"fat":1.3,"tdf":15.6,"lo":30,"hi":80,"v42":30,"B":40,"C":40},
+    {"name":"Dry dates","group":"other","price":220,"protein":2.5,"fat":0.4,"tdf":8.0,"lo":30,"hi":30,"v42":30,"B":30,"C":30},
+    {"name":"Puffed paddy","group":"other","price":90,"protein":7.5,"fat":0.5,"tdf":1.0,"lo":20,"hi":20,"v42":20,"B":20,"C":10},
+    {"name":"Makhana","group":"other","price":780,"protein":9.7,"fat":0.1,"tdf":7.6,"lo":20,"hi":20,"v42":20,"B":20,"C":10},
+    {"name":"Cardamom","group":"other","price":2400,"protein":10.8,"fat":6.7,"tdf":28.0,"lo":5,"hi":7,"v42":10,"B":5,"C":5},
+    {"name":"Dry ginger","group":"other","price":420,"protein":9.0,"fat":4.2,"tdf":14.0,"lo":5,"hi":7,"v42":10,"B":5,"C":5},
+    {"name":"Amla","group":"other","price":240,"protein":3.0,"fat":0.5,"tdf":15.0,"lo":10,"hi":10,"v42":10,"B":10,"C":10}
+  ]
+}
