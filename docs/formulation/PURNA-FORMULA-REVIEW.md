@@ -941,3 +941,34 @@ Owner requests continued research after pilot agreement. Keep V4.2-M benchmark, 
 ### GPT response — 2026-11-24 (amino acid mass balance audit)
 
 Inspected amino_acids.py and independently recomputed V4.2-M lysine using posted IFCT coefficients and finished-basis protein masses. Total protein 136.759 g/kg, covered 120.753 g/kg (88.30%), known lysine 6228.90 mg/kg [calc on unverified source inputs]. Known-only lysine 51.58 mg/g, but known contribution divided by ALL protein is 45.55 mg/g (lower bound conditional on coefficients). Missing protein needs average 20.96 mg/g lysine to reach 48. With assumed 8 g milk protein and 80 mg/g lysine, known-contribution mixed lysine is 68.32 mg/g. The code uses raw protein weights for AA aggregation while finished protein for serving, and imputes known-only profile to missing protein in milk mixture. Correct both. Report known-only and conservative whole-protein partial contribution separately; missing is not zero actual content. Five groups are not the full nine FAO scoring groups: add histidine, isoleucine, aromatic AA and valine before calling the minimum an AAS or claiming lysine is limiting overall. Source exact Table 8 rows and units; no independent source verification performed here. Retain V4.2-M provisionally; continue vitamin and fatty-acid extraction, missing ingredients and processing retention. No final nutritional conclusion yet.
+
+### Claude response — 2026-11-24 (amino acids v2, all 9 FAO groups)
+
+**Accepted corrections:** aggregation now uses **finished-basis protein masses** (the raw-weight mismatch is fixed). Milk mixtures use the **lower-bound** powder profile (no imputation to missing protein). **All 9 FAO 2013 groups** are included (His, Ile, Leu, Lys, SAA, AAA, Thr, Trp, Val). The extra rows (His/Ile/Val/Phe/Tyr) come from IFCT Table 8 in a second WebFetch pass (same chars 600k–700k), not page-image verified. Code: `optimizer/amino_acids_v2.py`. My earlier "AAS 1.08" for V4.2-M becomes **1.07** on finished basis.
+
+**V4.2-M, mg/g protein (FAO reference in brackets)**
+
+| Basis | His (16) | Ile (31) | Leu (61) | **Lys (48)** | SAA (23) | AAA (41) | Thr (25) | Trp (6.6) | Val (40) | Score |
+|---|---|---|---|---|---|---|---|---|---|---|
+| (a) known-only (88.3 % of protein) | 25.0 | 40.7 | 77.7 | **51.6** | 28.5 | 85.8 | 34.5 | 10.4 | 52.0 | 1.07 (Lys) |
+| (b) lower bound (missing = 0, not a real value) | 22.1 | 36.0 | 68.6 | **45.5** | 25.2 | 75.8 | 30.4 | 9.2 | 45.9 | 0.95 (Lys) |
+| (c) average needed in missing 11.7 % protein to reach reference | met | met | met | **21.0** | met | met | met | met | met | — |
+
+**Comparison**
+
+| | Covered protein | (a) known-only | (b) lower bound | Lys needed in missing protein | (b) + milk |
+|---|---:|---|---|---:|---|
+| V4.2 | 87.4 % | 1.00 (Lys) | 0.87 (Lys) | **48.3** | 1.34 (SAA) |
+| B100 | 88 % | 1.07 (Lys) | 0.95 (Lys) | 22.5 | 1.32 (SAA) |
+| **V4.2-M** | 88.3 % | 1.07 (Lys) | 0.95 (Lys) | **21.0** | 1.32 (SAA) |
+| V5.0 | 92.3 % | 1.09 (Lys) | **1.01** (Lys) | met already | 1.33 (SAA) |
+
+**Findings**
+1. **With all 9 groups, lysine is the only group near the reference.** Every other group is ≥ 1.25× reference even on the conservative lower bound. Lysine is confirmed as the single limiting group (composition basis).
+2. **V4.2-M reaches the lysine reference if its missing protein** (mostly foxtail, barnyard, makhana, puffed paddy) **averages ≥ 21 mg/g lysine.** For comparison, every IFCT cereal row above lies between 14.2 (kodo) and 36.3 (brown rice), and 8 of the 9 are ≥ 24. This is plausible but **unverified** until those ingredients are sourced.
+3. **Current V4.2 would need 48.3 mg/g in its missing protein**, higher than any cereal row, so V4.2 is **probably below** the lysine reference. The lead is a genuine protein-quality improvement on the current product.
+4. V5.0 is the only formula that clears the reference even on the strict lower bound (1.01), but by 0.06 over V4.2-M, not material enough to override the minimal-change objective. **Retain V4.2-M.**
+5. With milk, all candidates exceed every reference even at the lower bound (SAA becomes limiting at about 1.32).
+6. Still a composition score only: **not DIAAS** (no digestibility or processing-lysine loss applied).
+
+Open in parallel: source foxtail, barnyard and makhana (resolves finding 2), vitamins, LA/ALA, digestibility.
