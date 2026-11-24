@@ -375,3 +375,51 @@ Both reviewers agree that no winning recipe can be chosen by argument. What is l
 **Not allowed until proven:** high-protein / ultra-low-fat numbers, "instant / no boiling", GI or diabetic claims, 18-month expiry, groundnut in the core product.
 
 *Desk review closed. Re-open this file when lab or pilot data arrives.*
+
+---
+
+## 5. Re-opened: Claude proposes optimised V4.4 — 2026-11-24
+
+Dilip asked for the strongest recipe that data alone can give before lab work. I ran a linear-programming optimisation (scipy `linprog`) over all 20 ingredients using the **same unsourced nutrient inputs listed in Section 3** [estimate], minimising cost subject to:
+- total = 1,000 g; protein ≥ 14.0 g; fat ≤ 2.2 g (0.1 g margin under the 2.3 g spec); TDF ≥ 12.0 g per 100 g
+- every one of the 20 ingredients kept; dates, makhana, puffed paddy, amla held at V4.2 levels; cardamom/ginger 5–7 g; small millets ≥ 30 g each; ragi ≥ 180 g
+- weights rounded to 5 g, rounding remainder put on ragi
+
+| Ingredient | V4.2 (listed) | GPT V4.3-B | **Claude V4.4** |
+|---|---:|---:|---:|
+| Ragi | 190 | 190 | **185** |
+| Khapli wheat | 90 | 50 | **40** |
+| Pearl millet | 80 | 80 | **45** |
+| Roasted Bengal gram | 80 | 100 | **60** |
+| Green gram | 80 | 100 | **160** |
+| Mappillai Samba rice | 60 | 50 | **40** |
+| Foxtail | 50 | 50 | **30** |
+| Kodo | 50 | 40 | **30** |
+| Little millet | 50 | 40 | **30** |
+| Barnyard | 50 | 40 | **30** |
+| Black chickpea | 40 | 50 | **50** |
+| Cowpea | 40 | 40 | **50** |
+| Masoor | 30 | 40 | **80** |
+| Barley | 30 | 40 | **80** |
+| Dry dates | 30 | 30 | 30 |
+| Puffed paddy | 20 | 20 | 20 |
+| Makhana | 20 | 20 | 20 |
+| Cardamom | 10 | 5 | 5 |
+| Dry ginger | 10 | 5 | 5 |
+| Amla | 10 | 10 | 10 |
+| **Sum [calc]** | 1,020 | 1,000 | **1,000** |
+| **Cost [calc]** | ₹117.34 (₹115.04 norm.) | ₹103.64 | **₹105.42** |
+| Protein [calc on estimate] | ~12.3 | ~13.0 | **~14.0** |
+| Fat [calc on estimate] | ~2.6 | ~2.6 | **~2.19** |
+| TDF [calc on estimate] | ~11.5 | ~11.9 | **~12.5** |
+| Pulses | 26.5 % | 33 % | **40 %** |
+
+**Claim:** V4.4 is the only formula so far that meets **all** spec targets on paper, including the fat ceiling we agreed to keep. Under the same inputs, B and C fail fat. That is why I propose V4.4 should **replace C as an arm in the pilot** (B stays primary unless GPT agrees to swap).
+
+**Known risks:** 40 % pulses (digestive tolerance, beany flavour), weaker millet positioning, and optimisation on unverified inputs. The 0.1 g fat margin is smaller than the input uncertainty, so it is a direction, not a guarantee.
+
+#### Questions for GPT
+1. Can you reproduce the sums, cost and the mass balance using the Section 3 inputs? Do you see any arithmetic error?
+2. Should V4.4 join the pilot (replacing C, or as a 4th arm), given it's the only formula meeting the fat spec on paper?
+3. Is 40 % pulses an acceptable risk for a first pilot, or would you cap pulses (e.g. 35 %) and accept fat closer to 2.3 g?
+4. Any constraint you would add to the optimisation (e.g. minimum millet share for brand identity)?
