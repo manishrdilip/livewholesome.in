@@ -1,0 +1,31 @@
+id,category,requirement,source,ctq_metric,method,acceptance,evidence_status,uncertainty,validation_gate
+R01,Formula,Batch sums to exactly 1000 g,engineering,sum of weights,verify_recipe.py,=1000 g,VERIFIED (digital),none,G1 digital
+R02,Nutrition,Protein per 100 g finished powder,OWNER SPEC,protein g/100g,NABL Kjeldahl (N x 6.25),12.5-13.8 (design spec; owner to decide label),MODELLED 13.68,robust 12.4-15.1; spec window narrower than natural variation,G4 verification
+R03,Nutrition,Total fat per 100 g,OWNER SPEC,fat g/100g,NABL Soxhlet/acid hydrolysis,<=2.3,MODELLED 2.19 central / 2.62 stress,margin 0.11 g; moisture-dependent,G4 verification
+R04,Nutrition,Total dietary fibre,OWNER SPEC,TDF g/100g,AOAC 991.43,>=11.0,MODELLED 13.45,crude vs TDF must not be mixed,G4 verification
+R05,Nutrition,Vitamin C (amla bypass),OWNER SPEC,ascorbic acid mg/100g,HPLC/titration,>=12.0,NOT MODELLED,retention after storage unknown,G4 + G5 shelf life
+R06,Nutrition,Lysine composition ratio vs FAO 2013 (>3 y),PROPOSED,mg lys/g protein / 48,amino_acids_v2.py then AA assay,>=1.0 composition,MODELLED ~0.99 lower bound,not DIAAS; processing lysine loss,G1 digital / G4 assay
+R07,Nutrition,Per-serving declaration (30 g and +250 ml milk),PROPOSED,nutrients per serving,compare_final.py then lab,matches label within FSSAI tolerance,MODELLED,milk values estimated,G5 regulatory
+R08,Nutrition,Vitamins B1/B2/B3/folate/E and LA/ALA characterised,PROPOSED,per-serving values,IFCT Tables 2/3/7 + assay,documented (no target),MISSING DATA,owner upload needed,G1 digital
+R09,Nutrition,Fe/Zn bioavailability (phytate:mineral molar ratio),PROPOSED,phytate:Fe and phytate:Zn,PhyFoodComp + phytate assay,report only (no claim),MISSING DATA,sprouting reduces phytate - unquantified,G1 / G4
+R10,Safety,Salmonella,OWNER SPEC (non-compensatory),presence/25 g,ISO 6579,Absent in 25 g (every lot),NOT TESTED,sampling cannot prove safety,G2 + every lot
+R11,Safety,E. coli,OWNER SPEC (non-compensatory),cfu/g,ISO 16649,absent/limit per FSSAI,NOT TESTED,,G2 + every lot
+R12,Safety,Yeast & mould,OWNER SPEC,cfu/g,ISO 21527,<100,NOT TESTED,,G2 + every lot
+R13,Safety,Validated kill step (roast CCP-1),PROPOSED (non-compensatory),log reduction of surrogate,surrogate challenge study by food-safety lab,>=5-log (target set by specialist),NOT VALIDATED,current 85-95 C x 6-8 min unproven,G2 process safety
+R14,Safety,Post-lethality hygiene (amla/spice addition),PROPOSED (non-compensatory),supplier COA + env. swabs,COA per lot; swab plan,COA pass every lot,NOT IN PLACE,,G2
+R15,Safety,Allergen labelling (no gluten-free claim: wheat + barley),REGULATORY,label review,FSSAI labelling regs,contains-wheat/barley declared,NOT REVIEWED,,G5
+R16,Stability,Moisture,OWNER SPEC,% w/w,oven/halogen moisture,<=3.5,NOT TESTED,fat concentration rises as moisture falls,G4 + every lot
+R17,Stability,Water activity,OWNER SPEC,aw,aw meter,<=0.32,NOT TESTED,,G4 + every lot
+R18,Stability,Oxidation (rancidity),PROPOSED,peroxide value + FFA + hexanal/sensory,PV/FFA assay + panel,PV & FFA within limits set by lab; no rancid note,NOT TESTED,pearl millet & pulse hexanal literature,G5 shelf life
+R19,Stability,Shelf life,OWNER SPEC 18 months (claim held),months,real-time 30C/65%RH + accelerated pulls,label only what real-time data supports,NOT TESTED,accelerated != ambient,G5
+R20,Packaging,Seal integrity,PROPOSED,seal strength N/15mm + leak test,seal tester / dye or vacuum leak,lab-defined spec; 0 leakers,NOT TESTED,,G3 pilot
+R21,Packaging,O2 absorber capacity adequate,PROPOSED,headspace O2 %,headspace analyser,<1% at day 7 (target to confirm),NOT TESTED,absorber at low aw needs check,G3
+R22,Process,Particle size,OWNER SPEC 80-mesh,% passing 180 um,sieve analysis,>=95% passing (proposed),NOT TESTED,,G3
+R23,Process,Stage yields (raw->sprouted->dried->roasted->milled),PROPOSED,% yield per ingredient,weigh every stage,documented for 3+ batches,NOT MEASURED,needed for real cost/kg,G3
+R24,Process,Batch repeatability,PROPOSED,between-batch CV of protein/fat/moisture,assays on >=3 pilot then routine lots,CV limits set after data; SPC only after >=20-25 lots,NOT MEASURED,no capability claim from 3 batches,G3 / G6
+R25,Sensory,Taste acceptance vs current Purna,OWNER (mild taste),blinded preference/difference,triangle test then 9-point hedonic,not significantly worse than current (alpha 0.05),NOT TESTED,no validated predictive model,G4 consumer
+R26,Sensory,Beany / bitter off-notes,PROPOSED,panel attribute intensity,trained/semi-trained panel,not higher than current,NOT TESTED,mung hexanal rises in storage,G4 + G5
+R27,Usability,Dispersion in warm milk,PROPOSED,lumps / wetting time / sediment,standard prep 30 g in 200 ml 60 C 10 s stir,no visible lumps; sediment < lab-defined,NOT TESTED,no instant claim,G3
+R28,Cost,Raw-material cost per finished kg,OWNER,INR/kg finished,cost sheet x measured yields,<= current V4.2,MODELLED 118.96 raw-price,yield unknown,G3
+R29,Supply,Supplier variability,PROPOSED,incoming COA (moisture/aflatoxin for millets & pulses),COA per lot + spot tests,within supplier spec,NOT IN PLACE,,G6 scale-up
+R30,Regulatory,FSSAI label & claim compliance,REGULATORY,claims vs data,FSSAI labelling & claims regs + CA/consultant review,every claim backed by lab data,NOT REVIEWED,,G5
