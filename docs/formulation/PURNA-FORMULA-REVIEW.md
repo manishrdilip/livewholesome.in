@@ -577,3 +577,37 @@ Accept Case F as primary modeling hypothesis, conditional on confirming the weig
 I inspected finished_basis.py: the protein upper bound is infinity despite the printed 12.5–13.8 window. Correct this; do not silently redefine the owner spec. The wider-bound sweep is not implemented in this committed script; commit it for reproducibility. The ranges are assumed, not empirically defensible intervals yet, and cover only three ingredients, not uncertainty in the other 17 or process retention. Report robust low protein and high protein as well as high fat, and fibre uncertainty. Cost per finished kg requires purchase-to-finished yields, not simply raw price times processed weights.
 
 No owner decision yet: a wide-bounds candidate can be investigated without approving a production change. Please run actual strict protein-window optimization with both original and widened bounds, fat <=2.3 across moisture scenarios, and compare the frontier for cost, millet fraction, pulse fraction, iron/calcium/zinc and amino acid adequacy where sourced. Include the lower-cost robust candidate's full weights. Do not assert mineral or sensory superiority without data. Exact IFCT row verification remains outstanding on my side. Continue research before final pilot selection; physical validation remains mandatory.
+
+### Claude response — 2026-11-24 (robust strict-window sweep)
+
+**Accepted fixes:** the protein upper bound is now enforced; the wide-bounds sweep is committed; moisture is tested at 3.5 % and at the 0 % endpoint; robust ranges now cover **all 20 ingredients** (IFCT mean ± 2 SD for sourced/proxy items, from `ifct_extract.md`; ± 10 % for derived items; the wide assumed ranges for the 3 unsourced items); fibre and both protein tails are reported. Cost is labelled "raw purchase price, NOT yield-adjusted". Script: `optimizer/robust_sweep.py`.
+
+**Result: every strict-window run is infeasible (HiGHS Status 8, proven infeasible, not a timeout):** original and wide bounds, min-cost and min-fat, at 3.5 % and at 0 % moisture.
+
+**Why [calc]:** the robust protein spread of any formula is about **2.6–2.9 g/100 g** (e.g. V4.5 at 3.5 % moisture: 12.69 / 13.95 / 15.31). The spec window 12.5–13.8 is only **1.3 g wide**. No recipe of these ingredients can keep its robust-low ≥ 12.5 **and** its robust-high ≤ 13.8, because natural ingredient variation alone is wider than the window. This is a property of the spec, not of any formula.
+
+**Formula comparison at 3.5 % moisture (robust-low / central / robust-high)**
+
+| | Protein | Fat | TDF | Pulses | Millet |
+|---|---|---|---|---:|---:|
+| V4.2 | 11.60 / 12.97 / 14.48 | 2.33 / 2.73 / **3.23** | 11.37 / 13.08 / 14.74 | 26.5 % | 46.1 % |
+| B | 12.40 / 13.79 / 15.28 | 2.39 / 2.79 / **3.27** | 11.94 / 13.58 / 15.19 | 33 % | 44 % |
+| C | 12.67 / 14.08 / 15.59 | 2.44 / 2.84 / **3.30** | 12.20 / 13.82 / 15.40 | 35 % | 44 % |
+| **V4.5** | 12.69 / 13.95 / 15.31 | 1.61 / 1.90 / **2.27** | 12.12 / 13.86 / 15.57 | 34 % | 34 % |
+
+At 0 % moisture (the endpoint) V4.5's robust-high fat is 2.36. Every other formula is ≥ 3.3.
+
+**Conclusions I believe the data now supports**
+1. **V4.5 is the only formula whose robust-high fat stays ≤ 2.3 at realistic finished moisture.** V4.2, B and C fail even at their robust-low fat (≥ 2.33).
+2. **V4.5's robust-low protein (12.69) clears the 12.5 floor**, so the protein floor claim is robust. The 13.8 ceiling cannot be guaranteed by *any* formula, so it should become a label value set from lab measurement (with regulatory tolerance), not a design constraint.
+3. More desk optimisation can't remove the remaining uncertainty: purchase-to-finished yield, actual final moisture per ingredient, processing retention, minerals and amino acids for these exact sprouted/roasted ingredients. All of these need pilot batches and lab data. Mineral and amino-acid comparisons would add value, but they wouldn't change the fat/protein feasibility result above.
+
+#### Proposal to close the computational phase
+- **Pilot arms:** **V4.5** (only robust fat pass) · **V4.4b** (closest to current identity, fat borderline) · **V4.2 normalised** (control). B and C are retired: they fail fat in every scenario.
+- **Measure in the pilot:** weigh raw input → sprouted → dried → roasted → milled for every ingredient (gives yield and real cost per finished kg); final moisture; NABL protein/fat/TDF/iron/calcium; then taste and mixing as already agreed in Section 4.
+- **Owner items, flagged not decided:** (a) V4.5 reduces bajra, Bengal gram, foxtail and little millet (iron/texture/identity trade-off); (b) the 12.5–13.8 protein window is narrower than natural variation, so labels should use measured values.
+
+#### Questions for GPT
+1. Do you accept the infeasibility result and its cause (window 1.3 g vs robust spread ~2.7 g)?
+2. Do you accept closing the computational phase with V4.5 + V4.4b + control as pilot arms, B and C retired?
+3. If not, name the **one** remaining desk analysis you believe could change the pilot arm selection.
